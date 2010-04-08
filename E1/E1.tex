@@ -1,0 +1,296 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[latin1]{inputenc}
+\usepackage[english, ngerman]{babel}
+\usepackage[babel]{csquotes}
+\usepackage{tabularx}
+\usepackage{pst-circ, pstricks-add}
+\usepackage[basic,box]{circ}
+\author{Denis Dietze \and Wolfgang Keller \and Nico Linke \and Thomas Schulte}
+
+\title{Protokoll Einführungsversuch E1}
+\subtitle{Einsatz und Aufbau von Mess-- und Versorgungsgeräten}
+\begin{document}
+\maketitle
+
+\section{Studienkontrollfragen}
+
+\subsection{Aufbau von Drehspul-- und Dreheisenmesswerken}
+
+\subsection{Messbereichserweiterung an Strom-- und Spannungsmessern}
+
+\subsection{Stromrichtige vs. spannungsrichtige Messschaltung}
+
+\subsubsection{Stromrichtige Messschaltung}
+
+\begin{pspicture}%[showgrid=true]
+(0, 0)(10,6)
+    \pnode(1, 1){A}
+    \pnode(1, 4){B}
+    \pnode(3, 4){C}
+    \pnode(7.5, 4){D}
+    \pnode(7.5, 1){E}
+    \pnode(3, 1){F}
+    \battery(A)(B){$E$}
+    \circledipole[labeloffset=0, tensionlabel=$U_A$](C)(D){A}
+    \circledipole[labeloffset=0, tensionlabel=$E{=}U_A+U_{R_L}$, tensionlabeloffset=2.2](C)(F){V}
+    \wire(B)(C)
+    \resistor[tensionlabel=$U_{R_L}$, tensionlabeloffset=1.4](D)(E){$R_L$}
+    \wire(E)(F)
+    \wire(F)(A)
+\end{pspicture}
+
+\subsubsection{Spannungsrichtige Messschaltung}
+
+\begin{pspicture}%[showgrid=true]
+(0, 0)(9,6)
+    \pnode(1, 1){A}
+    \pnode(1, 4){B}
+    \pnode(4, 4){C}
+    \pnode(7.5, 4){D}
+    \pnode(7.5, 1){E}
+    \pnode(4, 1){F}
+    \battery(A)(B){$E$}
+    \circledipole[labeloffset=0, tensionlabel=$I_g{=}I_V+I_{R_L}$](B)(C){A}
+    \circledipole[labeloffset=0, tensionlabel=$I_V$, tensionlabeloffset=1.4](C)(F){V}
+    \wire(C)(D)
+    \resistor[tensionlabel=$I_{R_L}$, tensionlabeloffset=1.4](D)(E){$R_L$}
+    \wire(E)(F)
+    \wire(F)(A)
+\end{pspicture}
+
+\subsection{Gesichtspunkte bei der Auswahl von Messgeräten}
+
+\subsection{Empfindlichkeit von Messgeräten}
+
+\subsection{Fehlerarten bei Messungen}
+
+\subsection{Aufbau und Funktionsprinzip des Elektronenstrahloszilloskops}
+
+\subsection{Frequenzmessung mittels Lissajousfiguren}
+
+\subsection{Das Prinzip der Whetstoneschen Messbrücke}
+
+\begin{pspicture}%[showgrid=true]
+(1, 0)(9,7)
+    \pnode(2, 1){A}
+    \pnode(4, 1){B}
+    \pnode(6, 1){C}
+    \pnode(8, 1){D}
+    \pnode(8, 3){E}
+    \pnode(5, 3){F}
+    \pnode(2, 3){G}
+    \pnode(2, 6){H}
+    \pnode(5, 6){I}
+    \pnode(8, 6){J}
+    \wire(A)(B)
+    \battery(B)(C){$U=5~V$}
+    \wire(C)(D)
+    \wire(D)(E)
+    \resistor(E)(F){$R_3$}
+    \resistor(F)(G){$R_2$}
+    \wire(G)(A)
+    \circledipole[labeloffset=0, tensionlabel=$U_{Br}$, tensionlabeloffset=1.5](F)(I){V}
+    \wire(D)(J)
+    \wire(G)(H)
+    \resistor(I)(J){$R_x$}
+    \resistor[variable](H)(I){$R_1$}
+\end{pspicture}
+
+\section{Versuchsdurchführung}
+
+\subsection{Bestimmung der Widerstandswerte am Schiebewiderstand}
+
+\subsubsection{Ergebnisse der Messung in stromrichtiger Messschaltung}
+
+Die Ergebnisse der Messungen in stromrichtiger Messschaltung sind in Tabelle \ref{table:1} dargestellt.
+
+
+\begin{table}
+\begin{minipage}[t]{\textwidth}
+\begin{center}
+\begin{tabular}{|crrr|}
+\hline
+    Gewählte Klemmen & U \footnote{\label{fn:gemessen}gemessen} & I \footref{fn:gemessen} & R \footnote{aus gemessenem U und I berechnet; Genauigkeit zwei Dezimalstellen}\\
+\hline
+    1-2 & 5,1~V & 0,527~A & $9,68~\Omega$\\
+    2-3 & 8,2~V & 0,508~A & $16,14~\Omega$\\
+    1-3 & 8,2~V & 0,314~A & $26,11~\Omega$\\
+\hline
+\end{tabular}
+\end{center}
+\end{minipage}
+\caption{Messergebnisse der Messung in spannungsrichtiger Messschaltung}
+\label{table:1}
+\end{table}
+
+\subsubsection{Ergebnisse der Messung in spannungsrichtiger Messschaltung}
+
+Die Ergebnisse der Messungen in stromrichtiger Messschaltung sind in Tabelle \ref{table:2} dargestellt.
+
+\begin{table}
+\begin{minipage}[t]{\textwidth} 
+\begin{center} 
+\begin{tabular}{|crrr|}
+\hline
+    Gewählte Klemmen & U \footnote{\label{fn:gemessen}gemessen} & I \footref{fn:gemessen} & R \footnote{aus gemessenem U und I berechnet; Genauigkeit zwei Dezimalstellen}\\
+\hline
+    1-2 & 5~V & 0,527~A & $9,49~\Omega$\\
+    2-3 & 8,1~V & 0,508~A & $15,95~\Omega$\\
+    1-3 & 8,1~V & 0,17~A & $47,65~\Omega$\\
+\hline
+\end{tabular}
+\end{center}
+\end{minipage}
+\caption{Messergebnisse der Messung in stromrichtiger Messschaltung}
+\label{table:2}
+\end{table}
+
+\subsubsection{Messung mittels Widerstandsmessgeräten}
+
+Die Ergebnisse der Messungen sind in den Tabellen \ref{table:3} bis \ref{table:5} aufgelistet.
+
+\begin{table}
+\begin{minipage}[t]{\textwidth}
+\begin{center}
+\begin{tabular}{|cr|}
+\hline
+    Gewählte Klemmen & R \footnote{\label{fn:gemessen}gemessen}\\
+\hline
+    1-2 & $10,8~\Omega$\\
+    2-3 & $16,9~\Omega$\\
+    1-3 & $27,5~\Omega$\\
+\hline
+\end{tabular}
+\end{center}
+\end{minipage}
+\caption{Messergebnisse der direkten Widerstandsmessung mittels Digitalmultimeter VC 150}
+\label{table:3}
+\end{table}
+
+\begin{table}
+\begin{minipage}[t]{\textwidth}
+\begin{center}
+\begin{tabular}{|cr|}
+\hline
+    Gewählte Klemmen & R \footnote{\label{fn:gemessen}gemessen}\\
+\hline
+    1-2 & $10,6~\Omega$\\
+    2-3 & $17,0~\Omega$\\
+    1-3 & $27,4~\Omega$\\
+\hline
+\end{tabular}
+\end{center}
+\end{minipage}
+\caption{Messergebnisse der direkten Widerstandsmessung mittels Digitalvoltmeter G-1002.500}
+\label{table:4}
+\end{table}
+
+\begin{table}
+\begin{minipage}[t]{\textwidth}
+\begin{center}
+\begin{tabular}{|cr|}
+\hline
+    Gewählte Klemmen & R \footnote{\label{fn:gemessen}gemessen}\\
+\hline
+    1-2 & $10.5~\Omega$\\
+    2-3 & $17,2~\Omega$\\
+    1-3 & $26,5~\Omega$\\
+\hline
+\end{tabular}
+\end{center}
+\end{minipage}
+\caption{Messergebnisse der direkten Widerstandsmessung mittels Kleinmeßbrücke nach Wheatstone bei einer Speisespannung von 5~V}
+\label{table:5}
+\end{table}
+
+\subsection{Vergleich der Messergebnisse}
+
+Die gemessenen bzw. aus den Messgrößen berechneten Widerstände sind in Tabelle \ref{table:6} abgetragen.
+
+\begin{table}
+\begin{minipage}[t]{\textwidth}
+\begin{center}
+\begin{tabularx}{\textwidth}{|Xrrrr|}
+\hline
+    Messgerät/--methode & $R_{1, 2}$  & $R_{2, 3}$ & $R_{1, 2}+R_{2, 3}$ & $R_{1, 3}$ \\
+\hline
+    Stromrichtige Messung & $9,68~\Omega$ & $16,14~\Omega$ &  $25.82~\Omega$ & $26,11~\Omega$ \\
+    Spannungsrichtige Messung & $9,49~\Omega$ & $15,95~\Omega$ & $25.44~\Omega$ & $47,65~\Omega$ \\
+    Direkte Widerstandmessung Digitalmultimeter VC 150 & $10,8~\Omega$ & $16,9~\Omega$ & $27,7~\Omega$ & $27,5~\Omega$ \\
+    Direkte Widerstandsmessung Digitalvoltmeter G-1002.500 & $10,6~\Omega$ & $17,0~\Omega$ & $27,6~\Omega$ & $27,4~\Omega$ \\
+    Direkte Widerstandsmessung Kleinmeßbrücke nach Wheatstone & $10,5~\Omega$ & $17,2~\Omega$ & $27,5~\Omega$ & $26,5~\Omega$ \\
+\hline
+\end{tabularx}
+\end{center}
+\end{minipage}
+\caption{Vergleich der Messergebnisse der angewendeten Messmethoden zur Widerstandsmessung}
+\label{table:6}
+\end{table}
+
+
+Bei der außerordentlich Abweichung für $R_{1, 2}+R_{2, 3}$ von $R_{1, 3}$ bei der spannungsrichtigen Messung gehen wir davon aus, dass ein Ablesefehler des Messgerätes vorlag. Speziell gehen wir für den Wert von 0,17~A (vgl. Tabelle \ref{table:1} bei der Messung des Stroms unter Verwendung der Messpunkte 1 und 3 davon aus, dass hier ein fehlerhafter Wert abgelesen oder aufgeschrieben wurde. Eine alternative Erklärung könnte ebenfalls sein, dass falsche Messpunkte verwendet wurden. Letztere Vermutung erhält dadurch eine gewisse Evidenz, als dass der ausgerechnete Wert für den Widerstand im Bereich des Doppelten des "`eigentlich"' zu messenden Wertes liegt. Bedingt durch den Aufbau des Widerstandes ist ein solcher Fehler durchaus möglich. 
+
+Abgesehen von diesem Messfehler lässt sich der Unterschied zwischen strom- und spannungsrichtiger Messsung dadurch erklären, als bei stromrichtiger Messung die Spannung leicht zu hoch gemessen wird (was gemessen wird ist $U_A+U_{R_L}$, was wir jedoch messen wollen ist $U_{R_L}$) und bei spannungsrichtiger Messung der Strom leicht zu hoch gemessen wird (gemessen wird $I_V+I_{R_L}$, was wir jedoch messen wollen ist $I_{R_L}$). Somit wird die aus $U_{R_L}$ und $I_{R_L}$ abgeleitete Größe $R_L$ bei stromrichtiger Messung unterschätzt, denn es gilt:
+\begin{displaymath}
+R_L = \frac{U_{R_L}}{I_{R_L}} < \frac{U_{R_L}+U_A}{I_{R_L}}.
+\end{displaymath}
+
+Analog wird bei der spannungsrichtichtiger Messung die aus $U_{R_L}$ und $I_{R_L}$ abgeleitete Größe $R_L$ überschätzt, denn es gilt:
+\begin{displaymath}
+R_L = \frac{U_{R_L}}{I_{R_L}} > \frac{U_{R_L}}{I_{R_L}+I_V}.
+\end{displaymath}
+
+In der Tat zeigt der Vergleich der Messwerte von strom-- und spannungsrichtiger Messung (von dem "`groben Messfehler"' abgesehen), dass die aus den Messwerten berechneten Werte für den Widerstand in der Tat, wie aus der Theorie zu erwarten ist, bei der stromrichtigen Messung größer als bei der spannungsrichtigen Messung sind.
+
+\subsection{Effektiv-- und Spitzenwermessung mittels verschiedener Messgeräte}
+
+Die gemessenen Spannung sind in Tabelle \ref{table:7} abgetragen.
+
+\begin{table}
+\begin{minipage}[t]{\textwidth}
+\begin{center}
+\begin{tabular}{|lr|}
+\hline
+    Messgerät & gemessene Spannung U \\
+\hline
+     Analogmultimeter 2010 & 1,8~V \\
+     Digitalmultimeter VC 150 & 1,84~V \\
+     Millivoltmeter MV 21 & 1,8~V \\
+     Oszilloskop HM 203-7 & 5~V bzw. 2,5~V\footnote{ersterer Wert entspricht dem tatsächlich abgelesenen Wert für $\widehat{U}$ bzw. $U_{ss}$, letzterer entsteht durch Division des ersteren durch 2 und entspricht $U_s$}\\
+\hline
+\end{tabular}
+\end{center}
+\end{minipage}
+\caption{Ermittelte Spannungswerte für verschiedene Messgeräte bei $\widehat{U}=5~V$ und $f=1000~Hz$}
+\label{table:7}
+\end{table}
+
+Das "`Analogmultimeter 2010"', das "`Digitalmultimeter VC 150"' und das "`Millivoltmeter MV 21"' stellen bei der Spannung den Effektivwert dar, während auf dem Oszilloskop (in diesem Fall vom Typ "`HM 203-7"') der Spitzenwert abgelesen werden kann.
+
+Der Zusammenhang zwischen Effektivwert und Spitzenwert bei einer Sinusspannung ist
+\begin{displaymath}
+U_{eff} = \frac{1}{\sqrt{2}} U_s.
+\end{displaymath}
+
+\subsection{Oszillogramm einer Rechtecks-- und Sinusspannung}
+
+\subsection{Frequenzmessung mit Hilfe von Lissajous-Figuren}
+
+Die Frequenzverhältnisse sind als $f_{y-Achse} : f_{x-Achse}$ zu betrachten.
+
+% Bilder einfügen, Matlab-Programm zur Erzeugung wurde bereits geschrieben und eingecheckt
+
+Die Figuren entstehen folgendermaßen: an der x-- und y--Achse liegt je eine sinusförmige Spannung an:
+\begin{eqnarray*}
+u_x & = & U_s \sin (\frac{f_x}{2 \pi} t+\omega_x) \\
+u_y & = & U_s \sin (\frac{f_y}{2 \pi} t+\omega_y),
+\end{eqnarray*}
+wobei $f_x, f_y$ für die entsprechenden Frequenzen und $\omega_x, \omega_y$ für die Phasenverschiebungen stehen. Da die Spitzenspannung an beiden Achsen im vorliegenden Experiment die selbe ist, wurde diese mit $U_s$ bezeichnet -- im Allgemeinen kann diese jedoch für x- und y-Achse unterschiedlich sein.
+
+Da die Auslenkung des Oszillographen proportional zur Spannung ist, erhält man somit die Gleichung der Lissajous-Figuren
+
+\begin{displaymath}
+% Inhalt einfügen
+\end{displaymath}
+
+\end{document}
