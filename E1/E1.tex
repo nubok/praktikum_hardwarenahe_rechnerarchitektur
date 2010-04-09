@@ -4,7 +4,7 @@
 \usepackage[babel]{csquotes}
 \usepackage{tabularx}
 \usepackage{pst-circ, pstricks-add}
-\usepackage[basic,box]{circ}
+\usepackage{graphicx}
 \author{Denis Dietze \and Wolfgang Keller \and Nico Linke \and Thomas Schulte}
 
 \title{Protokoll Einführungsversuch E1}
@@ -73,6 +73,8 @@ Bei der \emph{spannungsrichtigen Messschaltung} dagegen ist das Spannungsmessger
 \subsection{Aufbau und Funktionsprinzip des Elektronenstrahloszilloskops}
 
 \subsection{Frequenzmessung mittels Lissajousfiguren}
+
+Die Beantwortung der Fragen zu diesem Thema erfolgt in Abschnitt \ref{abschnitt:liss}.
 
 \subsection{Das Prinzip der Whetstoneschen Messbrücke}
 
@@ -283,13 +285,15 @@ U_{eff} = \frac{1}{\sqrt{2}} U_s.
 
 \subsection{Frequenzmessung mit Hilfe von Lissajous-Figuren}
 
-Die Frequenzverhältnisse sind als $f_{y-Achse} : f_{x-Achse}$ zu betrachten.
+\label{abschnitt:liss}
+
+Die Frequenzverhältnisse der Aufgabenstellung seien als $f_{y-Achse} : f_{x-Achse}$ zu betrachten.
 
 % Bilder einfügen, Matlab-Programm zur Erzeugung wurde bereits geschrieben und eingecheckt
 
 Die Figuren entstehen folgendermaßen: an der x-- und y--Achse liegt je eine sinusförmige Spannung an:
 \begin{eqnarray*}
-u_x & = & U_s \sin (\frac{f_x}{2 \pi} t+\omega_x) \\
+u_x & = & U_s \sin (\frac{f_x t}{2 \pi} t+\omega_x) \\
 u_y & = & U_s \sin (\frac{f_y}{2 \pi} t+\omega_y),
 \end{eqnarray*}
 wobei $f_x, f_y$ für die entsprechenden Frequenzen und $\omega_x, \omega_y$ für die Phasenverschiebungen stehen. Da die Spitzenspannung an beiden Achsen im vorliegenden Experiment die selbe ist, wurde diese mit $U_s$ bezeichnet -- im Allgemeinen kann diese jedoch für x- und y-Achse unterschiedlich sein.
@@ -299,5 +303,32 @@ Da die Auslenkung des Oszillographen proportional zur Spannung ist, erhält man s
 \begin{displaymath}
 % Inhalt einfügen
 \end{displaymath}
+
+Für $U_s=5~V$, Frequenzverhältnisse nach Aufgabenstellung und in den Diagrammen angegebenen Werten für $\omega_x$ und $\omega_y$ erhält die in den Abbildungen \ref{fig:0.5:1} bis \ref{fig:3:1} dargestellten Oszillogramme (bzw. mathematisch gesehen Trajektorien der angegebenen Kurvengleichung).
+
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{05-1.eps}
+\caption{Lissajous-Figur für Frequenzverhältnis 0.5:1, $\omega_x=0$ und $\omega_y=1.12$}
+\label{fig:0.5:1}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{1-1.eps}
+\caption{Lissajous-Figur für Frequenzverhältnis 1:1, $\omega_x=0$ und $\omega_y=1$}
+\label{fig:1:1}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{2-1.eps}
+\caption{Lissajous-Figur für Frequenzverhältnis 2:1, $\omega_x=0$ und $\omega_y=0.3$}
+\label{fig:2:1}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{3-1.eps}
+\caption{Lissajous-Figur für Frequenzverhältnis 3:1, $\omega_x=0$ und $\omega_y=2.3$}
+\label{fig:3:1}
+\end{figure}
+
 
 \end{document}

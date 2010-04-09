@@ -1,5 +1,4 @@
 N=1000; % Number of points
-t=1/N*2*pi*(0:N)*2;
 us=2.5; % U_S
 
 yfreq=0.5;
