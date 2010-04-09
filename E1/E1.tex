@@ -58,6 +58,12 @@
     \wire(F)(A)
 \end{pspicture}
 
+\subsubsection{Unterschiede zwischen stromrichtiger und spannungsrichtiger Messschaltung}
+
+Bei der \emph{stromrichtigen Messschaltung} ist das Strommessgerät in Reihe mit dem Widerstand geschaltet, was zur Folge hat, dass der durch den Widerstand fließende Strom korrekt gemessen wird. Das Spannungsmessgerät befindet sich dagegen parallel zu einer Reihenschaltung aus Widerstand und Strommessgerät, mit der Folge dass als Spannung die Summe aus der am Strommessgerät anliegenden Spannung $U_A$ und der am Widerstand anliegenden Spannung $U_{R_L}$ gemessen wird, während wir "eigentlich" nur $U_{R_L}$ messen wollten. Es wird also bei dieser Messung eine höhere  Spannung gemessen, als am Widerstand anliegt.
+
+Bei der \emph{spannungsrichtigen Messschaltung} dagegen ist das Spannungsmessgerät parallel zum Widerstand geschaltet. Die am Widerstand anliegende Spannung wird also korrekt gemessen. Das Strommessgerät befindet sich dagegen in Reihe mit einer Parallelschaltung aus dem Widerstand und dem Spannungsmessgerät. In der Folge wird die Summe der Ströme durch das Spannungsmessgerät $I_V$ und den Widerstand $I_{R_L}$ gemessen, während wir gerne den Strom durch den Widerstand messen würden - es wird also ein höherer Strom gemessen als durch den Widerstand fließt.
+
 \subsection{Gesichtspunkte bei der Auswahl von Messgeräten}
 
 \subsection{Empfindlichkeit von Messgeräten}
@@ -214,11 +220,12 @@ Die gemessenen bzw. aus den Messgrößen berechneten Widerstände sind in Tabelle \
 \hline
     Messgerät/--methode & $R_{1, 2}$  & $R_{2, 3}$ & $R_{1, 2}+R_{2, 3}$ & $R_{1, 3}$ \\
 \hline
-    Stromrichtige Messung & $9,68~\Omega$ & $16,14~\Omega$ &  $25.82~\Omega$ & $26,11~\Omega$ \\
-    Spannungsrichtige Messung & $9,49~\Omega$ & $15,95~\Omega$ & $25.44~\Omega$ & $47,65~\Omega$ \\
+    Stromrichtige Messung & $9,68~\Omega$ & $16,14~\Omega$ &  $25,82~\Omega$ & $26,11~\Omega$ \\
+    Spannungsrichtige Messung & $9,49~\Omega$ & $15,95~\Omega$ & $25,44~\Omega$ & $47,65~\Omega$ \\
     Direkte Widerstandmessung Digitalmultimeter VC 150 & $10,8~\Omega$ & $16,9~\Omega$ & $27,7~\Omega$ & $27,5~\Omega$ \\
     Direkte Widerstandsmessung Digitalvoltmeter G-1002.500 & $10,6~\Omega$ & $17,0~\Omega$ & $27,6~\Omega$ & $27,4~\Omega$ \\
-    Direkte Widerstandsmessung Kleinmeßbrücke nach Wheatstone & $10,5~\Omega$ & $17,2~\Omega$ & $27,5~\Omega$ & $26,5~\Omega$ \\
+    Direkte Widerstandsmessung Kleinmeßbrücke nach Wheatstone & $10,5~\Omega$ & $17,2~\Omega$ & $27,7~\Omega$ & $26,5~\Omega$ \\
+    Mittelwert aus allen Messungen\footnote{Messung von $R_{1,3}$ bei spannungsrichtiger Messung wurde aus der Mittelwertberechnung wegen offensichtlich fehlerhafter Messung herausgenommen} & $10,214~\Omega$ & $16,638~\Omega$ & $26,852~\Omega$ & $26.8775~\Omega$ \\
 \hline
 \end{tabularx}
 \end{center}
