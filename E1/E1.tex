@@ -14,7 +14,19 @@
 
 \section{Studienkontrollfragen}
 
-\subsection{Aufbau von Drehspul-- und Dreheisenmesswerken}
+\subsection{Aufbau und Funktion von Drehspul-- und Dreheisenmesswerken}
+
+\subsubsection{Drehspulmesswerke}
+
+In einem Drehspulmesswerk befindet ich im magnetischen Feld eines Dauermagneten\footnote{in modernen Ausführungen befindet sich der Dauermagnet häufig \emph{innerhalb} der Spule und nicht außerhalb; unter anderem weil hierdurch Störfelder abgeschirmt werden} eine drehbare Spule. Spiralfedern sind leitend mit der Spule verbunden und dienen sowohl der Stromversorgung als auch der Rücksetzung in die Ruhelage.
+
+Wird durch diese Spule Strom geleitet, so kommt es zur Wirkung der Lorentzkraft auf die Leiter der Spule. Diese dreht sich somit so weit, bis die Lorentzkraft gleich der winkelabhängigen Rückstellkraft der Feder ist (was einen Ausschlag des Zeigers, der mit der Spule verbunden ist, bewirkt). Da die Federkraft nach dem Hooke'schen Gesetz proportional zur Auslenkung ist, folgt eine lineare Einteilung der Skala.
+
+\subsubsection{Dreheisenmesswerke}
+
+In einem \emph{Dreheisenmesswerk} befindet sich innerhalb einer Spule mit feststehendem Weicheisenkern ein an Federn befestigter drehbarer Kern (ein so genanntes "`Dreheisen"'), welcher ebenfalls aus Weicheisen besteht. An diesem inneren Kern ist ein Zeiger befestigt.
+
+Wenn Strom durch die Spule geleitet wird, so kommt es zur Magnetisierung beider Eisenkerne und der drehbare innere Kern dreht sich so weit, bis die Federkraft gleich der magnetischen Abstoßungskraft ist. Da diese Auslenkung nicht proportional zur Stromstärke ist, ist die Skala im Allgemeinen nichtlinear.
 
 \subsection{Messbereichserweiterung an Strom-- und Spannungsmessern}
 
@@ -65,6 +77,13 @@ Bei der \emph{stromrichtigen Messschaltung} ist das Strommessgerät in Reihe mit 
 Bei der \emph{spannungsrichtigen Messschaltung} dagegen ist das Spannungsmessgerät parallel zum Widerstand geschaltet. Die am Widerstand anliegende Spannung wird also korrekt gemessen. Das Strommessgerät befindet sich dagegen in Reihe mit einer Parallelschaltung aus dem Widerstand und dem Spannungsmessgerät. In der Folge wird die Summe der Ströme durch das Spannungsmessgerät $I_V$ und den Widerstand $I_{R_L}$ gemessen, während wir gerne den Strom durch den Widerstand messen würden - es wird also ein höherer Strom gemessen als durch den Widerstand fließt.
 
 \subsection{Gesichtspunkte bei der Auswahl von Messgeräten}
+
+\begin{itemize}
+\item Gewünschte Art der Messung (direkte Messung vs. indirekte (d. h. Messung anderer Größen, aus denen sich die gewünschte Größe berechnet werden kann))
+\item Messbereich (sofern keine Messbereichserweiterung vorgenommen werden kann)
+\item Empfindlichkeit des Messgeräts (in Bezug auf die Messgröße)
+\item Empfindlichkeit des Messgeräts in Bezug auf schnelle zeitliche Änderungen der Messgröße
+\end{itemize}
 
 \subsection{Empfindlichkeit von Messgeräten}
 
@@ -288,8 +307,6 @@ U_{eff} = \frac{1}{\sqrt{2}} U_s.
 \label{abschnitt:liss}
 
 Die Frequenzverhältnisse der Aufgabenstellung seien als $f_{y-Achse} : f_{x-Achse}$ zu betrachten.
-
-% Bilder einfügen, Matlab-Programm zur Erzeugung wurde bereits geschrieben und eingecheckt
 
 Die Figuren entstehen folgendermaßen: an der x-- und y--Achse liegt je eine sinusförmige Spannung an:
 \begin{eqnarray*}
