@@ -2,6 +2,7 @@
 \usepackage[latin1]{inputenc}
 \usepackage[english, ngerman]{babel}
 \usepackage[babel]{csquotes}
+\usepackage{amsmath} % for eqref
 \usepackage{tabularx}
 \usepackage{pst-circ, pstricks-add}
 \usepackage{graphicx}
@@ -29,6 +30,47 @@ In einem \emph{Dreheisenmesswerk} befindet sich innerhalb einer Spule mit festst
 Wenn Strom durch die Spule geleitet wird, so kommt es zur Magnetisierung beider Eisenkerne und der drehbare innere Kern dreht sich so weit, bis die Federkraft gleich der magnetischen Abstoßungskraft ist. Da diese Auslenkung nicht proportional zur Stromstärke ist, ist die Skala im Allgemeinen nichtlinear.
 
 \subsection{Messbereichserweiterung an Strom-- und Spannungsmessern}
+
+\subsubsection{Messbereichserweiterung an Strommessern}
+
+Um den Messbereich von Strommessern zu erweitern, schaltet man einen Widerstand\emph{parallel} zum Messwerk. Seien $R_M$ bzw. $R_P$ die Widerstände von Messgerät bzw. Shunt und $I_M$ bzw. $I_P$ die durch Messgerät bzw. Parallelwiderstand fließenden Ströme, sowie $I_{ges}=I_M+I_P$ der zu messende Strom.
+
+Um den Messbereich n-fach zu erweitern, muss 
+\begin{equation}
+R_P=\frac{R_M}{n-1}
+\label{eq:1}
+\end{equation}
+gewählt werden, da gilt:
+
+\begin{displaymath}
+\frac{I_P}{I_M}=\frac{R_M}{R_P}.
+\end{displaymath}
+
+Wenn man hier Gleichung \eqref{eq:1} einsetzt, folgt:
+\begin{equation}
+\frac{I_P}{I_M}=n-1.
+\label{eq:2}
+\end{equation}
+
+Unter Beachtung von
+\begin{displaymath}
+I_{ges}=I_M+I_P
+\end{displaymath}
+folgt somit aus Gleichung \eqref{eq:2}:
+\begin{displaymath}
+I_{ges}=n I_M,
+\end{displaymath}
+was einer n-fachen Messbereichserweiterung entspricht.
+
+\subsubsection{Messbereichserweiterung an Spannungsmessern}
+
+Um den Messbereich von Spannungsmessern auf das n-fache zu erweitern, schaltet man einen Widerstand von $R_R=(n-1) R_M$ \emph{in Reihe} mit dem Spannungsmessgerät, wobei $R_M$ bzw. $R_R$ den Widerstand des Spannungsmessgeräts  bzw. in Reihe geschalteten Widerstands bezeichne. Stehe $U_M$ für die am Spannungsmesser anliegende Spannung und $U_M$ für die Summe der an Widerstand und Messgerät anliegenden Spannungen.
+
+Mittels einer analogen Herleitung wie für die Messbereichserweiterung für Strommessgeräte kann man zeigen, dass dann gilt:
+
+\begin{displaymath}
+U_{ges}=n U_M.
+\end{displaymath}
 
 \subsection{Stromrichtige vs. spannungsrichtige Messschaltung}
 
