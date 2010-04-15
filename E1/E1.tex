@@ -114,7 +114,7 @@ U_{ges}=n U_M.
 
 \subsubsection{Unterschiede zwischen stromrichtiger und spannungsrichtiger Messschaltung}
 
-Bei der \emph{stromrichtigen Messschaltung} ist das Strommessgerät in Reihe mit dem Widerstand geschaltet, was zur Folge hat, dass der durch den Widerstand fließende Strom korrekt gemessen wird. Das Spannungsmessgerät befindet sich dagegen parallel zu einer Reihenschaltung aus Widerstand und Strommessgerät, mit der Folge dass als Spannung die Summe aus der am Strommessgerät anliegenden Spannung $U_A$ und der am Widerstand anliegenden Spannung $U_{R_L}$ gemessen wird, während wir "eigentlich" nur $U_{R_L}$ messen wollten. Es wird also bei dieser Messung eine höhere  Spannung gemessen, als am Widerstand anliegt.
+Bei der \emph{stromrichtigen Messschaltung} ist das Strommessgerät in Reihe mit dem Widerstand geschaltet, was zur Folge hat, dass der durch den Widerstand fließende Strom korrekt gemessen wird. Das Spannungsmessgerät befindet sich dagegen parallel zu einer Reihenschaltung aus Widerstand und Strommessgerät, mit der Folge dass als Spannung die Summe aus der am Strommessgerät anliegenden Spannung $U_A$ und der am Widerstand anliegenden Spannung $U_{R_L}$ gemessen wird, während wir "`eigentlich"' nur $U_{R_L}$ messen wollten. Es wird also bei dieser Messung eine höhere  Spannung gemessen, als am Widerstand anliegt.
 
 Bei der \emph{spannungsrichtigen Messschaltung} dagegen ist das Spannungsmessgerät parallel zum Widerstand geschaltet. Die am Widerstand anliegende Spannung wird also korrekt gemessen. Das Strommessgerät befindet sich dagegen in Reihe mit einer Parallelschaltung aus dem Widerstand und dem Spannungsmessgerät. In der Folge wird die Summe der Ströme durch das Spannungsmessgerät $I_V$ und den Widerstand $I_{R_L}$ gemessen, während wir gerne den Strom durch den Widerstand messen würden - es wird also ein höherer Strom gemessen als durch den Widerstand fließt.
 
@@ -122,20 +122,38 @@ Bei der \emph{spannungsrichtigen Messschaltung} dagegen ist das Spannungsmessger
 
 \begin{itemize}
 \item Gewünschte Art der Messung (direkte Messung vs. indirekte (d. h. Messung anderer Größen, aus denen sich die gewünschte Größe berechnet werden kann))
-\item Messbereich (sofern keine Messbereichserweiterung vorgenommen werden kann)
-\item Empfindlichkeit des Messgeräts (in Bezug auf die Messgröße)
+\item Messbereich
+\item Genauigkeit des Messgerätes
 \item Empfindlichkeit des Messgeräts in Bezug auf schnelle zeitliche Änderungen der Messgröße
 \end{itemize}
 
 \subsection{Empfindlichkeit von Messgeräten}
 
+Nach DIN 1319 versteht man unter der Empfindlichkeit eines Messgeräts die "`Änderung des Wertes der Ausgangsgröße eines Messgerätes  bezogen auf die sie verursachende Änderung des Wertes der Eingangsgröße"', also als Formel:
+\begin{displaymath}
+S = \frac{\Delta \alpha}{\Delta x},
+\end{displaymath}
+wobei $\alpha$ für den Wert der Ausgangsgröße des Messgeräts (z. B. Zeigerausschlag) und x für den Wert der Eingangsgröße steht.
+
 \subsection{Fehlerarten bei Messungen}
+
+Es gibt 2 Arten von Fehlern:
+\begin{itemize}
+\item Systemische Fehler
+\item Zufällige Fehler
+\end{itemize}
+
+\emph{Systemische Fehler} sind Fehler, die (wenn sie identifiziert sind) nach Betrag und Vorzeichen quantifiziert werden können. Des weiteren sind sie reproduzierbar. Somit kann man, wenn sie erkannt und erfasst sind, die Messwerte um den entsprechenden Fehler korrigieren.
+
+\emph{Zufällige Fehler} dagegen sind prinzipiell unvermeidbar. Sie können Betrag und Vorzeichen wechseln und sind nicht reproduzierbar. Sie behandelt man mit statistischen Methoden.
 
 \subsection{Aufbau und Funktionsprinzip des Elektronenstrahloszilloskops}
 
 \subsection{Frequenzmessung mittels Lissajousfiguren}
 
-Die Beantwortung der Fragen zu diesem Thema erfolgt in Abschnitt \ref{abschnitt:liss}.
+Die Entstehung der Figuren ist im Abschnitt \ref{abschnitt:liss} beschrieben. Um eine Frequenz mittels Lissajousfiguren zu messen, legt man an eine der beiden Achsen des Oszillographen die zu messenden Frequenz an und an die andere eine Referenzfrequenz.
+
+Anschließend ändert man die Referenzfrequenz so lange, bis auf dem Oszillographen eine Lissajous-Figur sichtbar wird, für die man das Frequenzverhältnis kennt.
 
 \subsection{Das Prinzip der Whetstoneschen Messbrücke}
 
@@ -172,7 +190,6 @@ Die Beantwortung der Fragen zu diesem Thema erfolgt in Abschnitt \ref{abschnitt:
 \subsubsection{Ergebnisse der Messung in stromrichtiger Messschaltung}
 
 Die Ergebnisse der Messungen in stromrichtiger Messschaltung sind in Tabelle \ref{table:1} dargestellt.
-
 
 \begin{table}
 \begin{minipage}[t]{\textwidth}
@@ -223,7 +240,8 @@ Die Ergebnisse der Messungen sind in den Tabellen \ref{table:3} bis \ref{table:5
 \begin{center}
 \begin{tabular}{|cr|}
 \hline
-    Gewählte Klemmen & R \footnote{\label{fn:gemessen}gemessen}\\
+    Gewählte Klemmen & R %\footnote{\label{fn:gemessen}gemessen}
+    \\
 \hline
     1-2 & $10,8~\Omega$\\
     2-3 & $16,9~\Omega$\\
@@ -241,7 +259,8 @@ Die Ergebnisse der Messungen sind in den Tabellen \ref{table:3} bis \ref{table:5
 \begin{center}
 \begin{tabular}{|cr|}
 \hline
-    Gewählte Klemmen & R \footnote{\label{fn:gemessen}gemessen}\\
+    Gewählte Klemmen & R %\footnote{\label{fn:gemessen}gemessen}
+    \\
 \hline
     1-2 & $10,6~\Omega$\\
     2-3 & $17,0~\Omega$\\
@@ -259,7 +278,8 @@ Die Ergebnisse der Messungen sind in den Tabellen \ref{table:3} bis \ref{table:5
 \begin{center}
 \begin{tabular}{|cr|}
 \hline
-    Gewählte Klemmen & R \footnote{\label{fn:gemessen}gemessen}\\
+    Gewählte Klemmen & R %\footnote{\label{fn:gemessen}gemessen}
+    \\
 \hline
     1-2 & $10.5~\Omega$\\
     2-3 & $17,2~\Omega$\\
@@ -348,7 +368,7 @@ U_{eff} = \frac{1}{\sqrt{2}} U_s.
 
 \label{abschnitt:liss}
 
-Die Frequenzverhältnisse der Aufgabenstellung seien als $f_{y-Achse} : f_{x-Achse}$ zu betrachten.
+Die Frequenzverhältnisse der Aufgabenstellung seien als $f_{y-Achse} : f_{x-Achse}$ zu betrachten. In den Abbildungen \ref{fig:0.5:1} bis \ref{fig:3:1} sind die in der Versuchsbeschreibung geforderten Skizzen der Lissajous-Figuren abgetragen.
 
 Die Figuren entstehen folgendermaßen: an der x-- und y--Achse liegt je eine sinusförmige Spannung an:
 \begin{eqnarray*}
@@ -360,7 +380,15 @@ wobei $f_x, f_y$ für die entsprechenden Frequenzen und $\omega_x, \omega_y$ für 
 Da die Auslenkung des Oszillographen proportional zur Spannung ist, erhält man somit die Gleichung der Lissajous-Figuren
 
 \begin{displaymath}
-% Inhalt einfügen
+\left(
+\begin{array}{c}
+u_x \\ u_y
+\end{array} \right) = U_s
+\left(
+\begin{array}{c}
+\sin (\frac{f_x}{2 \pi} t+\omega_x) \\ \sin (\frac{f_y}{2 \pi} t+\omega_y)
+\end{array}
+\right)
 \end{displaymath}
 
 Für $U_s=5~V$, Frequenzverhältnisse nach Aufgabenstellung und in den Diagrammen angegebenen Werten für $\omega_x$ und $\omega_y$ erhält die in den Abbildungen \ref{fig:0.5:1} bis \ref{fig:3:1} dargestellten Oszillogramme (bzw. mathematisch gesehen Trajektorien der angegebenen Kurvengleichung).
@@ -388,6 +416,5 @@ Für $U_s=5~V$, Frequenzverhältnisse nach Aufgabenstellung und in den Diagrammen 
 \caption{Lissajous-Figur für Frequenzverhältnis 3:1, $\omega_x=0$ und $\omega_y=2.3$}
 \label{fig:3:1}
 \end{figure}
-
 
 \end{document}
