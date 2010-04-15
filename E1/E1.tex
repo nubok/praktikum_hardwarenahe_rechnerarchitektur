@@ -153,10 +153,9 @@ Es gibt 2 Arten von Fehlern:
 
 Die Entstehung der Figuren ist im Abschnitt \ref{abschnitt:liss} beschrieben. Um eine Frequenz mittels Lissajousfiguren zu messen, legt man an eine der beiden Achsen des Oszillographen die zu messenden Frequenz an und an die andere eine Referenzfrequenz.
 
-Anschlie"send "andert man die Referenzfrequenz so lange, bis auf dem Oszillographen eine Lissajous-Figur sichtbar wird, f"ur die man das Frequenzverh"altnis kennt.
+Anschlie"send "andert man die Referenzfrequenz so lange, bis auf dem Oszillographen eine Lissajous-Figur sichtbar wird, f"ur die man das Frequenzverh"altnis kennt und rechnet hieraus die Frequenz aus.
 
-
-\subsection{Das Prinzip der Whetstoneschen Messbr"ucke}
+\subsection{Das Prinzip der Wheatstoneschen Messbr"ucke}
 
 \begin{pspicture}%[showgrid=true]
 (1, 0)(9,7)
@@ -183,6 +182,19 @@ Anschlie"send "andert man die Referenzfrequenz so lange, bis auf dem Oszillograp
     \resistor(I)(J){$R_x$}
     \resistor[variable](H)(I){$R_1$}
 \end{pspicture}
+
+In der Schaltung Wheatstoneschen Messbr"ucke gilt, wenn keine Spannung am Spannungsmessger"at anliegt:
+\begin{displaymath}
+  R_1 R_3 = R_2 R_x.
+\end{displaymath}
+
+Umgestellt nach $R_x$ ergibt sich:
+\begin{equation}
+ R_x = \frac{R_1 R_3}{R_2}.
+ \label{eq:wheaton}
+\end{equation}
+
+Nun zur Erkl"arung des Vorgehens: der Widerstand $R_1$ ist variabel, w"arend $R_x$ den zu messenden Widerstand darstellt. Wir "andern den Widerstand $R_1$ so lange ab, bis keine Spannung mehr durch das Voltmeter fließt. Da die Widerst"ande $R_1$, $R_2$ und $R_3$ bekannt sind, k"onnen wir mittels Gleichung \eqref{eq:wheaton} den Wert des unbekannten Widerstands $R_x$ ausrechnen.
 
 \section{Versuchsdurchf"uhrung}
 
@@ -232,7 +244,7 @@ Die Ergebnisse der Messungen in stromrichtiger Messschaltung sind in Tabelle \re
 \label{table:2}
 \end{table}
 
-\subsubsection{Messung mittels WiderstandsMessger"aten}
+\subsubsection{Messung mittels Widerstands-Messger"aten}
 
 Die Ergebnisse der Messungen sind in den Tabellen \ref{table:3} bis \ref{table:5} aufgelistet.
 
