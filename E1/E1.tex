@@ -8,8 +8,8 @@
 \usepackage{graphicx}
 \author{Denis Dietze \and Wolfgang Keller \and Nico Linke \and Thomas Schulte}
 
-\title{Protokoll Einf"uhrungsversuch E1}
-\subtitle{Einsatz und Aufbau von Mess-- und Versorgungsger"aten}
+\title{Protokoll Einf\"uhrungsversuch E1}
+\subtitle{Einsatz und Aufbau von Mess-- und Versorgungsger\"aten}
 \begin{document}
 \maketitle
 
@@ -377,11 +377,30 @@ U_{eff} = \frac{1}{\sqrt{2}} U_s.
 
 \subsection{Oszillogramm einer Rechtecks-- und Sinusspannung}
 
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{rechteck_839hz.eps}
+\caption{Oszillogramm einer Rechtecksspannung mit $2,5~V$ und $839~Hz$. Die Einheit der x-Achse ist $ms$ und die Einheit der y-Achse ist $V$.}
+\label{fig:rechteck839}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.5\textwidth]{sinus_839hz.eps}
+\caption{Oszillogramm einer Sinus-Spannung mit Spitzenspannung $2,5~V$ und $839~Hz$. Die Einheit der x-Achse ist $ms$ und die Einheit der y-Achse ist $V$.}
+\label{fig:sinus839}
+\end{figure}
+
+Die Oszillogramme bilden die Abbildungen \ref{fig:rechteck839} und \ref{fig:sinus839}. Um die Frequenz für die Sinusspannung abzulesen, misst man die Periodenlänge (für Sinusspannungen geht dies sehr einfach über den Abstand zwischen einer geraden Anzahl an Nulldurchl"aufen der Kurve). Für diese erhält man einen Wert von ca. $1,2~ms$, somit gilt für die Frequenz:
+\begin{eqnarray*}
+ f & = & \frac{1}{T} \\
+  & = & \frac{1}{1,2~ms} \\
+  & = & 833,3~Hz
+\end{eqnarray*}
+
 \subsection{Frequenzmessung mit Hilfe von Lissajous-Figuren}
 
 \label{abschnitt:liss}
 
-Die Frequenzverh"altnisse der Aufgabenstellung seien als $f_{y-Achse} : f_{x-Achse}$ zu betrachten. In den Abbildungen \ref{fig:0.5:1} bis \ref{fig:3:1} sind die in der Versuchsbeschreibung geforderten Skizzen der Lissajous-Figuren abgetragen.
+Die Frequenzverh"altnisse der Aufgabenstellung seien als $f_{y-Achse} : f_{x-Achse}$ zu betrachten. In den Abbildungen \ref{fig:0.5:1} bis \ref{fig:3:1} sind die in der Versuchsbeschreibung geforderten Skizzen der Lissajous-Figuren abgetragen. In allen diesen Abbildungen ist die an der x- und y-Achse verwendete Einheit "'Volt"`.
 
 Die Figuren entstehen folgenderma"sen: an der x-- und y--Achse liegt je eine sinusf"urmige Spannung an:
 \begin{eqnarray*}
