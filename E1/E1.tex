@@ -19,7 +19,7 @@
 
 \subsubsection{Drehspulmesswerke}
 
-In einem Drehspulmesswerk befindet ich im magnetischen Feld eines Dauermagneten\footnote{in modernen Ausf"uhrungen befindet sich der Dauermagnet h"aufig \emph{innerhalb} der Spule und nicht au"serhalb; unter anderem weil hierdurch St"orfelder abgeschirmt werden} eine drehbare Spule. Spiralfedern sind leitend mit der Spule verbunden und dienen sowohl der Stromversorgung als auch der R"ucksetzung in die Ruhelage.
+In einem \emph{Drehspulmesswerk} befindet ich im magnetischen Feld eines Dauermagneten\footnote{in modernen Ausf"uhrungen befindet sich der Dauermagnet h"aufig \emph{innerhalb} der Spule und nicht au"serhalb; unter anderem weil hierdurch St"orfelder abgeschirmt werden} eine drehbare Spule. Spiralfedern sind leitend mit der Spule verbunden und dienen sowohl der Stromversorgung als auch der R"ucksetzung in die Ruhelage.
 
 Wird durch diese Spule Strom geleitet, so kommt es zur Wirkung der Lorentzkraft auf die Leiter der Spule. Diese dreht sich somit so weit, bis die Lorentzkraft gleich der winkelabh"angigen R"uckstellkraft der Feder ist (was einen Ausschlag des Zeigers, der mit der Spule verbunden ist, bewirkt). Da die Federkraft nach dem Hooke'schen Gesetz proportional zur Auslenkung ist, folgt eine lineare Einteilung der Skala.
 
@@ -124,7 +124,7 @@ Bei der \emph{spannungsrichtigen Messschaltung} dagegen ist das Spannungsmessger
 \item Gew"unschte Art der Messung (direkte Messung vs. indirekte (d. h. Messung anderer Gr"o"sen, aus denen sich die gew"unschte Gr"o"se berechnet werden kann))
 \item Messbereich
 \item Empfindlichkeit des Messger"ates
-\item Empfindlichkeit des Messger"ats in Bezug auf schnelle zeitliche "anderungen der Messgr"o"se
+\item Tr"agheit des Messger"ats in Bezug auf schnelle zeitliche "Anderungen der Messgr"o"se (sofern Messung von schnellen Änderungen erwünscht ist)
 \end{itemize}
 
 \subsection{Empfindlichkeit von Messger"aten}
@@ -148,6 +148,64 @@ Es gibt 2 Arten von Fehlern:
 \emph{Zuf"allige Fehler} dagegen sind prinzipiell unvermeidbar. Sie k"onnen Betrag und Vorzeichen wechseln und sind nicht reproduzierbar. Sie behandelt man mit statistischen Methoden.
 
 \subsection{Aufbau und Funktionsprinzip des Elektronenstrahloszilloskops}
+
+Ein Elektronenstrahloszilloskop besteht aus einer Elektronenstrahlr"ohre, an die in x- und y-Richtung kapazitativ ein elektrisches Feld angelegt wird, welches zu einer Ablenkung des Elektronenstrahls führt.
+
+\begin{pspicture}%[showgrid=true]
+(0, -0.5)(11,7)
+    \pnode(2.8, 4){Y}
+	\pnode(1.5, 4){Z}
+    \pnode(1.5, 0){A}
+    \pnode(3, 0){B}
+    \pnode(3, 0.5){B'}
+    
+    \pnode(5, 0.5){C'}
+    \pnode(5, 0){C}
+    \pnode(6.5, 0){D}
+    \pnode(6.5, 4){E}
+    \pnode(5.2, 4){F}
+    
+    \pnode(4, 2.8){G}
+    \pnode(4, 1.5){H}
+    \pnode(9, 1.5){I}
+    \pnode(9, 3){J}
+    
+    \pnode(4, 5.2){K}
+    \pnode(4, 6.5){L}
+    \pnode(9, 6.5){M}
+    \pnode(9, 5){N}
+    
+    \pnode(8.5, 3){J'}
+    \pnode(8.5, 5){N'}
+    
+    \wire(Y)(Z)
+    \wire(Z)(A)
+    \wire(A)(B)
+    \psline(2.8, 3.3)(2.8, 4.7)
+    
+    \tension[labeloffset=-0.5](B')(C'){$x(t)$}
+    
+    \wire(C)(D)
+    \wire(D)(E)
+    \wire(E)(F)
+    \psline(5.2, 3.3)(5.2, 4.7)
+    
+    \wire(G)(H)
+    \wire(H)(I)
+    \wire(I)(J)
+    \psline(3.3, 2.8)(4.7, 2.8)
+    
+    \wire(K)(L)
+    \wire(L)(M)
+    \wire(M)(N)
+    \psline(3.3, 5.2)(4.7, 5.2)
+    
+    \tension[labeloffset=-0.5](J')(N'){$y(t)$}
+    
+    \pscircle(4,4){2}
+\end{pspicture}
+
+Je nach Wunsch des Nutzers, kann man nur an eine (y-Achse) oder beide Achsen eine Spannung anlegen. Falls man nur an die y-Achse eine Spannung anlegt, so wird an die x-Achse standardmäßig automatisch eine sägezahnförmige Spannung mit bekannter Frequenz angelegt, so dass es im Oszillogramm so aussieht, als würde man das Signal gegen die Zeit oszillographieren.
 
 \subsection{Frequenzmessung mittels Lissajousfiguren}
 
@@ -400,7 +458,7 @@ Die Oszillogramme bilden die Abbildungen \ref{fig:rechteck839} und \ref{fig:sinu
 
 \label{abschnitt:liss}
 
-Die Frequenzverh"altnisse der Aufgabenstellung seien als $f_{y-Achse} : f_{x-Achse}$ zu betrachten. In den Abbildungen \ref{fig:0.5:1} bis \ref{fig:3:1} sind die in der Versuchsbeschreibung geforderten Skizzen der Lissajous-Figuren abgetragen. In allen diesen Abbildungen ist die an der x- und y-Achse verwendete Einheit "'Volt"`.
+Die Frequenzverh"altnisse der Aufgabenstellung seien als $f_{y-Achse} : f_{x-Achse}$ zu betrachten. In den Abbildungen \ref{fig:0.5:1} bis \ref{fig:3:1} sind die in der Versuchsbeschreibung geforderten Skizzen der Lissajous-Figuren abgetragen. In allen diesen Abbildungen ist die an der x- und y-Achse verwendete Einheit "`Volt"'.
 
 Die Figuren entstehen folgenderma"sen: an der x-- und y--Achse liegt je eine sinusf"urmige Spannung an:
 \begin{eqnarray*}
