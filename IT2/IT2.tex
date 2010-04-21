@@ -17,7 +17,7 @@
 
 \subsection{Konfiguration von Port 0 zur Speichererweiterung durch 256 Byte externen RAM}
 
-Wir müssen in das Register \verb|P01M| den Binärwert \verb|XX0100XX| schreiben, wobei X für einen beliebiges Bit steht. In der Lösung in Abschnitt \ref{sec:1d}, in welcher man die Assemblerl"osung sehen kann, haben wir uns f"ur \verb|10h| entschieden.
+Wir m"ussen in das Register \verb|P01M| den Bin"arwert \verb|XX0100XX| schreiben, wobei X f"ur einen beliebiges Bit steht. In der Lösung in Abschnitt \ref{sec:1d}, in welcher man die Assemblerl"osung sehen kann, haben wir uns f"ur \verb|10h| entschieden.
 
 \subsection{Adressen zum Zugriff auf den externen RAM}
 
@@ -44,7 +44,7 @@ ORG 500h
 500h: RET
 \end{verbatim}
 
-Die Rückkehradresse liegt dann in der Adresse \verb|0x10FE| auf dem Stack, da der Program Counter 2 Bytes benötigt und entsprechend durch den \verb|CALL|-Befehl wie in Anlage 9 beschrieben der Stack Pointer \verb|SP| um 2 erniedrigt wird und in dieser Adresse der Program Counter \verb|PC| abgespeichert wird.
+Die R"uckkehradresse liegt dann in der Adresse \verb|0x10FE| auf dem Stack, da der Program Counter 2 Bytes benötigt und entsprechend durch den \verb|CALL|-Befehl wie in Anlage 9 beschrieben der Stack Pointer \verb|SP| um 2 erniedrigt wird und in dieser Adresse der Program Counter \verb|PC| abgespeichert wird.
 
 \section{Port-0-/Port-2-Komplex}
 
@@ -122,7 +122,7 @@ Unter der Betriebsart Modulo N versteht man, dass nach N Pulsen an der Eingabe e
 
 \subsubsection{Mittelwert des PWM-Signals bei einem Eingabewert von 0 sowie 255, wobei die Pulsamplitude 5 V betragen soll}
 
-Bezeichne $x$ die relative Pulsbreite der Low-Phase. Dann gilt für den Mittelwert des PWM-Signals:
+Bezeichne $x$ die relative Pulsbreite der Low-Phase. Dann gilt f"ur den Mittelwert des PWM-Signals:
 
 \begin{displaymath}
 \left(1-\frac{x}{257}\right)\cdot 5~V.
@@ -142,12 +142,35 @@ ORG 0Ch
 
 \section{UART (SIO)-Komplex}
 
-\subsection{Abschnitt a} % TODO bessere Uebrschrift
+\subsection{Teil a} % TODO bessere Uebrschrift
 
-\subsection{Initialisierung von UART für eine Baudrate von 9600 Bd}
+\subsection{Initialisierung von UART f"ur eine Baudrate von 9600 Bd}
 
-\subsection{Abschnitt c} % TODO bessere Uebrschrift
+\subsection{Teil c} % TODO bessere Uebrschrift
 
 \section{P33/P34/IRQ-1-Komplex}
+
+\subsection{Teil a} % TODO bessere Uebrschrift
+
+\begin{verbatim}
+ORG 01h
+                    % 2 Bytes: Adresse der Interrupt Service Routine zu 
+                    % Interrupt 1
+DB 2h               % upper byte
+DB 0h               % lower byte
+
+
+ORG 0Ch
+% Initialisierung
+0Ch:   
+
+ORG 200h
+isr1:               % Interrupt Service Routine fuer IRQ 1
+       ...
+       IRET         % Beendet Interrupt-Verarbeitung
+
+\end{verbatim}
+
+\subsection{Teil b} % TODO bessere Uebrschrift
 
 \end{document}
