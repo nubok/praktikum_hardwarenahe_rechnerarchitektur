@@ -17,6 +17,8 @@
 
 \subsection{Konfiguration von Port 0 zur Speichererweiterung durch 256 Byte externen RAM}
 
+Wir müssen in das Register \verb|P01M| den Binärwert \verb|XX0100XX| schreiben, wobei X für einen beliebiges Bit steht. In der Lösung in Abschnitt \ref{sec:1d}, in welcher man die Assemblerl"osung sehen kann, haben wir uns f"ur \verb|10h| entschieden.
+
 \subsection{Adressen zum Zugriff auf den externen RAM}
 
 Die Adressen des externen RAMs sind ab 4096 (\verb|0x1000|). % Ist dies korrekt?
@@ -27,16 +29,18 @@ Da 256 Byte externer RAM vorliegt, sind somit die Adressen des externen RAMs \ve
 \ldots % Inhalte einfuegen
 
 \subsection{Teilaufgabe d} % TODO Bessere Ueberschrift
+\label{sec:1d}
 
 \begin{verbatim}
 ORG 0Ch
-0Ch:  LD 248, 10h    % P01M initialisieren
-      % wir wollen SP auf 0x1100 setzen, somit ist 
-      % SPL auf 0x00 auf SPH auf 0x11 zu setzen
-      LD 255, 00h    % SPL
-      LD 254, 11h    % SPH
+0Ch:  LD 248, 10h    % Port 0 initialisieren; Register 248 ist P01M
+      % wir wollen SP auf 1100h setzen, somit ist 
+      % SPL auf 00h auf SPH auf 11h zu setzen
+      LD 255, 00h    % Register 255 ist SPL
+      LD 254, 11h    % Register 254 ist SPH
       CALL 500h
-...
+      STOP           % oder sollte man HLT verwenden?
+ORG 500h
 500h: RET
 \end{verbatim}
 
@@ -48,19 +52,66 @@ Die Rückkehradresse liegt dann in der Adresse \verb|0x10FE| auf dem Stack, da de
 
 \begin{verbatim}
 ORG 0Ch
-0Ch:   LD 248, 0h  % P01M initialisieren
-       LD 246, FFh % P2M initialisieren
+0Ch:   LD 248, 0h  % Port 0 initialisieren; Register 248 ist P01M
+       LD 246, FFh % Port 2 initialisieren; Register 246 ist P2M
 label: LD 2, 0     % Wert von Port 0 in Port 2 schreiben
        JP label    % dies in einer Endlosschleife machen
 \end{verbatim}
 
 \subsection{Teilaufgabe b} % TODO Bessere Ueberschrift
 
+\begin{verbatim}
+ORG 0Ch
+% Initialisierung
+0Ch:   LD 248, 0h  % Port 0 initialisieren; Register 248 ist P01M
+       LD 247, 1h  $ Port 2 auf Push-pull setzen
+       LD 246, 0h  % Port 2 initialisieren; Register 246 ist P2M
+       
+       % Registerbelegung:
+       % Register 5: Wert von Port 2
+       % Register 4: Wert von Port 0
+       
+       LDC 5, 8h   % Wert 8 (genau oberstes Bit gesetzt) in Port 2 schreiben
+       LDC 4, 0h   % Wert 0 (keine LED an) in Port 0 schreiben
+      
+
+% Eigentliches Programm
+begin:
+       LD 2, 5     % Werte in Ports schreiben
+       LD 0, 4
+       
+       % wenn Register 5 den Wert 0 hat, springe nach port0
+       JP 5, port2 % ???
+       JP port0
+
+port2:
+       RCF         % Carry-Flag loeschen
+       RRC 5       % Register 5 nach rechts rotieren, C hat
+                   % den Wert 0, also kein Problem
+       % wenn Register 5 nicht 0 ist, springe nach begin
+       JP 5, begin % ???
+       LDC 4, 1    % 1 in Port 0 in Zukunft
+       
+port0: 
+       % Wenn wir hier ankommen, hat Register 4 (in Zukunft Port 0) 
+       % sicherlich nicht den Wert 0
+       RCF         % Carry-Flag loeschen
+       RLC 4       % Register 4 nach links rotieren, C hat
+                   % den Wert 0, also kein Problem
+       % wenn Register 4 nicht 0 ist, springe nach begin
+       JP 4, begin % ???
+       % Register 4 ist also 0. Wir setzen also Register 5 mit
+       % Wert 8 (hoechste LED an)
+       LDC 5, 8h
+       JP begin    % ... und springen dann zurueck zum Anfang
+\end{verbatim}
+
+
 \section{Timer-0-Komplex/Pulsbreitenmodulator}
 
 \subsection{Kontrollfragen}
 
-\subsection{Software f+r Pulsbreitenmodulator}
+\subsection{Software f"ur Pulsbreitenmodulator}
 
 \section{Timer-1-Komplex}
 
