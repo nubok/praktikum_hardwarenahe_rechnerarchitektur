@@ -13,5 +13,42 @@
 \begin{document}
 \maketitle
 
+\section{Port-1-Komplex}
+
+\subsection{Konfiguration von Port 0 zur Speichererweiterung durch 256 Byte externen RAM}
+
+\subsection{Adressen zum Zugriff auf den externen RAM}
+
+Die Adressen des externen RAMs sind ab 4096 (\verb|0x1000|). % Ist dies korrekt?
+Da 256 Byte externer RAM vorliegt, sind somit die Adressen des externen RAMs \verb|0x1000-0x10FF|.
+
+\subsection{Befehle zum Zugriff auf den RAM}
+
+\ldots % Inhalte einfuegen
+
+\subsection{Teilaufgabe d} % TODO Bessere Ueberschrift
+
+\begin{verbatim}
+LD 248, 0x10 % P01M initialisieren
+% wir wollen SP auf 0x1100 setzen, somit ist 
+% SPL auf 0x00 auf SPH auf 0x11 zu setzen
+LD 255, 0x00 % SPL
+LD 254, 0x11
+CALL 0x500
+...
+0x500: RET
+\end{verbatim}
+
+Die Rückkehradresse liegt dann in der Adresse \verb|0x10FE| auf dem Stack, da der Program Counter 2 Bytes benötigt.
+
+\section{Port-0-/Port 2-Komplex}
+
+\section{Timer-0-Komplex/Pulsbreitenmodulator}
+
+\section{Timer-1-Komplex}
+
+\section{UAT (SIO)-Komplex}
+
+\section{P33/P34/IRQ-1-Komplex}
 
 \end{document}
