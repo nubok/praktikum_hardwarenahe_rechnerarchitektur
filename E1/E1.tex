@@ -293,7 +293,7 @@ Die Ergebnisse der Messungen in stromrichtiger Messschaltung sind in Tabelle \re
 \hline
     1-2 & 5~V & 0,527~A & $9,49~\Omega$\\
     2-3 & 8,1~V & 0,508~A & $15,95~\Omega$\\
-    1-3 & 8,1~V & 0,17~A & $47,65~\Omega$\\
+    1-3 & 8,1~V & 0,317~A & $25,55~\Omega$\\
 \hline
 \end{tabular}
 \end{center}
@@ -375,7 +375,7 @@ Die gemessenen bzw. aus den MessGr"o"sen berechneten Widerst"ande sind in Tabell
     Messger"at/--methode & $R_{1, 2}$  & $R_{2, 3}$ & $R_{1, 2}+R_{2, 3}$ & $R_{1, 3}$ \\
 \hline
     Stromrichtige Messung & $9,68~\Omega$ & $16,14~\Omega$ &  $25,82~\Omega$ & $26,11~\Omega$ \\
-    Spannungsrichtige Messung & $9,49~\Omega$ & $15,95~\Omega$ & $25,44~\Omega$ & $47,65~\Omega$ \\
+    Spannungsrichtige Messung & $9,49~\Omega$ & $15,95~\Omega$ & $25,44~\Omega$ & $25,55~\Omega$ \\
     Direkte Widerstandmessung Digitalmultimeter VC 150 & $10,8~\Omega$ & $16,9~\Omega$ & $27,7~\Omega$ & $27,5~\Omega$ \\
     Direkte Widerstandsmessung Digitalvoltmeter G-1002.500 & $10,6~\Omega$ & $17,0~\Omega$ & $27,6~\Omega$ & $27,4~\Omega$ \\
     Direkte Widerstandsmessung Kleinme"sbr"ucke nach Wheatstone & $10,5~\Omega$ & $17,2~\Omega$ & $27,7~\Omega$ & $26,5~\Omega$ \\
@@ -388,9 +388,7 @@ Die gemessenen bzw. aus den MessGr"o"sen berechneten Widerst"ande sind in Tabell
 \label{table:6}
 \end{table}
 
-Bei der au"serordentlich Abweichung f"ur $R_{1, 2}+R_{2, 3}$ von $R_{1, 3}$ bei der spannungsrichtigen Messung gehen wir davon aus, dass ein Ablesefehler des Messger"ates vorlag. Speziell gehen wir f"ur den Wert von 0,17~A (vgl. Tabelle \ref{table:1} bei der Messung des Stroms unter Verwendung der Messpunkte 1 und 3) davon aus, dass hier ein fehlerhafter Wert abgelesen oder aufgeschrieben wurde. Eine alternative Erkl"arung k"onnte ebenfalls sein, dass falsche Messpunkte innerhalb des Widerstandes (dieser bietet außer A, B und C noch weitere Messpunkte) verwendet wurden. Letztere Vermutung erh"alt dadurch eine gewisse Evidenz, als dass der ausgerechnete Wert f"ur den Widerstand im Bereich des Doppelten des "`eigentlich"' zu messenden Wertes liegt. Bedingt durch den Aufbau des Widerstandes ist ein solcher Fehler durchaus m"oglich. 
-
-Abgesehen von diesem Messfehler l"asst sich der Unterschied zwischen strom- und spannungsrichtiger Messsung dadurch erkl"aren, als bei stromrichtiger Messung die Spannung leicht zu hoch gemessen wird (was gemessen wird ist $U_A+U_{R_L}$, was wir jedoch messen wollen ist $U_{R_L}$) und bei spannungsrichtiger Messung der Strom leicht zu hoch gemessen wird (gemessen wird $I_V+I_{R_L}$, was wir jedoch messen wollen ist $I_{R_L}$). Somit wird die aus $U_{R_L}$ und $I_{R_L}$ abgeleitete Gr"o"se $R_L$ bei stromrichtiger Messung untersch"atzt, denn es gilt:
+Der Unterschied zwischen strom- und spannungsrichtiger Messsung lässt sich dadurch erkl"aren, dass bei stromrichtiger Messung die Spannung leicht zu hoch gemessen wird (was gemessen wird ist $U_A+U_{R_L}$, was wir jedoch messen wollen ist $U_{R_L}$) und bei spannungsrichtiger Messung der Strom leicht zu hoch gemessen wird (gemessen wird $I_V+I_{R_L}$, was wir jedoch messen wollen ist $I_{R_L}$). Somit wird die aus $U_{R_L}$ und $I_{R_L}$ abgeleitete Gr"o"se $R_L$ bei stromrichtiger Messung untersch"atzt, denn es gilt:
 \begin{displaymath}
 R_L = \frac{U_{R_L}}{I_{R_L}} < \frac{U_{R_L}+U_A}{I_{R_L}}.
 \end{displaymath}
