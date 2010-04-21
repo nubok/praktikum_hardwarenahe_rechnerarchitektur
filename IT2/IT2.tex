@@ -29,21 +29,38 @@ Da 256 Byte externer RAM vorliegt, sind somit die Adressen des externen RAMs \ve
 \subsection{Teilaufgabe d} % TODO Bessere Ueberschrift
 
 \begin{verbatim}
-LD 248, 0x10 % P01M initialisieren
-% wir wollen SP auf 0x1100 setzen, somit ist 
-% SPL auf 0x00 auf SPH auf 0x11 zu setzen
-LD 255, 0x00 % SPL
-LD 254, 0x11
-CALL 0x500
+ORG 0Ch
+0Ch:  LD 248, 10h    % P01M initialisieren
+      % wir wollen SP auf 0x1100 setzen, somit ist 
+      % SPL auf 0x00 auf SPH auf 0x11 zu setzen
+      LD 255, 00h    % SPL
+      LD 254, 11h    % SPH
+      CALL 500h
 ...
-0x500: RET
+500h: RET
 \end{verbatim}
 
-Die Rückkehradresse liegt dann in der Adresse \verb|0x10FE| auf dem Stack, da der Program Counter 2 Bytes benötigt.
+Die Rückkehradresse liegt dann in der Adresse \verb|0x10FE| auf dem Stack, da der Program Counter 2 Bytes benötigt und entsprechend durch den \verb|CALL|-Befehl wie in Anlage 9 beschrieben der Stack Pointer \verb|SP| um 2 erniedrigt wird und in dieser Adresse der Program Counter \verb|PC| abgespeichert wird.
 
-\section{Port-0-/Port 2-Komplex}
+\section{Port-0-/Port-2-Komplex}
+
+\subsection{Teilaufgabe a} % TODO Bessere Ueberschrift
+
+\begin{verbatim}
+ORG 0Ch
+0Ch:   LD 248, 0h  % P01M initialisieren
+       LD 246, FFh % P2M initialisieren
+label: LD 2, 0     % Wert von Port 0 in Port 2 schreiben
+       JP label    % dies in einer Endlosschleife machen
+\end{verbatim}
+
+\subsection{Teilaufgabe b} % TODO Bessere Ueberschrift
 
 \section{Timer-0-Komplex/Pulsbreitenmodulator}
+
+\subsection{Kontrollfragen}
+
+\subsection{Software f+r Pulsbreitenmodulator}
 
 \section{Timer-1-Komplex}
 
