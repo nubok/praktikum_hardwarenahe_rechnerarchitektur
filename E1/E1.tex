@@ -136,6 +136,7 @@ S = \frac{\Delta \alpha}{\Delta x},
 wobei $\alpha$ f"ur den Wert der Ausgangsgr"o"se des Messger"ats (z. B. Zeigerausschlag) und x f"ur den Wert der Eingangsgr"o"se steht.
 
 \subsection{Fehlerarten bei Messungen}
+\label{sec:fehlerarten}
 
 Es gibt 2 Arten von Fehlern:
 \begin{itemize}
@@ -365,7 +366,7 @@ Die Ergebnisse der Messungen sind in den Tabellen \ref{table:3} bis \ref{table:5
 
 \subsection{Vergleich der Messergebnisse}
 
-Die gemessenen bzw. aus den MessGr"o"sen berechneten Widerst"ande sind in Tabelle \ref{table:6} abgetragen.
+Die gemessenen bzw. aus den Messgr"o"sen berechneten Widerst"ande sind in Tabelle \ref{table:6} abgetragen.
 
 \begin{table}
 \begin{minipage}[t]{\textwidth}
@@ -398,7 +399,16 @@ Analog wird bei der spannungsrichtichtiger Messung die aus $U_{R_L}$ und $I_{R_L
 R_L = \frac{U_{R_L}}{I_{R_L}} > \frac{U_{R_L}}{I_{R_L}+I_V}.
 \end{displaymath}
 
-In der Tat zeigt der Vergleich der Messwerte von strom-- und spannungsrichtiger Messung (von dem "`groben Messfehler"' abgesehen), dass die aus den Messwerten berechneten Werte f"ur den Widerstand in der Tat, wie aus der Theorie zu erwarten ist, bei der stromrichtigen Messung Gr"o"ser als bei der spannungsrichtigen Messung sind.
+In der Tat zeigt der Vergleich der Messwerte von strom-- und spannungsrichtiger Messung, dass die aus den Messwerten berechneten Werte f"ur den Widerstand in der Tat, wie aus der Theorie zu erwarten ist, bei der stromrichtigen Messung Gr"o"ser als bei der spannungsrichtigen Messung sind.
+
+Die sonstigen Unterschiede in den Messergebnissen vermuten wir aufgrund allgemeiner systemische Fehler (vgl. Abschnitt \ref{sec:fehlerarten}), darunter
+\begin{itemize}
+\item Alterungserscheinungen der Messgeräte
+\item bei Digitalmessgeräten Vortäuschung einer Messpräzision durch viele angegebene Dezimalstellen, welche über der tatsächlichen Genauigkeit des Messgeräts liegt
+\item bei der Wheatstone'schen Messbrücke nicht ganz präzise Einstellung auf den Nullpunkt aufgrund der Handhabung des Messgeräts
+\item Erwärmung der Leiter infolge des Stromflusses führt zu veränderten Widerstandswerten
+\item einen (wenn auch ausgesprochen geringen) Beitrag zum Fehler liefert ebenfalls, dass wir die Ergebnisse von Berechnungen auf 2 Nachkommastellen rundeten
+\end{itemize}
 
 \subsection{Effektiv-- und Spitzenwermessung mittels verschiedener Messger"ate}
 
