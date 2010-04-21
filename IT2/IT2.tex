@@ -33,11 +33,11 @@ Da 256 Byte externer RAM vorliegt, sind somit die Adressen des externen RAMs \ve
 
 \begin{verbatim}
 ORG 0Ch
-0Ch:  LD 248, 10h    % Port 0 initialisieren; Register 248 ist P01M
+0Ch:  LD P01M, 10h   % Port 0 initialisieren; Register 248 ist P01M
       % wir wollen SP auf 1100h setzen, somit ist 
       % SPL auf 00h auf SPH auf 11h zu setzen
-      LD 255, 00h    % Register 255 ist SPL
-      LD 254, 11h    % Register 254 ist SPH
+      LD SPL, 00h
+      LD SPH, 11h
       CALL 500h
       STOP           % oder sollte man HLT verwenden?
 ORG 500h
@@ -52,8 +52,8 @@ Die Rückkehradresse liegt dann in der Adresse \verb|0x10FE| auf dem Stack, da de
 
 \begin{verbatim}
 ORG 0Ch
-0Ch:   LD 248, 0h  % Port 0 initialisieren; Register 248 ist P01M
-       LD 246, FFh % Port 2 initialisieren; Register 246 ist P2M
+0Ch:   LD P01M, 0h % Port 0 initialisieren
+       LD P2M, FFh % Port 2 initialisieren
 label: LD 2, 0     % Wert von Port 0 in Port 2 schreiben
        JP label    % dies in einer Endlosschleife machen
 \end{verbatim}
@@ -63,9 +63,9 @@ label: LD 2, 0     % Wert von Port 0 in Port 2 schreiben
 \begin{verbatim}
 ORG 0Ch
 % Initialisierung
-0Ch:   LD 248, 0h  % Port 0 initialisieren; Register 248 ist P01M
-       LD 247, 1h  $ Port 2 auf Push-pull setzen
-       LD 246, 0h  % Port 2 initialisieren; Register 246 ist P2M
+0Ch:   LD P01M, 0h  % Port 0 initialisieren; P01M
+       LD P3M, 1h  $ Port 2 auf Push-pull setzen
+       LD P2M, 0h  % Port 2 initialisieren
        
        % Registerbelegung:
        % Register 5: Wert von Port 2
@@ -120,7 +120,7 @@ Unter der Betriebsart Modulo N versteht man, dass nach N Pulsen an der Eingabe e
 \frac{8~MHz}{16 \cdot 257} = 1,9453~kHz
 \end{displaymath}
 
-\subsection{Mittelwert des PWM-Signals bei einem Eingabewert von 0 sowie 255, wobei die Pulsamplitude 5 V betragen soll}
+\subsubsection{Mittelwert des PWM-Signals bei einem Eingabewert von 0 sowie 255, wobei die Pulsamplitude 5 V betragen soll}
 
 Bezeichne $x$ die relative Pulsbreite der Low-Phase. Dann gilt für den Mittelwert des PWM-Signals:
 
@@ -130,9 +130,23 @@ Bezeichne $x$ die relative Pulsbreite der Low-Phase. Dann gilt für den Mittelwer
 
 \subsection{Software f"ur Pulsbreitenmodulator}
 
+\begin{verbatim}
+ORG 0Ch
+% Initialisierung
+0Ch:   LD TMR,  F1h % Timer initialisieren
+       LD PRE0, 41h % Prescaler 0 auf 16 setzen (16*4+1)
+       ...
+\end{verbatim}
+
 \section{Timer-1-Komplex}
 
-\section{UAT (SIO)-Komplex}
+\section{UART (SIO)-Komplex}
+
+\subsection{Abschnitt a} % TODO bessere Uebrschrift
+
+\subsection{Initialisierung von UART für eine Baudrate von 9600 Bd}
+
+\subsection{Abschnitt c} % TODO bessere Uebrschrift
 
 \section{P33/P34/IRQ-1-Komplex}
 
