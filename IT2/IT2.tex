@@ -106,10 +106,27 @@ port0:
        JP begin    % ... und springen dann zurueck zum Anfang
 \end{verbatim}
 
-
 \section{Timer-0-Komplex/Pulsbreitenmodulator}
 
 \subsection{Kontrollfragen}
+
+\subsubsection{Betriebsart Modulo N}
+
+Unter der Betriebsart Modulo N versteht man, dass nach N Pulsen an der Eingabe ein Puls an der Ausgabe erzeugt wird
+
+\subsubsection{Frage 2}  % TODO bessere Uebrschrift
+
+\begin{displaymath}
+\frac{8~MHz}{16 \cdot 257} = 1,9453~kHz
+\end{displaymath}
+
+\subsection{Mittelwert des PWM-Signals bei einem Eingabewert von 0 sowie 255, wobei die Pulsamplitude 5 V betragen soll}
+
+Bezeichne $x$ die relative Pulsbreite der Low-Phase. Dann gilt für den Mittelwert des PWM-Signals:
+
+\begin{displaymath}
+\left(1-\frac{x}{257}\right)\cdot 5~V.
+\end{displaymath}
 
 \subsection{Software f"ur Pulsbreitenmodulator}
 
