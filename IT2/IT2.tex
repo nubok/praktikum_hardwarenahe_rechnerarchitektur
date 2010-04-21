@@ -162,11 +162,11 @@ DB 0h               % lower byte
 
 ORG 0Ch
 % Initialisierung
-0Ch:   
+0Ch:   ...
 
 ORG 200h
 isr1:               % Interrupt Service Routine fuer IRQ 1
-       ...
+       INC 0        % Inkrementiere Port 0
        IRET         % Beendet Interrupt-Verarbeitung
 
 \end{verbatim}
