@@ -4,8 +4,9 @@
 \usepackage[babel]{csquotes}
 \usepackage{amsmath} % for eqref
 \usepackage{tabularx}
-\usepackage{pst-circ, pstricks-add}
+\usepackage{listings} % for listings - of course ;-)
 \usepackage{graphicx}
+\usepackage[usenames,dvipsnames]{color}
 \author{Denis Dietze \and Wolfgang Keller \and Nico Linke \and Thomas Schulte}
 
 \title{Protokoll Versuch IT2}
@@ -13,164 +14,191 @@
 \begin{document}
 \maketitle
 
+\lstdefinelanguage{z8asm}
+{
+morekeywords={ORG,LD,TITLE,CALL,NOP,RET,END,JP},
+morecomment=[l]{;}
+}
+
+\lstset{
+numbers=left,                   % where to put the line-numbers,
+commentstyle=\color{OliveGreen},
+showtabs=true,                 % show tabs within strings adding particular underscores
+frame=single,	                % adds a frame around the code
+tabsize=2	                % sets default tabsize to 2 spaces
+}
+
 \section{Port-1-Komplex}
 
-\subsection{Konfiguration von Port 0 zur Speichererweiterung durch 256 Byte externen RAM}
+\subsection{Konfiguration von Port 1 zur Speichererweiterung durch 256 Byte externen RAM}
+\label{sec:1a}
 
-Wir m"ussen in das Register \verb|P01M| den Bin"arwert \verb|XX0100XX| schreiben, wobei X f"ur einen beliebiges Bit steht. In der Lösung in Abschnitt \ref{sec:1d}, in welcher man die Assemblerl"osung sehen kann, haben wir uns f"ur \verb|10h| entschieden.
+\subsubsection{Aufgabe}
+Konfigurieren Sie Port 1 zur Speichererweiterung durch 256 Byte externen RAM.
+
+\subsubsection{L"osung}
+
+Wir m"ussen in das Register \verb|P01M| den Bin"arwert \verb|XX0100XX| schreiben, wobei X f"ur einen beliebiges Bit steht. Wir haben uns f"ur den Wert \verb|10h| entschieden.
+
+Der Befehl lautet somit: \verb|LD P01M, #%10|.
 
 \subsection{Adressen zum Zugriff auf den externen RAM}
+\label{sec:1b}
 
-Die Adressen des externen RAMs sind ab 4096 (\verb|0x1000|). % Ist dies korrekt?
-Da 256 Byte externer RAM vorliegt, sind somit die Adressen des externen RAMs \verb|0x1000-0x10FF|.
+\subsubsection{Aufgabe}
+Über welche Adressen kann auf den externen RAM zugegriffen werden?
+
+\subsubsection{L"osung}
+Die ersten 4096 (\verb|1000h|) Adressen sind durch das interne ROM belegt. Alle darüber hinaus gehenden Adressen der mit den 13 Adressbits A0-A12 darstellbaren Adressen (also von \verb|1000h| bis \verb|3000h|) gehören somit \emph{theoretisch} zum externen RAM.
+
+Man kann in der Tat über all diese Adressen auf den externen RAM zugreifen. Jedoch tritt in der Praxis eine Besonderheit auf: wie man in ersten Grafik Anlage 1 der Versuchsbeschreibung sehen kann, sind die Adressbits A8 bis A12 mit Masse verbunden - d. h. im RAM sind nur 256 (\verb|100h|) verschiedene Adressen adressierbar. Die obersten 5 Adressbits (A8-A12) werden ignoriert. Da somit nur 256 Bytes an RAM physikalisch adressierbar sind, wird der Inhalt dieser 256 Bytes in den restlichen mit A0 bis A12 adressierbaren Adressen des externen RAMs zyklisch wiederholt.
 
 \subsection{Befehle zum Zugriff auf den RAM}
+\label{sec:1c}
 
-\ldots % Inhalte einfuegen
+\subsubsection{Aufgabe}
 
-\subsection{Teilaufgabe d} % TODO Bessere Ueberschrift
+Mit welchen Befehlen kann auf das RAM zugegriffen werden?
+
+\subsubsection{L"osung}
+
+TODO: Nico und Thomas: Inhalt einf"ugen
+
+\subsection{Nutzung eines externen Stacks}
 \label{sec:1d}
 
-\begin{verbatim}
-ORG 0Ch
-0Ch:  LD P01M, 10h   % Port 0 initialisieren; Register 248 ist P01M
-      % wir wollen SP auf 1100h setzen, somit ist 
-      % SPL auf 00h auf SPH auf 11h zu setzen
-      LD SPL, 00h
-      LD SPH, 11h
-      CALL 500h
-      STOP           % oder sollte man HLT verwenden?
-ORG 500h
-500h: RET
-\end{verbatim}
+\subsubsection{Aufgabe}
+Programmieren Sie einen externen Stack und legen Sie seine Adresse auf das Ende des unter \ref{sec:1a} konfigurierten externen RAMs. Testen Sie im Schrittbetrieb mittels eines \verb|CALL|-Befehls zur Adresse \verb|500h| und eines \verb|RETURN|-Befehls von dort die korrekte Funktion des Stacks.
+
+Wo liegt exakt die Rücksprungadresse im Stack?
+
+\subsubsection{L"osung}
+
+Gem"a"s den Instruktionen w"ahrend des Praktikums wurde die Aufgabenstellung derart erweitert, dass vor dem \textbf{RETURN}-Befehl ein weiterer Sprung auf die Adresse \verb|600h| mit direkt folgendem Rücksprung erfolgen soll.
+
+\lstinputlisting[caption={Nutzung eines externen Stacks},language=z8asm]{aufgabe31d.asm}
 
 Die R"uckkehradresse liegt dann in der Adresse \verb|0x10FE| auf dem Stack, da der Program Counter 2 Bytes benötigt und entsprechend durch den \verb|CALL|-Befehl wie in Anlage 9 beschrieben der Stack Pointer \verb|SP| um 2 erniedrigt wird und in dieser Adresse der Program Counter \verb|PC| abgespeichert wird.
 
+Wie man in den Zeile 6 und 7 sehen kann, werden SPH bzw. SPL und  (High bzw. Low Byte des Stack Pointers) auf die Adressen \verb|11h| bzw. \verb|00h| gesetzt. Nach den Vorbetrachtungen in Abschnitt \label{sec:1b} stellt dies das Ende des externen unter \label{sec:1a} konfigurierten externen RAMs dar.
+
+Wenn wir uns im Einzelschritt-Betrieb in Zeile 9 befinden, so ist offensichtlich noch kein Wert auf den Stack geschrieben worden. Der Program Counter PC hat den Wert \verb|0015h|.
+
+Wenn wir einen Schritt weitergehen (den \verb|CALL|-Befehl also ausführen), so wird in der Speicheradresse \verb|10FFh| der Wert \verb|00h| und in der Speicheradresse \verb|10FEh| der Wert \verb|18h| abgespeichert. Dies stellt ein Pushen der Adresse des folgenden und Befehls (Zeile 10) in Little-Endian-Darstellung auf den Stack dar. Zudem wurde der Wert des aus SPL und SPH bestehenden Stack Pointers um 2 erniedrigt.
+
+Die Werte sind am Anfang von Zeile 15 also folgendermaßen:
+\\
+
+\begin{tabular}{|lr|}
+\hline
+Register/Speicheradresse & Wert \\
+\hline
+PC & \verb|500h| \\
+SPL & \verb|FE| \\
+SPH & \verb|10| \\
+\verb|10FEh| & \verb|18h| \\
+\verb|10FFh| & \verb|00h| \\
+\hline
+\end{tabular}
+\\
+
+Wenn wir nun einen Schritt weitergehen und Zeile 15 ausführen, so wird der Wert \verb|503h| (der \verb|CALL|-Befehl ist 3 Bytes lang, die zur Adresse \verb|0500h| addiert werden) auf den Stack gepusht und der Program Counter auf den Wert \verb|600h| gesetzt.
+
+Somit sind nach Ausführung dieser Zeile in den Registern bzw. Speicheradressen folgende Werte abgelegt:
+\\
+
+\begin{tabular}{|lr|}
+\hline
+Register/Speicheradresse & Wert \\
+\hline
+PC & \verb|600h| \\
+SPL & \verb|FC| \\
+SPH & \verb|10| \\
+\verb|10FCh| & \verb|05h| \\
+\verb|10FDh| & \verb|03h| \\
+\verb|10FEh| & \verb|18h| \\
+\verb|10FFh| & \verb|00h| \\
+\hline
+\end{tabular}
+\\
+
+Wenn nun in Zeile 20 der \verb|RET|-Befehl augeführt wird, so wird die Rücksprungadresse vom Stack genommen und im Program Counter abgespeichert. Wir befinden uns also nach Ausführung von Zeile 20 in Zeile 16.
+
+Die Werte der Register bzw. Speicheradressen sind somit folgendermaßen:\\
+
+\begin{tabular}{|lr|}
+\hline
+Register/Speicheradresse & Wert \\
+\hline
+PC & \verb|503h| \\
+SPL & \verb|FE| \\
+SPH & \verb|10| \\
+\verb|10FEh| & \verb|18h| \\
+\verb|10FFh| & \verb|00h| \\
+\hline
+\end{tabular}
+\\
+
+Bei der Ausführung von Zeile 16 wird ein weiteres Mal die Rücksprungadresse vom Stack genommen, so dass wir als Werte in den Registern nun bekommen:\\
+
+\begin{tabular}{|lr|}
+\hline
+Register/Speicheradresse & Wert \\
+\hline
+PC & \verb|503h| \\
+SPL & \verb|00| \\
+SPH & \verb|11| \\
+\hline
+\end{tabular}
+
 \section{Port-0-/Port-2-Komplex}
 
-\subsection{Teilaufgabe a} % TODO Bessere Ueberschrift
+\subsection{Zyklische Abfrage und Ausgabe von Schaltern}
 
-\begin{verbatim}
-ORG 0Ch
-0Ch:   LD P01M, 0h % Port 0 initialisieren
-       LD P2M, FFh % Port 2 initialisieren
-label: LD 2, 0     % Wert von Port 0 in Port 2 schreiben
-       JP label    % dies in einer Endlosschleife machen
-\end{verbatim}
+\subsubsection{Aufgabe}
 
-\subsection{Teilaufgabe b} % TODO Bessere Ueberschrift
+Initialisieren Sie Port 0 als Ausgabe- und Port 2 als Eingabe-Port. Entwickeln Sie eine Software, die zyklisch die an Port 2 angeschlossenen Schalter abfragt und die Schaltzust"ande an Port 0 ausgibt.
 
-\begin{verbatim}
-ORG 0Ch
-% Initialisierung
-0Ch:   LD P01M, 0h  % Port 0 initialisieren; P01M
-       LD P3M, 1h  $ Port 2 auf Push-pull setzen
-       LD P2M, 0h  % Port 2 initialisieren
-       
-       % Registerbelegung:
-       % Register 5: Wert von Port 2
-       % Register 4: Wert von Port 0
-       
-       LDC 5, 8h   % Wert 8 (genau oberstes Bit gesetzt) in Port 2 schreiben
-       LDC 4, 0h   % Wert 0 (keine LED an) in Port 0 schreiben
-      
+\subsubsection{L"osung}
 
-% Eigentliches Programm
-begin:
-       LD 2, 5     % Werte in Ports schreiben
-       LD 0, 4
-       
-       % wenn Register 5 den Wert 0 hat, springe nach port0
-       JP 5, port2 % ???
-       JP port0
+\lstinputlisting[caption={Zyklische Abfrage von Ausgabe von Schaltern},language=z8asm]{aufgabe32a.asm}
 
-port2:
-       RCF         % Carry-Flag loeschen
-       RRC 5       % Register 5 nach rechts rotieren, C hat
-                   % den Wert 0, also kein Problem
-       % wenn Register 5 nicht 0 ist, springe nach begin
-       JP 5, begin % ???
-       LDC 4, 1    % 1 in Port 0 in Zukunft
-       
-port0: 
-       % Wenn wir hier ankommen, hat Register 4 (in Zukunft Port 0) 
-       % sicherlich nicht den Wert 0
-       RCF         % Carry-Flag loeschen
-       RLC 4       % Register 4 nach links rotieren, C hat
-                   % den Wert 0, also kein Problem
-       % wenn Register 4 nicht 0 ist, springe nach begin
-       JP 4, begin % ???
-       % Register 4 ist also 0. Wir setzen also Register 5 mit
-       % Wert 8 (hoechste LED an)
-       LDC 5, 8h
-       JP begin    % ... und springen dann zurueck zum Anfang
-\end{verbatim}
+\subsection{Z"ahlen von Anzahl Schalter"anderungen (Zusatz-Aufgabe)}
 
-\section{Timer-0-Komplex/Pulsbreitenmodulator}
+\subsubsection{Aufgabe}
 
-\subsection{Kontrollfragen}
+Es ist ein Programm zu entwickeln, welches die Anzahl "Anderungen der Schaltzust"ande an Port 2 z"ahlt und die aktuelle Anzahl "uber Port 0 ausgibt.
 
-\subsubsection{Betriebsart Modulo N}
+Die Abarbeitung soll sowohl im Einzelschrittmodus als auch im normalen Programmablauf erfolgen. Warum ergibt sich ein unterschiedliches Verhalten?
 
-Unter der Betriebsart Modulo N versteht man, dass nach N Pulsen an der Eingabe ein Puls an der Ausgabe erzeugt wird
+Verbessern Sie das Programm so, dass im normalen Programmablauf das erwartete Verhalten eintritt.
 
-\subsubsection{Frage 2}  % TODO bessere Uebrschrift
+\subsubsection{L"osung}
 
-\begin{displaymath}
-\frac{8~MHz}{16 \cdot 257} = 1,9453~kHz
-\end{displaymath}
-
-\subsubsection{Mittelwert des PWM-Signals bei einem Eingabewert von 0 sowie 255, wobei die Pulsamplitude 5 V betragen soll}
-
-Bezeichne $x$ die relative Pulsbreite der Low-Phase. Dann gilt f"ur den Mittelwert des PWM-Signals:
-
-\begin{displaymath}
-\left(1-\frac{x}{257}\right)\cdot 5~V.
-\end{displaymath}
-
-\subsection{Software f"ur Pulsbreitenmodulator}
-
-\begin{verbatim}
-ORG 0Ch
-% Initialisierung
-0Ch:   LD TMR,  F1h % Timer initialisieren
-       LD PRE0, 41h % Prescaler 0 auf 16 setzen (16*4+1)
-       ...
-\end{verbatim}
+\lstinputlisting[caption={Z"ahlen von Anzahl Schalter"anderungen},language=z8asm]{aufgabe32c.asm}
 
 \section{Timer-1-Komplex}
 
-\section{UART (SIO)-Komplex}
+\subsection{Generierung einer Impulsfolge mit 5 kHz}
 
-\subsection{Teil a} % TODO bessere Uebrschrift
+\subsubsection{Aufgabe}
 
-\subsection{Initialisierung von UART f"ur eine Baudrate von 9600 Bd}
+Initialisieren Sie Timer 0 (einschließlich Prescaler) derart, dass am Portausgang P36 (${T1}_{OUT}$) eine Impulsfolge mit einer Frequenz von 5 kHz geliefert wird (Modulo-N-Mode, OSC=8 MHz, Anlage 5). Porteingang P31 soll hierbei als Toreingang (${T1}_{IN}$) benutzt werden (Aktivierung: High-Pegel über entprellten Schalter S3, Anlage 1).
 
-\subsection{Teil c} % TODO bessere Uebrschrift
+\subsubsection{L"osung}
 
-\section{P33/P34/IRQ-1-Komplex}
+TODO: Nico und Thomas: Inhalt einf"ugen
 
-\subsection{Teil a} % TODO bessere Uebrschrift
+\subsection{Frequenzteiler}
 
-\begin{verbatim}
-ORG 01h
-                    % 2 Bytes: Adresse der Interrupt Service Routine zu 
-                    % Interrupt 1
-DB 2h               % upper byte
-DB 0h               % lower byte
+\subsubsection{Aufgabe}
 
+Entwickeln Sie eine Software, die den Timer 1 als Frequenzteiler f"ur eine an P31 (${T1}_{IN}$) anliegende kontinuierliche Frequenzfolge (1 MHz, Generator HM 8035) wirken l"asst. Weisen Sie den maximalen und minimalen Teilerfaktor nach!
 
-ORG 0Ch
-% Initialisierung
-0Ch:   ...
+\subsubsection{L"osung}
 
-ORG 200h
-isr1:               % Interrupt Service Routine fuer IRQ 1
-       INC 0        % Inkrementiere Port 0
-       IRET         % Beendet Interrupt-Verarbeitung
+Warnung: diese L"osung ist unvollst"andig. R"ucksprache mit Denis erforderlich!!!
 
-\end{verbatim}
-
-\subsection{Teil b} % TODO bessere Uebrschrift
+\lstinputlisting[caption={Frequenzteiler},language=z8asm]{aufgabe34b.asm}
 
 \end{document}
