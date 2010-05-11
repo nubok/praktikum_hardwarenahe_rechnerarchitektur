@@ -4,9 +4,12 @@
 \usepackage[babel]{csquotes}
 \usepackage{amsmath} % for eqref
 \usepackage{tabularx}
-\usepackage{listings} % for listings - of course ;-)
 \usepackage{graphicx}
 \usepackage[usenames,dvipsnames]{color}
+\usepackage{pstricks}
+\usepackage{pst-node}
+\usepackage{pstricks-add}
+\usepackage{listings} % for listings - of course ;-)
 \author{Denis Dietze \and Wolfgang Keller \and Nico Linke \and Thomas Schulte}
 
 \title{Protokoll Versuch IT2}
@@ -75,13 +78,17 @@ Wo liegt exakt die Rücksprungadresse im Stack?
 
 \subsubsection{L"osung}
 
+Der Programmcode, welcher f"ur diese Aufgabe verwendet wurde, befindet sich in Listing \ref{lst:aufgabe31d}.
+
 Gem"a"s den Instruktionen w"ahrend des Praktikums wurde die Aufgabenstellung derart erweitert, dass vor dem \textbf{RETURN}-Befehl ein weiterer Sprung auf die Adresse \verb|600h| mit direkt folgendem Rücksprung erfolgen soll.
 
-\lstinputlisting[caption={Nutzung eines externen Stacks},language=z8asm]{aufgabe31d.asm}
+\begin{figure}
+\lstinputlisting[caption={Nutzung eines externen Stacks},language=z8asm, label=lst:aufgabe31d]{aufgabe31d.asm}
+\end{figure}
 
 Die R"uckkehradresse liegt dann in der Adresse \verb|0x10FE| auf dem Stack, da der Program Counter 2 Bytes benötigt und entsprechend durch den \verb|CALL|-Befehl wie in Anlage 9 beschrieben der Stack Pointer \verb|SP| um 2 erniedrigt wird und in dieser Adresse der Program Counter \verb|PC| abgespeichert wird.
 
-Wie man in den Zeile 6 und 7 sehen kann, werden SPH bzw. SPL und  (High bzw. Low Byte des Stack Pointers) auf die Adressen \verb|11h| bzw. \verb|00h| gesetzt. Nach den Vorbetrachtungen in Abschnitt \label{sec:1b} stellt dies das Ende des externen unter \label{sec:1a} konfigurierten externen RAMs dar.
+Wie man in den Zeile 6 und 7 sehen kann, werden SPH bzw. SPL und  (High bzw. Low Byte des Stack Pointers) auf die Adressen \verb|11h| bzw. \verb|00h| gesetzt. Nach den Vorbetrachtungen in Abschnitt \ref{sec:1b} stellt dies das Ende des externen unter \ref{sec:1a} konfigurierten externen RAMs dar.
 
 Wenn wir uns im Einzelschritt-Betrieb in Zeile 9 befinden, so ist offensichtlich noch kein Wert auf den Stack geschrieben worden. Der Program Counter PC hat den Wert \verb|0015h|.
 
@@ -162,9 +169,45 @@ Initialisieren Sie Port 0 als Ausgabe- und Port 2 als Eingabe-Port. Entwickeln S
 
 \subsubsection{L"osung}
 
-\lstinputlisting[caption={Zyklische Abfrage von Ausgabe von Schaltern},language=z8asm]{aufgabe32a.asm}
+Das Flussdiagramm, welches man aus der Programmbesschreibung erhält, befindet sich in Abbildung \ref{abb:1}. Das Assembler-Programm, welches hieraus erzeugt wurde, ist in Listing \ref{lst:32a} zu sehen.
+
+\begin{figure}
+\begin{center}
+\begin{pspicture}(8,8)
+%\psgrid
+\begin{psmatrix}[rowsep=0.4,colsep=0.5]
+	\psovalbox{Begin} \\
+	~ & [name=Init1] & \makebox[3cm]{} & [name=Init1a]\\
+	\psframebox{00h in P01M schreiben}  \\
+	~ & [name=Init2] \\
+	\psframebox{FFh in P2M schreiben}  \\
+	~ & [name=Init3] \\
+	\psframebox{01h in P3M schreiben}  \\
+	~ & [name=Init4] & \makebox[3cm]{} & [name=Init4a]\\
+	\psframebox{\parbox{4cm}{Lade Wert von Register 2 nach Register 0}}
+\end{psmatrix}
+\ncline{->}{1,1}{3,1}
+\ncline{->}{3,1}{5,1}
+\ncline{->}{5,1}{7,1}
+\ncline{->}{7,1}{9,1}
+\ncangles[angleA=-90, armA=0.5cm, armB=2.5cm]{->}{9,1}{8,1}
+\psbrace[ref=lC](Init2)(Init1){\parbox{3cm}{Initialisiere Port 0 f"ur Ausgabe}}
+\psbrace[ref=lC](Init3)(Init2){\parbox{3cm}{Definiere alle Bits von Port 2 als Eingabe-Bits}}
+\psbrace[ref=lC](Init4)(Init3){\parbox{3cm}{Setze Push-Pull bei Port 2}}
+\psbrace[ref=lC](Init4a)(Init1a){\parbox{3cm}{Initialisierung}}
+\end{pspicture}
+\vspace{0.5cm}
+\end{center}
+\caption{Zyklische Abfrage und Ausgabe von Schaltern}
+\label{abb:1}
+\end{figure}
+
+\begin{figure}
+\lstinputlisting[caption={Zyklische Abfrage und Ausgabe von Schaltern}, language=z8asm, label=lst:32a]{aufgabe32a.asm}
+\end{figure}
 
 \subsection{Z"ahlen von Anzahl Schalter"anderungen}
+\label{abschn:32c}
 
 \subsubsection{Aufgabe}
 
@@ -176,23 +219,140 @@ Verbessern Sie das Programm so, dass im normalen Programmablauf das erwartete Ve
 
 \subsubsection{L"osung}
 
-Eine auf den ersten Blick korrekt erscheinende L"osung sieht folgenderma"sen aus:
+Eine auf den ersten Blick korrekt erscheinende L"osung kann man in Abbildung \ref{abb:aufgabe32c_ohneschwingung} bzw. Listing \ref{lst:aufgabe32c_ohneschwingung} sehen. Die zugeh"orige Registerbelegungstabelle ist Tabelle \ref{table:aufgabe32c_ohneschwingung}.
 
-\lstinputlisting[caption={Z"ahlen von Anzahl Schalter"anderungen},language=z8asm]{aufgabe32c_ohneschwingung.asm}
+\begin{table}
+\begin{tabular}[t]{|c|l|}
+\hline
+Register & Bedeutung \\
+\hline
+4 & Anzahl "Anderungen \\
+5 & Alter Wert von Port 2 \\
+6 & Neuer Wert von Port 2 \\
+\hline
+\end{tabular}
+\caption{Registerbelegungstabelle f"ur die erste Version (ohne Ber"ucksichtigung von Schwingungen) des in Abschnitt \ref{abschn:32c} zu erstellende Programms}
+\label{table:aufgabe32c_ohneschwingung}
+\end{table}
+
+\begin{figure}
+\begin{center}
+\begin{pspicture}(8,16)
+%\psgrid
+\begin{psmatrix}[rowsep=0.4,colsep=0.5]
+	\psovalbox{Begin} \\
+	~ & [name=Init1] \\
+	\psframebox{\parbox{4cm}{00h in P01M schreiben}} \\
+	\psframebox{\parbox{4cm}{FFh in P2M schreiben}} \\
+	\psframebox{\parbox{4cm}{01h in P3M schreiben}} \\
+	\psframebox{\parbox{4cm}{Register 4 mit 0 initialisieren}} \\
+	\psframebox{\parbox{4cm}{Register 5 mit dem Wert von Port 2 initialisieren}} \\
+	\psframebox{\parbox{4cm}{Gib Register 4 nach Port 0 aus}} \\
+	~ & [name=Init6] \\
+	\psframebox{\parbox{4cm}{Lade Wert von Port 2 nach Register 6}} \\
+	\psdiabox{\parbox{2.2cm}{Ist Register 5 = Register 6?}} \\
+	\psframebox{\parbox{4cm}{Inkrementiere Register 4}} \\
+	\psframebox{\parbox{4cm}{Sende Wert von Register 4 an Port 0}} \\
+	\psframebox{\parbox{4cm}{Speichere Wert von Register 6 in Register 5}}
+	\ncline{->}{1,1}{3,1}
+	\ncline{->}{3,1}{4,1}
+	\ncline{->}{4,1}{5,1}
+	\ncline{->}{5,1}{6,1}
+	\ncline{->}{6,1}{7,1}
+	\ncline{->}{7,1}{8,1}
+	\ncline{->}{8,1}{10,1}
+	\ncline{->}{10,1}{11,1}
+	\ncline{->}{11,1}{12,1}\nbput{Nein}
+	\ncangles[angleA=0, armA=0.5cm, armB=2.5cm]{->}{11,1}{9,1}\nbput{Ja}
+	\ncline{->}{12,1}{13,1}
+	\ncline{->}{13,1}{14,1}
+	\ncangles[angleA=-90, armA=0.5cm, armB=4cm]{->}{14,1}{9,1}
+\end{psmatrix}
+\psbrace[ref=lC](Init6)(Init1){\parbox{3cm}{Initialisierung}}
+\end{pspicture}
+\vspace{0.5cm}
+\end{center}
+\caption{Z"ahlen von Anzahl Schalter"anderungen (ohne Ber"ucksichtigung von Schwingungen)}
+\label{abb:aufgabe32c_ohneschwingung}
+\end{figure}
+
+\begin{figure}
+\lstinputlisting[caption={Z"ahlen von Anzahl Schalter"anderungen (ohne Ber"ucksichtigung von Schwingungen)}, language=z8asm, label=lst:aufgabe32c_ohneschwingung]{aufgabe32c_ohneschwingung.asm}
+\end{figure}
 
 In der Tat arbeitet diese im Einzelschrittmodus so, wie man es erwarten w"urde. Wenn man jedoch das Programm normal ablaufen l"asst, stellt man fest, dass beim Umschalten eines Schalters der angezeigte Wert nicht um 1 erh"oht (inkrementiert) wird, sondern um gr"o"sere Werte.
 
 Der Grund liegt darin, dass es sich bei den Schaltern um mechanische Elemente handelt, die beim Umschalten in Schwingung geraten. Daher kommt es kurz nach dem Umschalten zu weiteren kurzzeitigen Umschaltungen, die der Microcontroller registriert und z"ahlt.
 
-Die L"osung ist damit naheliegend: nachdem eine Schalter"anderung detektiert wurde, kurz warten sich sich die Schwingungen beruhigt haben und erst dann mit dem Programmablauf fortfahren. Dies wurde in dem folgenden Programm getan.
+Die L"osung ist damit naheliegend: nachdem eine Schalter"anderung detektiert wurde, kurz warten sich sich die Schwingungen beruhigt haben und erst dann mit dem Programmablauf fortfahren. Dies wurde in dem Programm aus Listing \ref{lst:aufgabe32c} getan. Die zugehörige Registerbelegungstabelle ist Tabelle \ref{table:aufgabe32c} und das Flussdiagramm ist Abbildung \ref{abb:aufgabe32c}.
 
-\lstinputlisting[caption={Z"ahlen von Anzahl Schalter"anderungen},language=z8asm]{aufgabe32c.asm}
+\begin{table}
+\begin{tabular}[t]{|c|l|}
+\hline
+Register & Bedeutung \\
+\hline
+4 & Anzahl "Anderungen \\
+5 & Alter Wert von Port 2 \\
+6 & Neuer Wert von Port 2 \\
+r0 & Z"ahler "au"sere Schleife \\
+r1 & Z"ahler innere Schleife \\
+\hline
+\end{tabular}
+\caption{Registerbelegungstabelle f"ur die zweite Version (unter Ber"ucksichtigung von Schwingungen) des in Abschnitt \ref{abschn:32c} zu erstellende Programms}
+\label{table:aufgabe32c}
+\end{table}
+
+\begin{figure}
+\begin{center}
+\begin{pspicture}(8,20)
+%\psgrid
+\begin{psmatrix}[rowsep=0.4,colsep=0.5]
+	\psovalbox{Begin} \\
+	~ & [name=Init1] \\
+	\psframebox{\parbox{4cm}{00h in P01M, FFh in P2M, 01h in P3M schreiben}} \\
+	\psframebox{\parbox{4cm}{Register 4 mit 0 initialisieren, Register 5 mit dem Wert von Port 2 initialisieren, gib Register 4 nach Port 0 aus}} \\
+	~ & [name=Init6] \\
+	\psframebox{\parbox{4cm}{Lade Wert von Port 2 nach Register 6}} \\
+	\psdiabox{\parbox{2.2cm}{Ist Register 5 = Register 6?}} \\
+	\psframebox{\parbox{4cm}{Lade 10h nach RP, FFh nach r0}} \\
+	%~ & [name=Loop1] \\
+	\psframebox{\parbox{4cm}{Lade FFh nach r1}} \\
+	\psframebox{\parbox{4cm}{Dekrementiere r1}} \\
+	\psdiabox{\parbox{2.2cm}{Ist r1 $\neq$ 0?}} \\
+	\psframebox{\parbox{4cm}{Dekrementiere r0}} \\
+	\psdiabox{\parbox{2.2cm}{Ist r0 $\neq$ 0?}} \\
+	\psframebox{\parbox{4cm}{Inkrementiere Register 4, sende den neuen Wert an Port 0, speichere Wert von Register 6 in Register 5}}
+	\ncline{->}{1,1}{3,1}
+	\ncline{->}{3,1}{4,1}
+	\ncline{->}{4,1}{6,1}
+	\ncline{->}{6,1}{7,1}
+	\ncangles[angleA=0, armA=0.5cm, armB=2.5cm]{->}{7,1}{5,1}\nbput{Ja}
+	\ncline{->}{7,1}{8,1}\nbput{Nein}
+	\ncline{->}{8,1}{9,1}
+	\ncline{->}{9,1}{10,1}
+	\ncline{->}{10,1}{11,1}
+	\ncline{->}{11,1}{12,1}\nbput{Nein}
+	\ncline{->}{12,1}{13,1}
+	\ncline{->}{13,1}{14,1}\nbput{Nein}
+	\ncangles[angleA=-90, armA=0.5cm, armB=4cm]{->}{14,1}{5,1}
+\end{psmatrix}
+\psbrace[ref=lC](Init6)(Init1){\parbox{3cm}{Initialisierung}}
+\end{pspicture}
+\vspace{0.5cm}
+\end{center}
+\caption{Z"ahlen von Anzahl Schalter"anderungen (unter Ber"ucksichtigung von Schwingungen)}
+\label{abb:aufgabe32c}
+\end{figure}
+
+\begin{figure}
+\lstinputlisting[caption={Z"ahlen von Anzahl Schalter"anderungen (unter Ber"ucksichtigung von Schwingungen)},language=z8asm, label=lst:aufgabe32c]{aufgabe32c.asm}
+\end{figure}
 
 Zur Erkl"arung: prinzipiell k"onnte man ein Abwarten durch \verb|NOP|-Befehle erreichen. Da jedoch recht viele Instruktionsdauern lange gewartet werden muss und die Wartezeit linear in den Anzahl an \verb|NOP|s ist, ist dieser Weg nicht praktikabel.
 
 Stattdessen werden zwei verschachtelte, durch den \verb|DJNZ|-Befehl erzeugte Schleifen verwendet.
 
-in Zeile 29 wird der Registerpointer auf den Wert \verb|10h| gesetzt. Da der \verb|DJNZ| auf Arbeitsregistern operiert (deren absolute Position vom Wert des Registerpointers abh"angt), wird somit garantiert, dass die Nummerierung der aktuellen Arbeitsregister ab Position \verb|10h| (nur die obersten 4 Bits werden ber"ucksichtigt) beginnt.
+In Zeile 29 wird der Registerpointer auf den Wert \verb|10h| gesetzt. Da der \verb|DJNZ| auf Arbeitsregistern operiert (deren absolute Position vom Wert des Registerpointers abh"angt), wird somit garantiert, dass die Nummerierung der aktuellen Arbeitsregister ab Position \verb|10h| (nur die obersten 4 Bits werden ber"ucksichtigt) beginnt.
 
 Normalerweise w"urde man zur Bestimmung der tats"achlich zu wartenden Dauer oszillographische Methoden benutzen, um die Zeitdauer zu bestimmen und anschlie"send die Werte in den Zeilen 32 und 34 an die gemessenen Werte anpassen. Gem"a"s den Anweisungen des Betreuers wurde jedoch hierauf verzichtet.
 
@@ -218,6 +378,25 @@ Entwickeln Sie eine Software, die den Timer 1 als Frequenzteiler f"ur eine an P3
 
 Warnung: diese L"osung ist unvollst"andig. R"ucksprache mit Denis erforderlich!!!
 
-\lstinputlisting[caption={Frequenzteiler},language=z8asm]{aufgabe34b.asm}
+Denis' Email:
+\begin{verbatim}
+3.4.b)
+ 1Mhz   -------
+--------->| MC |---->
+             -------
+   P31               P36
+
+
+Theor. Wert | Messung         | T1            | PRE1
+------------------------------------------------------------------------
+5*10^5       | 500,103*10^3 | min(1)     | min(1)    --> 05 in Register
+7812,5       | 7,8141*10^3  | min(1)     | max(64)   --> 01 in Register
+1953,125     | 1,95352*10^3 | max(256)   | min(1)
+ca. 30,52    | 30,523       | max(256)   | max(64)
+\end{verbatim}
+
+\begin{figure}
+\lstinputlisting[caption={Frequenzteiler},language=z8asm,label=lst:34b]{aufgabe34b.asm}
+\end{figure}
 
 \end{document}
