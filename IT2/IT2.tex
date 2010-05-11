@@ -315,8 +315,9 @@ r1 & Z"ahler innere Schleife \\
 	\psframebox{\parbox{4cm}{Lade Wert von Port 2 nach Register 6}} \\
 	\psdiabox{\parbox{2.2cm}{Ist Register 5 = Register 6?}} \\
 	\psframebox{\parbox{4cm}{Lade 10h nach RP, FFh nach r0}} \\
-	%~ & [name=Loop1] \\
+	[name=Loop0] \\
 	\psframebox{\parbox{4cm}{Lade FFh nach r1}} \\
+	[name=Loop1] \\
 	\psframebox{\parbox{4cm}{Dekrementiere r1}} \\
 	\psdiabox{\parbox{2.2cm}{Ist r1 $\neq$ 0?}} \\
 	\psframebox{\parbox{4cm}{Dekrementiere r0}} \\
@@ -330,11 +331,14 @@ r1 & Z"ahler innere Schleife \\
 	\ncline{->}{7,1}{8,1}\nbput{Nein}
 	\ncline{->}{8,1}{9,1}
 	\ncline{->}{9,1}{10,1}
-	\ncline{->}{10,1}{11,1}
-	\ncline{->}{11,1}{12,1}\nbput{Nein}
+	\ncline{->}{10,1}{12,1}
 	\ncline{->}{12,1}{13,1}
+	\ncangles[angleA=0, armA=0.5cm, armB=2.5cm]{->}{13,1}{Loop1}\nbput{Ja}
 	\ncline{->}{13,1}{14,1}\nbput{Nein}
-	\ncangles[angleA=-90, armA=0.5cm, armB=4cm]{->}{14,1}{5,1}
+	\ncline{->}{14,1}{15,1}
+	\ncline{->}{15,1}{16,1}\nbput{Nein}
+	\ncangles[angleA=0, armA=1.5cm, armB=2.5cm]{->}{15,1}{Loop0}\nbput{Ja}
+	\ncangles[angleA=-90, armA=0.5cm, armB=5.0cm]{->}{16,1}{5,1}
 \end{psmatrix}
 \psbrace[ref=lC](Init6)(Init1){\parbox{3cm}{Initialisierung}}
 \end{pspicture}
