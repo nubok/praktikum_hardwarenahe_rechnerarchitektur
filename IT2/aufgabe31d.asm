@@ -3,8 +3,8 @@
 
 	; externen Stack anlegen
 	LD P01M, #%10
-	LD SPH, #%11
-	LD SPL, #%00
+	LD SPH,  #%11
+	LD SPL,  #%00
 
 	CALL L500
 	NOP
