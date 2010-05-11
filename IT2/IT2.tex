@@ -23,6 +23,7 @@ morecomment=[l]{;}
 \lstset{
 numbers=left,                   % where to put the line-numbers,
 commentstyle=\color{OliveGreen},
+captionpos=b, % Ist t oder b besser?
 showtabs=true,                 % show tabs within strings adding particular underscores
 frame=single,	                % adds a frame around the code
 tabsize=2	                % sets default tabsize to 2 spaces
@@ -104,7 +105,7 @@ SPH & \verb|10| \\
 
 Wenn wir nun einen Schritt weitergehen und Zeile 15 ausführen, so wird der Wert \verb|503h| (der \verb|CALL|-Befehl ist 3 Bytes lang, die zur Adresse \verb|0500h| addiert werden) auf den Stack gepusht und der Program Counter auf den Wert \verb|600h| gesetzt.
 
-Somit sind nach Ausführung dieser Zeile in den Registern bzw. Speicheradressen folgende Werte abgelegt:
+Somit sind nach Ausf"uhrung dieser Zeile in den Registern bzw. Speicheradressen folgende Werte abgelegt:
 \\
 
 \begin{tabular}{|lr|}
@@ -122,9 +123,9 @@ SPH & \verb|10| \\
 \end{tabular}
 \\
 
-Wenn nun in Zeile 20 der \verb|RET|-Befehl augeführt wird, so wird die Rücksprungadresse vom Stack genommen und im Program Counter abgespeichert. Wir befinden uns also nach Ausführung von Zeile 20 in Zeile 16.
+Wenn nun in Zeile 20 der \verb|RET|-Befehl ausgef"uhrt wird, so wird die Rücksprungadresse vom Stack genommen und im Program Counter abgespeichert. Wir befinden uns also nach Ausf"uhrung von Zeile 20 in Zeile 16.
 
-Die Werte der Register bzw. Speicheradressen sind somit folgendermaßen:\\
+Die Werte der Register bzw. Speicheradressen enthalten daher folgende Werte:\\
 
 \begin{tabular}{|lr|}
 \hline
@@ -139,7 +140,7 @@ SPH & \verb|10| \\
 \end{tabular}
 \\
 
-Bei der Ausführung von Zeile 16 wird ein weiteres Mal die Rücksprungadresse vom Stack genommen, so dass wir als Werte in den Registern nun bekommen:\\
+Bei der Ausführung von Zeile 16 wird ein weiteres Mal die R"ucksprungadresse vom Stack genommen, so dass wir als Werte in den Registern nun ablesen k"onnen:\\
 
 \begin{tabular}{|lr|}
 \hline
@@ -163,7 +164,7 @@ Initialisieren Sie Port 0 als Ausgabe- und Port 2 als Eingabe-Port. Entwickeln S
 
 \lstinputlisting[caption={Zyklische Abfrage von Ausgabe von Schaltern},language=z8asm]{aufgabe32a.asm}
 
-\subsection{Z"ahlen von Anzahl Schalter"anderungen (Zusatz-Aufgabe)}
+\subsection{Z"ahlen von Anzahl Schalter"anderungen}
 
 \subsubsection{Aufgabe}
 
@@ -175,7 +176,25 @@ Verbessern Sie das Programm so, dass im normalen Programmablauf das erwartete Ve
 
 \subsubsection{L"osung}
 
+Eine auf den ersten Blick korrekt erscheinende L"osung sieht folgenderma"sen aus:
+
+\lstinputlisting[caption={Z"ahlen von Anzahl Schalter"anderungen},language=z8asm]{aufgabe32c_ohneschwingung.asm}
+
+In der Tat arbeitet diese im Einzelschrittmodus so, wie man es erwarten w"urde. Wenn man jedoch das Programm normal ablaufen l"asst, stellt man fest, dass beim Umschalten eines Schalters der angezeigte Wert nicht um 1 erh"oht (inkrementiert) wird, sondern um gr"o"sere Werte.
+
+Der Grund liegt darin, dass es sich bei den Schaltern um mechanische Elemente handelt, die beim Umschalten in Schwingung geraten. Daher kommt es kurz nach dem Umschalten zu weiteren kurzzeitigen Umschaltungen, die der Microcontroller registriert und z"ahlt.
+
+Die L"osung ist damit naheliegend: nachdem eine Schalter"anderung detektiert wurde, kurz warten sich sich die Schwingungen beruhigt haben und erst dann mit dem Programmablauf fortfahren. Dies wurde in dem folgenden Programm getan.
+
 \lstinputlisting[caption={Z"ahlen von Anzahl Schalter"anderungen},language=z8asm]{aufgabe32c.asm}
+
+Zur Erkl"arung: prinzipiell k"onnte man ein Abwarten durch \verb|NOP|-Befehle erreichen. Da jedoch recht viele Instruktionsdauern lange gewartet werden muss und die Wartezeit linear in den Anzahl an \verb|NOP|s ist, ist dieser Weg nicht praktikabel.
+
+Stattdessen werden zwei verschachtelte, durch den \verb|DJNZ|-Befehl erzeugte Schleifen verwendet.
+
+in Zeile 29 wird der Registerpointer auf den Wert \verb|10h| gesetzt. Da der \verb|DJNZ| auf Arbeitsregistern operiert (deren absolute Position vom Wert des Registerpointers abh"angt), wird somit garantiert, dass die Nummerierung der aktuellen Arbeitsregister ab Position \verb|10h| (nur die obersten 4 Bits werden ber"ucksichtigt) beginnt.
+
+Normalerweise w"urde man zur Bestimmung der tats"achlich zu wartenden Dauer oszillographische Methoden benutzen, um die Zeitdauer zu bestimmen und anschlie"send die Werte in den Zeilen 32 und 34 an die gemessenen Werte anpassen. Gem"a2s den Anweisungen des Betreuers wurde jedoch hierauf verzichtet.
 
 \section{Timer-1-Komplex}
 
@@ -183,7 +202,7 @@ Verbessern Sie das Programm so, dass im normalen Programmablauf das erwartete Ve
 
 \subsubsection{Aufgabe}
 
-Initialisieren Sie Timer 0 (einschließlich Prescaler) derart, dass am Portausgang P36 (${T1}_{OUT}$) eine Impulsfolge mit einer Frequenz von 5 kHz geliefert wird (Modulo-N-Mode, OSC=8 MHz, Anlage 5). Porteingang P31 soll hierbei als Toreingang (${T1}_{IN}$) benutzt werden (Aktivierung: High-Pegel über entprellten Schalter S3, Anlage 1).
+Initialisieren Sie Timer 0 (einschlie"slich Prescaler) derart, dass am Portausgang P36 (${T1}_{OUT}$) eine Impulsfolge mit einer Frequenz von 5 kHz geliefert wird (Modulo-N-Mode, OSC=8 MHz, Anlage 5). Porteingang P31 soll hierbei als Toreingang (${T1}_{IN}$) benutzt werden (Aktivierung: High-Pegel über entprellten Schalter S3, Anlage 1).
 
 \subsubsection{L"osung}
 
