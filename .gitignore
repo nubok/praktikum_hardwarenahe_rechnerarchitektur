@@ -4,4 +4,6 @@
 *.ps
 *.pdf
 *.asv
+*.bbl
+*.blg
 

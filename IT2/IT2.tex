@@ -66,7 +66,25 @@ Mit welchen Befehlen kann auf das RAM zugegriffen werden?
 
 \subsubsection{L"osung}
 
-TODO: Nico und Thomas: Inhalt einf"ugen
+\begin{figure}
+\lstinputlisting[caption={Nutzung eines externen Stacks},language=z8asm, label=aufgabe31a]{aufgabe31a.asm}
+\end{figure}
+
+Listing \ref{aufgabe31a} bildet die Assembler-Lösung der Aufgabe.
+
+In Zeile 5 wird der Port wie in Abschnitt \ref{sec:1a} beschrieben initialisiert. Als nächstes wird der Registerpointer (RP) initialisiert. Im weiteren Verlauf sind dann alle verwendeten Register als so genannte Arbeitsregister deklariert. Durch diese Festlegung ist es möglich, bestimmte Operationen effizienter mit weniger Quelltext auszuführen (Register-Pointer-Befehle).
+
+Um zu überprüfen, dass der Speicher richtig initialisiert wurde, werden nun fest gelegte Bereiche mit Konstanten beschrieben und wieder ausgelesen.
+
+In Zeile 8 wird eine Konstante in das Arbeitsregister 4 geladen. Anschließend bekommt das Register 6 ebenfalls einen Wert, dieser muss allerdings größer sein als 10h. Dies hängt damit zusammen, alle Adressen vor diesem Wert vom internen Rom bereits belegt werden. Somit können dort keine Daten gespeichert werden.
+
+Zeile 10 beschreibt über @RR6, dass nun der Speicher an der durch den Wert in R6 festgelegten Stelle angesprochen und die Konstante aus R4 dort gespeichert wird.
+
+Danach bekommt R6 einen anderen Wert, also eine andere Adresse im Speicher. In der Zeile 12 wird dann der Wert, der an der ursprünglichen Adresse von R6 lag ausgelesen und in R5 geschrieben.
+
+Befindet sich dort eine andere Konstante als in R4, trat ein Fehler bei der Initialisierung, bzw. beim Schreiben und Lesen des externen Speichers auf.
+
+Die Zeilen 14-18 zeigen ebenfalls eine nochmalige Kontrolle nach der eben beschriebenen Vorgehensweise. Die Speicheradressen sowie -register sind dabei jedoch anders.
 
 \subsection{Nutzung eines externen Stacks}
 \label{sec:1d}
@@ -208,11 +226,26 @@ Das Flussdiagramm, welches man aus der Programmbesschreibung erhält, befindet si
 
 \subsubsection{Aufgabe}
 
-Das Programm ist in soweitzu erweitern, dass zwischen der Ein- und Ausgabe die Bitpaare $D_0-D_7$, $D_1-D_6$, $D_2-D_5$ und $D_3-D_4$ vertauscht werden.
+Das Programm ist insoweit zu erweitern, dass zwischen der Ein- und Ausgabe die Bitpaare $D_0-D_7$, $D_1-D_6$, $D_2-D_5$ und $D_3-D_4$ vertauscht werden.
 
-\subsection{L"osung}
+\subsubsection{L"osung}
 
+\begin{figure}
+\lstinputlisting[caption={Erweiterung des zyklischen Abfrage und Ausgabe von Schaltern um Vertauschung von Bitpaaren}, language=z8asm, label=lst:32a_erweiterung]{aufgabe32a_erweiterung.asm}
+\end{figure}
 
+Listing \ref{lst:32a_erweiterung} bildet die Assembler-L"osung der Aufgabe.
+
+Zunächst wird der Port 0 als Ausgabe-Port initialisiert. Die Bitbelegung ist dabei XXX00X00, wobei X für ein beliebiges Bit steht.
+
+Anschließend muss Port 2 als Eingabe-Port initialisiert werden. Hierbei ist Bitbelegung 11111111, demzufolge in Hex FF.
+In Zeile 7 wird dann das Steuerregister P3M initialisiert. Dies ist wichtig, da der Port 2 als Ausgabe-Port aktive Pull-Ups benötigt.
+
+Die Bitbelegung ist dort also XXXXXXX1 -- f"ur die L"osung wurde sich f"ur \verb|1h| entschieden.
+
+Nach der Initialisierung der benötigten Ports folgt nun eine Schleife, da lt. Aufgabenstellung die Schalter zyklisch abgefragt werden sollen.
+Dort wird der abgefragte Wert der LED's aus Port 2 in das Register 4 geladen. Danach wird dieser Wert in P0, dem Ausgangsport geladen.
+Somit leuchten dort die jeweiligen LED's auf. Zum Schluss erfolgt ein Sprung zurück zum Anfang der Schleife, damit eine neue Anfrage gestartet wird.
 
 \subsection{Z"ahlen von Anzahl Schalter"anderungen}
 \label{abschn:32c}
@@ -380,7 +413,19 @@ Initialisieren Sie Timer 0 (einschlie"slich Prescaler) derart, dass am Portausga
 
 \subsubsection{L"osung}
 
-TODO: Nico und Thomas: Inhalt einf"ugen
+\begin{figure}
+\lstinputlisting[caption={Generierung einer Impulsfolge mit 5 kHz},language=z8asm,label=lst:34a]{aufgabe34a.asm}
+\end{figure}
+
+Listing \ref{lst:34a} bildet die Assembler-L"osung der Aufgabe.
+
+ALs erstes wird das Steuerregister P3M in folgender Belegung initialisiert: XX0XXXXX. D5 ist dabei sehr wichtig, da es P31 auf $T_{in}$ setzt.
+
+Anschließend muss das Timer-Mode-Register wie folgt initialisiert werden: 10011100 Hier erfolgt die richtige Belegung über die Eingangs- und Ausgangssignale (lt. Aufgabenstellung).
+
+Danach werden die Initialwerte des Prescaler 1 und des Timers 1 gesetzt, um dadurch die gewünschte Frequenz von 5 KHz zu bekommen. Der Prescaler wird außerdem über das Bit D0 in den Modulo N Modus und über D1 in den Input $T_{in}$ Modus gesetzt.
+
+Letztendlich befindet sich im Programm eine Schleife, sodass das Programm nicht unerwünscht terminiert.
 
 \subsection{Frequenzteiler}
 
@@ -392,25 +437,41 @@ Entwickeln Sie eine Software, die den Timer 1 als Frequenzteiler f"ur eine an P3
 
 Warnung: diese L"osung ist unvollst"andig. R"ucksprache mit Denis erforderlich!!!
 
-Denis' Email:
-\begin{verbatim}
-3.4.b)
- 1Mhz   -------
---------->| MC |---->
-             -------
-   P31               P36
-
-
-Theor. Wert | Messung         | T1            | PRE1
-------------------------------------------------------------------------
-5*10^5       | 500,103*10^3 | min(1)     | min(1)    --> 05 in Register
-7812,5       | 7,8141*10^3  | min(1)     | max(64)   --> 01 in Register
-1953,125     | 1,95352*10^3 | max(256)   | min(1)
-ca. 30,52    | 30,523       | max(256)   | max(64)
-\end{verbatim}
-
 \begin{figure}
 \lstinputlisting[caption={Frequenzteiler},language=z8asm,label=lst:34b]{aufgabe34b.asm}
 \end{figure}
+
+Listing \ref{lst:34a} bildet die Assembler-L"osung der Aufgabe.
+
+Gem"a"s der Abbildung aus Anlage 5 der Aufgabenstellung ist die an $T_{OUT}$ anliegende Frequenz $f_{T_{OUT}}$ bei Teilerfaktoren von $PRE1_{TF}$ bzw.  $T1_{TF}$ f"ur \verb|PRE1| bzw. \verb|T1|:
+
+\begin{displaymath}
+f_{T_{OUT}} = \frac{1~MHz}{2\cdot PRE1_{TF} \cdot T1_{TF}}.
+\end{displaymath}
+
+In Tabelle \ref{table:1} sind die Werte der praktischen Messungen, die Werte der Teilerfaktoren $T1_{Init}$ bzw. $PRE1_{Init}$, die zu initialisierenden Werte für die zueg"origen Timerregister \verb|PRE1| bzw. \verb|T1|, die theoretisch zu erwartenden Werte f"ur $f_{T_{OUT}}$, sowie dessen praktische Messwerte abgetragen.
+
+\begin{table}
+\begin{minipage}[t]{\textwidth}
+\begin{center}
+\begin{tabular}{|rr|rr|rr|}
+\hline
+\multicolumn{2}{|c|}{Teilerfaktor f"ur} &
+\multicolumn{2}{c|}{Zu initialisierender Wert f"ur Register} & 
+\multicolumn{2}{c|}{$f_{T_{OUT}}$} 
+\\
+\verb|PRE1| & \verb|T1| & \verb|PRE1| & \verb|T1| & Theorie\footnote{Ergebnisse der Rechnung auf drei Dezimalstellen gerundet} & Messung\\
+\hline
+1 & 1 & 5 & 1 & 500~kHz & 500,103~kHz\\
+64 & 1 & 1 & 1 & 7812,5~Hz & 7814,1~Hz \\
+1 & 256 & 5 & 0 & 1953,125~Hz & 1953,52~Hz\\
+64 & 256 & 1 & 0 & 30,518~Hz & 30,523~Hz\\
+\hline
+\end{tabular}
+\end{center}
+\end{minipage}
+\caption{In Aufgabe Frequenzteiler zu bestimmende Werte}
+\label{table:1}
+\end{table}
 
 \end{document}
