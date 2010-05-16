@@ -466,13 +466,26 @@ Initialisieren Sie Timer 0 (einschlie"slich Prescaler) derart, dass am Portausga
 \lstinputlisting[caption={Generierung einer Impulsfolge mit 5 kHz},language=z8asm,label=lst:34a]{aufgabe34a.asm}
 \end{figure}
 
-Listing \ref{lst:34a} bildet die Assembler-L"osung der Aufgabe.
+%Listing \ref{lst:34a} bildet die Assembler-L"osung der Aufgabe.
 
-ALs erstes wird das Steuerregister P3M in folgender Belegung initialisiert: XX0XXXXX. D5 ist dabei sehr wichtig, da es P31 auf $T_{in}$ setzt.
+Als erstes wird das Steuerregister P3M in mit \verb|XX0XXXXX| initialisiert. Das Bit D5 ist dabei zentral, da es P31 auf $T_{in}$ setzt.
 
-Anschließend muss das Timer-Mode-Register wie folgt initialisiert werden: 10011100 Hier erfolgt die richtige Belegung über die Eingangs- und Ausgangssignale (lt. Aufgabenstellung).
+Anschließend muss das Timer-Mode-Register mit \verb|10011100| initialisiert werden. Hier erfolgt die richtige Belegung über die Eingangs- und Ausgangssignale (lt. Aufgabenstellung).
 
-Danach werden die Initialwerte des Prescaler 1 und des Timers 1 gesetzt, um dadurch die gewünschte Frequenz von 5 KHz zu bekommen. Der Prescaler wird außerdem über das Bit D0 in den Modulo N Modus und über D1 in den Input $T_{in}$ Modus gesetzt.
+Danach werden die Initialwerte des Prescaler 1 und des Timers 1 gesetzt, um dadurch die gewünschte Frequenz von 5 KHz zu bekommen. 
+
+Der Grund, warum sich tats"chlich eine Frequenz von 5~kHz ergibt, l"asst sich aus Abbildung 5 des Aufgabenblattes entnehmen: die am \verb|OSC|-Eingang anliegende Frequenz wird erst einmal durch 2 dividiert. Anschließend wird sie in der Clock Logic nochmals durch  4 dividiert.
+
+Desweiteren wird die Frequenz vor der Ausgabe bei $T_{OUT}$ nochmals durch 2 dividiert.
+
+Wenn somit am Prescaler \verb|PRE1| ein Skalierungsfaktor von 1 und an \verb|T1| ein Skalierungsfaktor von 100 anliegt, so erh"alt man f"ur die an $T_{OUT}$ anliegende Frequenz $f_{T_{OUT}}$:
+
+\begin{eqnarray*}
+f_{T_{OUT}} & = & \frac{8~MHz}{2\cdot 4 \cdot 1 \cdot 100 \cdot 2} \\
+& = & 5~kHz.
+\end{eqnarray*}
+
+Der Prescaler wird außerdem über das Bit D0 in den Modulo N Modus und über D1 in den Input $T_{in}$ Modus gesetzt.
 
 Letztendlich befindet sich im Programm eine Schleife, sodass das Programm nicht unerwünscht terminiert.
 
