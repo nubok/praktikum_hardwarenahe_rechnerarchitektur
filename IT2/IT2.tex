@@ -117,7 +117,7 @@ Wenn wir einen Schritt weitergehen (den \verb|CALL|-Befehl also ausführen), so w
 Die Werte sind am Anfang von Zeile 15 also folgendermaßen:
 \\
 
-\begin{tabular}{|lr|}
+\begin{tabular}{|rr|}
 \hline
 Register/Speicheradresse & Wert \\
 \hline
@@ -135,7 +135,7 @@ Wenn wir nun einen Schritt weitergehen und Zeile 15 ausführen, so wird der Wert 
 Somit sind nach Ausf"uhrung dieser Zeile in den Registern bzw. Speicheradressen folgende Werte abgelegt:
 \\
 
-\begin{tabular}{|lr|}
+\begin{tabular}{|rr|}
 \hline
 Register/Speicheradresse & Wert \\
 \hline
@@ -154,7 +154,7 @@ Wenn nun in Zeile 20 der \verb|RET|-Befehl ausgef"uhrt wird, so wird die Rückspr
 
 Die Werte der Register bzw. Speicheradressen enthalten daher folgende Werte:\\
 
-\begin{tabular}{|lr|}
+\begin{tabular}{|rr|}
 \hline
 Register/Speicheradresse & Wert \\
 \hline
@@ -169,7 +169,7 @@ SPH & \verb|10| \\
 
 Bei der Ausführung von Zeile 16 wird ein weiteres Mal die R"ucksprungadresse vom Stack genommen, so dass wir als Werte in den Registern nun ablesen k"onnen:\\
 
-\begin{tabular}{|lr|}
+\begin{tabular}{|rr|}
 \hline
 Register/Speicheradresse & Wert \\
 \hline
@@ -203,16 +203,16 @@ Nach der Initialisierung wird in einer Endlosschleife der Wert von Register 2 (P
 
 \begin{figure}
 \begin{center}
-\begin{pspicture}(8,8)
+\begin{pspicture}(8,7)
 %\psgrid
 \begin{psmatrix}[rowsep=0.4,colsep=0.5]
 	\psovalbox{Begin} \\
 	~ & [name=Init1] & \makebox[3cm]{} & [name=Init1a]\\
-	\psframebox{00h in P01M schreiben}  \\
+	\psframebox{\parbox{4cm}{00h in P01M schreiben}}  \\
 	~ & [name=Init2] \\
-	\psframebox{FFh in P2M schreiben}  \\
+	\psframebox{\parbox{4cm}{FFh in P2M schreiben}}  \\
 	~ & [name=Init3] \\
-	\psframebox{01h in P3M schreiben}  \\
+	\psframebox{\parbox{4cm}{01h in P3M schreiben}}  \\
 	~ & [name=Init4] & \makebox[3cm]{} & [name=Init4a]\\
 	\psframebox{\parbox{4cm}{Lade Wert von Register 2 nach Register 0}}
 \end{psmatrix}
@@ -245,16 +245,58 @@ Das Programm ist insoweit zu erweitern, dass zwischen der Ein- und Ausgabe die B
 \subsubsection{L"osung}
 
 \begin{figure}
+\begin{center}
+\begin{pspicture}(8,13)
+%\psgrid
+\begin{psmatrix}[rowsep=0.4,colsep=0.5]
+	\psovalbox{Begin} \\
+	~ & [name=Init1] & \makebox[3cm]{} & [name=Init1a]\\
+	\psframebox{\parbox{4cm}{00h in P01M schreiben}}  \\
+	~ & [name=Init2] \\
+	\psframebox{\parbox{4cm}{FFh in P2M schreiben}}  \\
+	~ & [name=Init3] \\
+	\psframebox{\parbox{4cm}{01h in P3M schreiben}}  \\
+	~ & [name=Init4] & \makebox[3cm]{} & [name=Init4a]\\
+	\psframebox{\parbox{4cm}{Lade Wert von P2 nach Register 4}} \\
+	~ & [name=BeginRep] \\
+	\psframebox{\parbox{4cm}{Rotiere Register 4 unter Nutzung des Carry-Flags nach rechts}} \\
+	\psframebox{\parbox{4cm}{Rotiere Register 5 unter Nutzung des Carry-Flags nach links}} \\
+	~ & [name=EndRep] \\
+	\psframebox{\parbox{4cm}{Lade Wert von Register 5 nach P0}}
+\end{psmatrix}
+\ncline{->}{1,1}{3,1}
+\ncline{->}{3,1}{5,1}
+\ncline{->}{5,1}{7,1}
+\ncline{->}{7,1}{9,1}
+\ncline{->}{9,1}{11,1}
+\ncline{->}{11,1}{12,1}
+\ncline{->}{12,1}{14,1}
+\ncangles[angleA=-90, armA=0.5cm, armB=2.5cm]{->}{14,1}{8,1}
+\psbrace[ref=lC](Init2)(Init1){\parbox{3cm}{Initialisiere Port 0 f"ur Ausgabe}}
+\psbrace[ref=lC](Init3)(Init2){\parbox{3cm}{Definiere alle Bits von Port 2 als Eingabe-Bits}}
+\psbrace[ref=lC](Init4)(Init3){\parbox{3cm}{Setze Push-Pull bei Port 2}}
+\psbrace[ref=lC](Init4a)(Init1a){\parbox{3cm}{Initialisierung}}
+\psbrace[ref=lC](EndRep)(BeginRep){\parbox{3cm}{8 mal nacheinander diesen Block ausf"uhren}}
+\end{pspicture}
+\vspace{0.5cm}
+\end{center}
+\caption{Zyklische Abfrage und Ausgabe von Schaltern mit Vertauschen von Bitpaaren}
+\label{abb:32a_erweiterung}
+\end{figure}
+
+\begin{figure}
 \lstinputlisting[caption={Erweiterung der zyklischen Abfrage und Ausgabe von Schaltern um Vertauschung von Bitpaaren}, language=z8asm, label=lst:32a_erweiterung]{aufgabe32a_erweiterung.asm}
 \end{figure}
 
-Listing \ref{lst:32a_erweiterung} bildet die Assembler-L"osung der Aufgabe.
+Abbildung \ref{abb:32a_erweiterung} enthält ein Flussdiagramm eines die Aufgabenstellung l"osenden Programms. Listing \ref{lst:32a_erweiterung} ist die komkrete Assembler-L"osung.
 
 Die Initialisierung erfolgt wie in Abschnitt \ref{sec:3a_loesung} beschrieben.
 
-Nach der Initialisierung der benötigten Ports folgt nun eine Schleife, da lt. Aufgabenstellung die Schalter zyklisch abgefragt werden sollen.
-Dort wird der abgefragte Wert der LEDs aus Port 2 in das Register 4 geladen. Danach wird dieser Wert in P0, dem Ausgangsport geladen.
-Somit leuchten dort die jeweiligen LEDs auf. Zum Schluss erfolgt ein Sprung zurück zum Anfang der Schleife, damit eine neue Anfrage gestartet wird.
+Die Endlosschleife muss gegenüber der vorhergehenden Aufgabe erweitert werden. Zuerst wird der an Port 2 abgefragte Wert der LEDs in das Register 4 geladen. Durch einen Rechts-Rotationsschritt wird das aktuell niedrigste Bit von Register 4 in das Carry-Flag "ubertragen. Anschließend wird dieses als neues h"ochstes Bit nach Register 5 "ubertragen.
+
+Da ein Byte 8 Bits enth"alt, muss dies acht mal durchgeführt werden.
+
+Zuletzt wird der Wert von Register 5 nach P0, dem Ausgangsport übertragen und zum Anfang der Schleife zur"uckgesprungen.
 
 \subsection{Z"ahlen von Anzahl Schalter"anderungen}
 \label{abschn:32c}
@@ -303,8 +345,8 @@ Register & Bedeutung \\
 	\psframebox{\parbox{4cm}{Lade Wert von Port 2 nach Register 6}} \\
 	\psdiabox{\parbox{2.2cm}{Ist Register 5 = Register 6?}} \\
 	\psframebox{\parbox{4cm}{Inkrementiere Register 4}} \\
-	\psframebox{\parbox{4cm}{Sende Wert von Register 4 an Port 0}} \\
-	\psframebox{\parbox{4cm}{Speichere Wert von Register 6 in Register 5}}
+	\psframebox{\parbox{4cm}{Sende den Wert von Register 4 an Port 0}} \\
+	\psframebox{\parbox{4cm}{Speichere den Wert von Register 6 in Register 5}}
 	\ncline{->}{1,1}{3,1}
 	\ncline{->}{3,1}{4,1}
 	\ncline{->}{4,1}{5,1}
@@ -355,14 +397,12 @@ r1 & Z"ahler innere Schleife \\
 
 \begin{figure}
 \begin{center}
-\begin{pspicture}(8,20)
+\begin{pspicture}(8,17)
 %\psgrid
 \begin{psmatrix}[rowsep=0.4,colsep=0.5]
 	\psovalbox{Begin} \\
-	~ & [name=Init1] \\
-	\psframebox{\parbox{4cm}{00h in P01M, FFh in P2M, 01h in P3M schreiben}} \\
-	\psframebox{\parbox{4cm}{Register 4 mit 0 initialisieren, Register 5 mit dem Wert von Port 2 initialisieren, gib Register 4 nach Port 0 aus}} \\
-	~ & [name=Init6] \\
+	\psframebox{\parbox{4cm}{Initialisierung wie im vorhergehenden Programm}} \\
+	[name=Begin] \\
 	\psframebox{\parbox{4cm}{Lade Wert von Port 2 nach Register 6}} \\
 	\psdiabox{\parbox{2.2cm}{Ist Register 5 = Register 6?}} \\
 	\psframebox{\parbox{4cm}{Lade 10h nach RP, FFh nach r0}} \\
@@ -373,25 +413,26 @@ r1 & Z"ahler innere Schleife \\
 	\psdiabox{\parbox{2.2cm}{Ist r1 $\neq$ 0?}} \\
 	\psframebox{\parbox{4cm}{Dekrementiere r0}} \\
 	\psdiabox{\parbox{2.2cm}{Ist r0 $\neq$ 0?}} \\
-	\psframebox{\parbox{4cm}{Inkrementiere Register 4, sende den neuen Wert an Port 0, speichere Wert von Register 6 in Register 5}}
-	\ncline{->}{1,1}{3,1}
-	\ncline{->}{3,1}{4,1}
-	\ncline{->}{4,1}{6,1}
-	\ncline{->}{6,1}{7,1}
-	\ncangles[angleA=0, armA=0.5cm, armB=2.5cm]{->}{7,1}{5,1}\nbput{Ja}
-	\ncline{->}{7,1}{8,1}\nbput{Nein}
-	\ncline{->}{8,1}{9,1}
-	\ncline{->}{9,1}{10,1}
-	\ncline{->}{10,1}{12,1}
+	\psframebox{\parbox{4cm}{Inkrementiere Register 4}} \\
+	\psframebox{\parbox{4cm}{Sende den Wert von Register 4 Wert an Port 0}} \\
+	\psframebox{\parbox{4cm}{Speichere den Wert von Register 6 in Register 5}}
+	\ncline{->}{1,1}{2,1}
+	\ncline{->}{2,1}{4,1}
+	\ncangles[angleA=0, armA=0.5cm, armB=2.5cm]{->}{4,1}{Begin}\nbput{Ja}
+	\ncline{->}{4,1}{5,1}\nbput{Nein}
+	\ncline{->}{5,1}{6,1}
+	\ncline{->}{6,1}{8,1}
+	\ncline{->}{8,1}{10,1}
+	\ncline{->}{10,1}{11,1}
+	\ncangles[angleA=0, armA=0.5cm, armB=2.5cm]{->}{11,1}{Loop1}\nbput{Ja}
+	\ncline{->}{11,1}{12,1}\nbput{Nein}
 	\ncline{->}{12,1}{13,1}
-	\ncangles[angleA=0, armA=0.5cm, armB=2.5cm]{->}{13,1}{Loop1}\nbput{Ja}
 	\ncline{->}{13,1}{14,1}\nbput{Nein}
 	\ncline{->}{14,1}{15,1}
-	\ncline{->}{15,1}{16,1}\nbput{Nein}
-	\ncangles[angleA=0, armA=1.5cm, armB=2.5cm]{->}{15,1}{Loop0}\nbput{Ja}
-	\ncangles[angleA=-90, armA=0.5cm, armB=5.0cm]{->}{16,1}{5,1}
+	\ncline{->}{15,1}{16,1}
+	\ncangles[angleA=0, armA=1.5cm, armB=2.5cm]{->}{13,1}{Loop0}\nbput{Ja}
+	\ncangles[angleA=-90, armA=0.5cm, armB=3.0cm]{->}{16,1}{5,1}
 \end{psmatrix}
-\psbrace[ref=lC](Init6)(Init1){\parbox{3cm}{Initialisierung}}
 \end{pspicture}
 \vspace{0.5cm}
 \end{center}
