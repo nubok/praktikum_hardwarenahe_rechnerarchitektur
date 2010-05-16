@@ -19,7 +19,7 @@
 
 \lstdefinelanguage{z8asm}
 {
-morekeywords={ORG,LD,TITLE,CALL,NOP,RET,END,JP},
+morekeywords={ORG,CALL,JP,LD,LDE,NOP,RET,RLC,RRC,TITLE,END},
 morecomment=[l]{;}
 }
 
@@ -42,7 +42,7 @@ Konfigurieren Sie Port 1 zur Speichererweiterung durch 256 Byte externen RAM.
 
 \subsubsection{L"osung}
 
-Wir m"ussen in das Register \verb|P01M| den Bin"arwert \verb|XX0100XX| schreiben, wobei X f"ur einen beliebiges Bit steht. Wir haben uns f"ur den Wert \verb|10h| entschieden.
+Wir m"ussen in das Register \verb|P01M| den Bin"arwert \verb|XX0100XX| schreiben, wobei X f"ur ein beliebiges Bit steht. Wir haben uns im Rahmen des Versuchs f"ur den Wert \verb|10h| entschieden.
 
 Der Befehl lautet somit: \verb|LD P01M, #%10|.
 
@@ -53,9 +53,11 @@ Der Befehl lautet somit: \verb|LD P01M, #%10|.
 Über welche Adressen kann auf den externen RAM zugegriffen werden?
 
 \subsubsection{L"osung}
-Die ersten 4096 (\verb|1000h|) Adressen sind durch das interne ROM belegt. Alle darüber hinaus gehenden Adressen der mit den 13 Adressbits A0-A12 darstellbaren Adressen (also von \verb|1000h| bis \verb|3000h|) gehören somit \emph{theoretisch} zum externen RAM.
+Die ersten 4096 (\verb|1000h|) Bytes des Speichers sind durch das interne ROM belegt. Alle darüber hinaus gehenden mit den 13 Adressbits A0-A12 darstellbaren Adressen (also von \verb|1000h| bis \verb|3000h|) gehören somit \emph{theoretisch} zum externen RAM.
 
-Man kann in der Tat über all diese Adressen auf den externen RAM zugreifen. Jedoch tritt in der Praxis eine Besonderheit auf: wie man in ersten Grafik Anlage 1 der Versuchsbeschreibung sehen kann, sind die Adressbits A8 bis A12 mit Masse verbunden - d. h. im RAM sind nur 256 (\verb|100h|) verschiedene Adressen adressierbar. Die obersten 5 Adressbits (A8-A12) werden ignoriert. Da somit nur 256 Bytes an RAM physikalisch adressierbar sind, wird der Inhalt dieser 256 Bytes in den restlichen mit A0 bis A12 adressierbaren Adressen des externen RAMs zyklisch wiederholt.
+Man kann in der Tat über all diese Adressen auf den externen RAM zugreifen. Jedoch tritt in der Praxis eine Besonderheit auf: wie man in ersten Grafik Anlage 1 der Versuchsbeschreibung sehen kann, sind die Adressbits A8 bis A12 mit Masse verbunden. Das heißt im RAM sind nur 256 (\verb|100h|) verschiedene Speicherzellen adressierbar. Die obersten 5 Adressbits (A8-A12) werden ignoriert. 
+
+Da somit nur 256 Bytes an RAM physikalisch adressierbar sind, wird der Inhalt dieser 256 Bytes in den restlichen mit A0 bis A12 adressierbaren Adressen des externen RAMs zyklisch wiederholt.
 
 \subsection{Befehle zum Zugriff auf den RAM}
 \label{sec:1c}
@@ -67,24 +69,24 @@ Mit welchen Befehlen kann auf das RAM zugegriffen werden?
 \subsubsection{L"osung}
 
 \begin{figure}
-\lstinputlisting[caption={Nutzung eines externen Stacks},language=z8asm, label=aufgabe31a]{aufgabe31a.asm}
+\lstinputlisting[caption={Zugriff auf den RAM},language=z8asm, label=aufgabe31a]{aufgabe31a.asm}
 \end{figure}
 
 Listing \ref{aufgabe31a} bildet die Assembler-Lösung der Aufgabe.
 
-In Zeile 5 wird der Port wie in Abschnitt \ref{sec:1a} beschrieben initialisiert. Als nächstes wird der Registerpointer (RP) initialisiert. Im weiteren Verlauf sind dann alle verwendeten Register als so genannte Arbeitsregister deklariert. Durch diese Festlegung ist es möglich, bestimmte Operationen effizienter mit weniger Quelltext auszuführen (Register-Pointer-Befehle).
+In Zeile 5 wird der Port wie in Abschnitt \ref{sec:1a} beschrieben initialisiert. Als nächstes wird in Zeile 6 der Registerpointer (RP) initialisiert. Im weiteren Verlauf sind dann alle verwendeten Register als sogenannte Arbeitsregister deklariert. Durch diese Festlegung ist es möglich, bestimmte Operationen effizienter mit weniger Quelltext auszuführen (Register-Pointer-Befehle).
 
-Um zu überprüfen, dass der Speicher richtig initialisiert wurde, werden nun fest gelegte Bereiche mit Konstanten beschrieben und wieder ausgelesen.
+Um zu überprüfen, dass der Speicher richtig initialisiert wurde, werden nun festgelegte Bereiche mit Konstanten beschrieben und wieder ausgelesen.
 
-In Zeile 8 wird eine Konstante in das Arbeitsregister 4 geladen. Anschließend bekommt das Register 6 ebenfalls einen Wert, dieser muss allerdings größer sein als 10h. Dies hängt damit zusammen, alle Adressen vor diesem Wert vom internen Rom bereits belegt werden. Somit können dort keine Daten gespeichert werden.
+In Zeile 8 wird eine Konstante (in unserem Fall 10) in das Arbeitsregister 4 geladen. Anschließend bekommt das Register 6 ebenfalls einen Wert, dieser muss allerdings größer oder gleich \verb|10h| sein (dies hängt damit zusammen, alle Adressen vor diesem Wert vom internen Rom bereits belegt werden. Somit können dort keine Daten gespeichert werden.
 
 Zeile 10 beschreibt über @RR6, dass nun der Speicher an der durch den Wert in R6 festgelegten Stelle angesprochen und die Konstante aus R4 dort gespeichert wird.
 
-Danach bekommt R6 einen anderen Wert, also eine andere Adresse im Speicher. In der Zeile 12 wird dann der Wert, der an der ursprünglichen Adresse von R6 lag ausgelesen und in R5 geschrieben.
+In der Zeile 12 wird dann der Wert, der an der Adresse von R6 liegt, ausgelesen und in R5 geschrieben. Nun vergleicht man im Einzelschrittmodus manuell, ob dieser mit dem in \verb|R4| gespeicherten Wert "ubereinstimmt. Falls dies nicht der Fall sein sollte, so würde liegt ein Fehler im Speicher vorliegen.
 
-Befindet sich dort eine andere Konstante als in R4, trat ein Fehler bei der Initialisierung, bzw. beim Schreiben und Lesen des externen Speichers auf.
+Da jedoch auch zuf"alligerweise in der Speicherzelle genau der richtige Wert stehen k"onnte, aber dennoch das Schreiben eventuell nicht funktioniert, muss man den selben Test mit einem anderen Wert (in unserem Fall \verb|17h|) wiederholen.
 
-Die Zeilen 14-18 zeigen ebenfalls eine nochmalige Kontrolle nach der eben beschriebenen Vorgehensweise. Die Speicheradressen sowie -register sind dabei jedoch anders.
+Erst dann kann man sicher sein, dass das Lesen und Schreiben des Speichers tats"achlich funktioniert.
 
 \subsection{Nutzung eines externen Stacks}
 \label{sec:1d}
@@ -187,7 +189,17 @@ Initialisieren Sie Port 0 als Ausgabe- und Port 2 als Eingabe-Port. Entwickeln S
 
 \subsubsection{L"osung}
 
+\label{sec:3a_loesung}
+
 Das Flussdiagramm, welches man aus der Programmbesschreibung erhält, befindet sich in Abbildung \ref{abb:1}. Das Assembler-Programm, welches hieraus erzeugt wurde, ist in Listing \ref{lst:32a} zu sehen.
+
+In diesem wird zun"achst der Port 0 als Ausgabe-Port initialisiert. Die Bitbelegung ist dabei \verb|XXX00X00|, wobei X für ein beliebiges Bit steht. Wir haben uns f"ur \verb|0h| entschieden.
+
+Anschließend muss Port 2 als Eingabe-Port initialisiert werden. Hierbei ist Bitbelegung 11111111, demzufolge in Hex FF.
+
+Die Initialisierung des Steuerregisters \verb|P3M| mit dem Wert \verb|XXXXXXX1| (in diesem Fall \verb|1h|) scheint dagegen "uberfl"ussig zu sein, da Port 2 nur als \emph{Ausgabe-Port} aktive Pull-Ups ben"otigt. Wir haben es dennoch nicht entfernt, um keine neue Fehlerquelle in der Ausarbeitung einzubauen.
+
+Nach der Initialisierung wird in einer Endlosschleife der Wert von Register 2 (Port-Register von Port 2) nach Register 0 kopiert (Port-Register von Port 0).
 
 \begin{figure}
 \begin{center}
@@ -224,6 +236,8 @@ Das Flussdiagramm, welches man aus der Programmbesschreibung erhält, befindet si
 \lstinputlisting[caption={Zyklische Abfrage und Ausgabe von Schaltern}, language=z8asm, label=lst:32a]{aufgabe32a.asm}
 \end{figure}
 
+\subsection{Zyklische Abfrage und Ausgabe von Schaltern mit Vertauschen von Bitpaaren}
+
 \subsubsection{Aufgabe}
 
 Das Programm ist insoweit zu erweitern, dass zwischen der Ein- und Ausgabe die Bitpaare $D_0-D_7$, $D_1-D_6$, $D_2-D_5$ und $D_3-D_4$ vertauscht werden.
@@ -231,25 +245,19 @@ Das Programm ist insoweit zu erweitern, dass zwischen der Ein- und Ausgabe die B
 \subsubsection{L"osung}
 
 \begin{figure}
-\lstinputlisting[caption={Erweiterung des zyklischen Abfrage und Ausgabe von Schaltern um Vertauschung von Bitpaaren}, language=z8asm, label=lst:32a_erweiterung]{aufgabe32a_erweiterung.asm}
+\lstinputlisting[caption={Erweiterung der zyklischen Abfrage und Ausgabe von Schaltern um Vertauschung von Bitpaaren}, language=z8asm, label=lst:32a_erweiterung]{aufgabe32a_erweiterung.asm}
 \end{figure}
 
 Listing \ref{lst:32a_erweiterung} bildet die Assembler-L"osung der Aufgabe.
 
-Zunächst wird der Port 0 als Ausgabe-Port initialisiert. Die Bitbelegung ist dabei XXX00X00, wobei X für ein beliebiges Bit steht.
-
-Anschließend muss Port 2 als Eingabe-Port initialisiert werden. Hierbei ist Bitbelegung 11111111, demzufolge in Hex FF.
-In Zeile 7 wird dann das Steuerregister P3M initialisiert. Dies ist wichtig, da der Port 2 als Ausgabe-Port aktive Pull-Ups benötigt.
-
-Die Bitbelegung ist dort also XXXXXXX1 -- f"ur die L"osung wurde sich f"ur \verb|1h| entschieden.
+Die Initialisierung erfolgt wie in Abschnitt \ref{sec:3a_loesung} beschrieben.
 
 Nach der Initialisierung der benötigten Ports folgt nun eine Schleife, da lt. Aufgabenstellung die Schalter zyklisch abgefragt werden sollen.
-Dort wird der abgefragte Wert der LED's aus Port 2 in das Register 4 geladen. Danach wird dieser Wert in P0, dem Ausgangsport geladen.
-Somit leuchten dort die jeweiligen LED's auf. Zum Schluss erfolgt ein Sprung zurück zum Anfang der Schleife, damit eine neue Anfrage gestartet wird.
+Dort wird der abgefragte Wert der LEDs aus Port 2 in das Register 4 geladen. Danach wird dieser Wert in P0, dem Ausgangsport geladen.
+Somit leuchten dort die jeweiligen LEDs auf. Zum Schluss erfolgt ein Sprung zurück zum Anfang der Schleife, damit eine neue Anfrage gestartet wird.
 
 \subsection{Z"ahlen von Anzahl Schalter"anderungen}
 \label{abschn:32c}
-
 
 
 \subsubsection{Aufgabe}
@@ -435,15 +443,13 @@ Entwickeln Sie eine Software, die den Timer 1 als Frequenzteiler f"ur eine an P3
 
 \subsubsection{L"osung}
 
-Warnung: diese L"osung ist unvollst"andig. R"ucksprache mit Denis erforderlich!!!
-
 \begin{figure}
 \lstinputlisting[caption={Frequenzteiler},language=z8asm,label=lst:34b]{aufgabe34b.asm}
 \end{figure}
 
 Listing \ref{lst:34a} bildet die Assembler-L"osung der Aufgabe.
 
-Gem"a"s der Abbildung aus Anlage 5 der Aufgabenstellung ist die an $T_{OUT}$ anliegende Frequenz $f_{T_{OUT}}$ bei Teilerfaktoren von $PRE1_{TF}$ bzw.  $T1_{TF}$ f"ur \verb|PRE1| bzw. \verb|T1|:
+Gem"a"s der Abbildung aus Anlage 5 der Aufgabenstellung ist (da der Frequenzgenerator als "`external clock"' an \verb|P31| anliegt und daher nicht als Vorverarbeitungsschritt durch 4 dividiert wird) die an $T_{OUT}$ anliegende Frequenz $f_{T_{OUT}}$ bei Teilerfaktoren von $PRE1_{TF}$ bzw.  $T1_{TF}$ f"ur \verb|PRE1| bzw. \verb|T1|:
 
 \begin{displaymath}
 f_{T_{OUT}} = \frac{1~MHz}{2\cdot PRE1_{TF} \cdot T1_{TF}}.

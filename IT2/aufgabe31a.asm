@@ -3,19 +3,22 @@
 	ORG %C
 
 	LD P01M, #%10
-	LD RP, 	#0
+	LD RP, #0
 
-	LD R4, #10	; (Kostante)
+	LD R4, #10 ; (Konstante)
 	LD R6, #%12
 	LDE @RR6, R4
-	LD R6, #%17
 	LDE R5, @RR6
-
-	LD R8, #18	; (weitere Konstante)
-	LD R6, #%14
-	LDE @RR6, R8
-	LD R6, #%20
-	LDE R9, @RR6
+	; Im Einzelschritt-Modus vergleichen,
+	; ob Inhalt R4 mit Inhalt von R5 
+	; uebereinstimmt
+	LD R4, #%17 ; (andere Konstante)
+	LDE @RR6, R4
+	LDE R5, @RR6
+	; Ein zweites mal im 
+	; Einzelschritt-Modus vergleichen,
+	; ob Inhalt von R4 mit Inhalt 
+	; von R5 uebereinstimmt
 
 	NOP
 
