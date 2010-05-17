@@ -41,6 +41,7 @@ tabsize=2	                % sets default tabsize to 2 spaces
 Konfigurieren Sie Port 1 zur Speichererweiterung durch 256 Byte externen RAM.
 
 \subsubsection{L"osung}
+\label{sec:1a_lsg}
 
 Wir m"ussen in das Register \verb|P01M| den Bin"arwert \verb|XX0100XX| schreiben, wobei X f"ur ein beliebiges Bit steht. Wir haben uns im Rahmen des Versuchs f"ur den Wert \verb|10h| entschieden.
 
@@ -69,20 +70,82 @@ Mit welchen Befehlen kann auf das RAM zugegriffen werden?
 \subsubsection{L"osung}
 
 \begin{figure}
-\lstinputlisting[caption={Zugriff auf den RAM},language=z8asm, label=aufgabe31a]{aufgabe31a.asm}
+\begin{center}
+\begin{pspicture}(5,17)
+%\psgrid
+\begin{psmatrix}[rowsep=0.4,colsep=0.5]
+	\psovalbox{Begin} \\
+	~ & [name=Init1] & \makebox[3cm]{} & [name=Init1a]\\
+	\psframebox{\parbox{4cm}{10h in P01M schreiben}}  \\
+	~ & [name=Init2] \\
+	\psframebox{\parbox{4cm}{RP mit 0 initialisieren}} \\
+	~ & [name=Init3] \\
+	\psframebox{\parbox{4cm}{R6 auf 12h setzen}} \\
+	~ & [name=Init4] & \makebox[3cm]{} & [name=Init4a]\\
+	\psframebox{\parbox{4cm}{R4 auf 10 setzen}} \\
+	\psframebox{\parbox{4cm}{Wert von R4 in die Speicherzelle, deren Adresse in R6 gespeichert ist ablegen}} \\
+	\psframebox{\parbox{4cm}{Den Wert der Speicherzelle, deren Adresse in R6 gespeichert ist, in R5 ablegen}} \\
+	~ & [name=Check1] \\
+	\psframebox{\parbox{4cm}{R4 auf 17 setzen}} \\
+	\psframebox{\parbox{4cm}{Wert von R4 in die Speicherzelle, deren Adresse in R6 gespeichert ist ablegen}} \\
+	\psframebox{\parbox{4cm}{Den Wert der Speicherzelle, deren Adresse in R6 gespeichert ist, in R5 ablegen}} \\
+	~ & [name=Check2] \\
+	\psovalbox{End}
+\end{psmatrix}
+\ncline{->}{1,1}{3,1}
+\ncline{->}{3,1}{5,1}
+\ncline{->}{5,1}{7,1}
+\ncline{->}{7,1}{9,1}
+\ncline{->}{9,1}{10,1}
+\ncline{->}{10,1}{11,1}
+\ncline{->}{11,1}{13,1}
+\ncline{->}{13,1}{14,1}
+\ncline{->}{14,1}{15,1}
+\ncline{->}{15,1}{17,1}
+\psbrace[ref=lC](Init2)(Init1){\parbox{3cm}{Konfiguration von Port 1 zur Speichererweiterung durch 256 Byte externen RAM}}
+\psbrace[ref=lC](Init3)(Init2){\parbox{3cm}{R6 mit einer zulässigen Adresse initialisieren}}
+\psbrace[ref=lC](Init4)(Init3){\parbox{3cm}{Initialisierung des Register Pointers}}
+\psbrace[ref=lC](Init4a)(Init1a){\parbox{3cm}{Initialisierung}}
+\psbrace[ref=lC](Check1)(Init4){\parbox{6cm}{Erster Test; nach Durchlauf dieses Blocks im Einzelschrittmodus "uberpr"ufen, ob Inhalte von R4 und R5 "ubereinstimmen}}
+\psbrace[ref=lC](Check2)(Check1){\parbox{6cm}{Zweiter Test; nach Durchlauf dieses Blocks im Einzelschrittmodus "uberpr"ufen, ob Inhalte von R4 und R5 "ubereinstimmt}}
+\end{pspicture}
+\vspace{0.5cm}
+\end{center}
+\caption{Zugriff auf den RAM}
+\label{abb:aufgabe31a}
 \end{figure}
 
-Listing \ref{aufgabe31a} bildet die Assembler-Lösung der Aufgabe.
+\begin{figure}
+\lstinputlisting[caption={Zugriff auf den RAM},language=z8asm, label=lsg:aufgabe31a]{aufgabe31a.asm}
+\end{figure}
 
-In Zeile 5 wird der Port wie in Abschnitt \ref{sec:1a} beschrieben initialisiert. Als nächstes wird in Zeile 6 der Registerpointer (RP) initialisiert. Im weiteren Verlauf sind dann alle verwendeten Register als sogenannte Arbeitsregister deklariert. Durch diese Festlegung ist es möglich, bestimmte Operationen effizienter mit weniger Quelltext auszuführen (Register-Pointer-Befehle).
+\begin{table}
+\begin{tabular}[t]{|c|l|}
+\hline
+Register & Bedeutung \\
+\hline
+R4 & Konstante, welche in den Speicher geschrieben wird \\
+R5 & Aus dem Speicher ausgelesener Wert \\
+R6 & Speicheradresse \\
+\hline
+\end{tabular}
+\caption{Registerbelegung des Programms zum Zugriff auf den RAM}
+\label{table:aufgabe31a}
+\end{table}
+
+Abbildung \ref{abb:aufgabe31a} enthält das Flussdiagramm, auf dem die Assembler-L"osung dieser Aufgabe aus Listing \ref{lsg:aufgabe31a} basiert. Die Tabelle \ref{table:aufgabe31a} beinhaltet die Registerbelegung des Programms.
+
+In Zeile 5 wird der Port wie in Abschnitt \ref{sec:1a_lsg} beschrieben initialisiert. Als nächstes wird in Zeile 6 der Registerpointer (\verb|RP|) initialisiert. Im weiteren Verlauf sind dann alle verwendeten Register als sogenannte Arbeitsregister deklariert. Durch diese Festlegung ist es möglich, bestimmte Operationen effizienter mit weniger Quelltext auszuführen (Register-Pointer-Befehle).
 
 Um zu überprüfen, dass der Speicher richtig initialisiert wurde, werden nun festgelegte Bereiche mit Konstanten beschrieben und wieder ausgelesen.
 
-In Zeile 8 wird eine Konstante (in unserem Fall 10) in das Arbeitsregister 4 geladen. Anschließend bekommt das Register 6 ebenfalls einen Wert, dieser muss allerdings größer oder gleich \verb|10h| sein (dies hängt damit zusammen, alle Adressen vor diesem Wert vom internen Rom bereits belegt werden. Somit können dort keine Daten gespeichert werden.
+Register \verb|R6| bekommt einen Wert (eine Speicheradresse) zugewiesen. Dieser muss größer oder gleich \verb|10h| sein (dies hängt damit zusammen, alle Adressen vor diesem Wert vom internen Rom bereits belegt werden). Somit können dort keine Daten gespeichert werden. 
 
-Zeile 10 beschreibt über @RR6, dass nun der Speicher an der durch den Wert in R6 festgelegten Stelle angesprochen und die Konstante aus R4 dort gespeichert wird.
+Anschließend wird in Zeile 9 wird eine Konstante (in unserem Fall 10) in das Arbeitsregister \verb|R4| geladen. 
 
-In der Zeile 12 wird dann der Wert, der an der Adresse von R6 liegt, ausgelesen und in R5 geschrieben. Nun vergleicht man im Einzelschrittmodus manuell, ob dieser mit dem in \verb|R4| gespeicherten Wert "ubereinstimmt. Falls dies nicht der Fall sein sollte, so würde liegt ein Fehler im Speicher vorliegen.
+Zeile 10 beschreibt über \verb|@RR6|, dass nun der Speicher an der durch den Wert in \verb|R6| festgelegten Stelle angesprochen und die Konstante aus \verb|R4| dort gespeichert wird.
+
+In der Zeile 12 wird dann der Wert, der an der Adresse von \verb|R6| liegt, ausgelesen und in \verb|R5| geschrieben. Nun vergleicht man im Einzelschrittmodus manuell, ob dieser mit dem in \verb|R4| gespeicherten Wert "ubereinstimmt. Falls dies nicht der Fall sein sollte, so würde liegt ein Fehler im Speicher vorliegen.
 
 Da jedoch auch zuf"alligerweise in der Speicherzelle genau der richtige Wert stehen k"onnte, aber dennoch das Schreiben eventuell nicht funktioniert, muss man den selben Test mit einem anderen Wert (in unserem Fall \verb|17h|) wiederholen.
 
@@ -108,22 +171,22 @@ Gem"a"s den Instruktionen w"ahrend des Praktikums wurde die Aufgabenstellung der
 
 Die R"uckkehradresse liegt dann in der Adresse \verb|0x10FE| auf dem Stack, da der Program Counter 2 Bytes benötigt und entsprechend durch den \verb|CALL|-Befehl wie in Anlage 9 beschrieben der Stack Pointer \verb|SP| um 2 erniedrigt wird und in dieser Adresse der Program Counter \verb|PC| abgespeichert wird.
 
-Wie man in den Zeile 6 und 7 sehen kann, werden SPH bzw. SPL und  (High bzw. Low Byte des Stack Pointers) auf die Adressen \verb|11h| bzw. \verb|00h| gesetzt. Nach den Vorbetrachtungen in Abschnitt \ref{sec:1b} stellt dies das Ende des externen unter \ref{sec:1a} konfigurierten externen RAMs dar.
+Wie man in den Zeile 6 und 7 sehen kann, werden \verb|SPH| bzw. \verb|SPL| und  (High bzw. Low Byte des Stack Pointers) auf die Adressen \verb|11h| bzw. \verb|00h| gesetzt. Nach den Vorbetrachtungen in Abschnitt \ref{sec:1b} stellt dies das Ende des externen unter \ref{sec:1a} konfigurierten externen RAMs dar.
 
-Wenn wir uns im Einzelschritt-Betrieb in Zeile 9 befinden, so ist offensichtlich noch kein Wert auf den Stack geschrieben worden. Der Program Counter PC hat den Wert \verb|0015h|.
+Wenn wir uns im Einzelschritt-Betrieb in Zeile 9 befinden, so ist offensichtlich noch kein Wert auf den Stack geschrieben worden. Der Program Counter \verb|PC| hat den Wert \verb|0015h|.
 
-Wenn wir einen Schritt weitergehen (den \verb|CALL|-Befehl also ausführen), so wird in der Speicheradresse \verb|10FFh| der Wert \verb|00h| und in der Speicheradresse \verb|10FEh| der Wert \verb|18h| abgespeichert. Dies stellt ein Pushen der Adresse des folgenden und Befehls (Zeile 10) in Little-Endian-Darstellung auf den Stack dar. Zudem wurde der Wert des aus SPL und SPH bestehenden Stack Pointers um 2 erniedrigt.
+Wenn wir einen Schritt weitergehen (den \verb|CALL|-Befehl also ausführen), so wird in der Speicheradresse \verb|10FFh| der Wert \verb|00h| und in der Speicheradresse \verb|10FEh| der Wert \verb|18h| abgespeichert. Dies stellt ein Pushen der Adresse des folgenden und Befehls (Zeile 10) in Little-Endian-Darstellung auf den Stack dar. Zudem wurde der Wert des aus \verb|SPL| und \verb|SPH| bestehenden Stack Pointers um 2 erniedrigt.
 
 Die Werte sind am Anfang von Zeile 15 also folgendermaßen:
 \\
 
-\begin{tabular}{|rr|}
+\begin{tabular}{|c|r|}
 \hline
 Register/Speicheradresse & Wert \\
 \hline
 PC & \verb|500h| \\
-SPL & \verb|FE| \\
-SPH & \verb|10| \\
+SPL & \verb|FEh| \\
+SPH & \verb|10h| \\
 \verb|10FEh| & \verb|18h| \\
 \verb|10FFh| & \verb|00h| \\
 \hline
@@ -135,13 +198,13 @@ Wenn wir nun einen Schritt weitergehen und Zeile 15 ausführen, so wird der Wert 
 Somit sind nach Ausf"uhrung dieser Zeile in den Registern bzw. Speicheradressen folgende Werte abgelegt:
 \\
 
-\begin{tabular}{|rr|}
+\begin{tabular}{|c|r|}
 \hline
 Register/Speicheradresse & Wert \\
 \hline
 PC & \verb|600h| \\
-SPL & \verb|FC| \\
-SPH & \verb|10| \\
+SPL & \verb|FCh| \\
+SPH & \verb|10h| \\
 \verb|10FCh| & \verb|05h| \\
 \verb|10FDh| & \verb|03h| \\
 \verb|10FEh| & \verb|18h| \\
@@ -154,13 +217,13 @@ Wenn nun in Zeile 20 der \verb|RET|-Befehl ausgef"uhrt wird, so wird die Rückspr
 
 Die Werte der Register bzw. Speicheradressen enthalten daher folgende Werte:\\
 
-\begin{tabular}{|rr|}
+\begin{tabular}{|c|r|}
 \hline
 Register/Speicheradresse & Wert \\
 \hline
 PC & \verb|503h| \\
-SPL & \verb|FE| \\
-SPH & \verb|10| \\
+SPL & \verb|FEh| \\
+SPH & \verb|10h| \\
 \verb|10FEh| & \verb|18h| \\
 \verb|10FFh| & \verb|00h| \\
 \hline
@@ -169,13 +232,13 @@ SPH & \verb|10| \\
 
 Bei der Ausführung von Zeile 16 wird ein weiteres Mal die R"ucksprungadresse vom Stack genommen, so dass wir als Werte in den Registern nun ablesen k"onnen:\\
 
-\begin{tabular}{|rr|}
+\begin{tabular}{|c|r|}
 \hline
 Register/Speicheradresse & Wert \\
 \hline
 PC & \verb|503h| \\
-SPL & \verb|00| \\
-SPH & \verb|11| \\
+SPL & \verb|00h| \\
+SPH & \verb|11h| \\
 \hline
 \end{tabular}
 
@@ -189,17 +252,7 @@ Initialisieren Sie Port 0 als Ausgabe- und Port 2 als Eingabe-Port. Entwickeln S
 
 \subsubsection{L"osung}
 
-\label{sec:3a_loesung}
-
-Das Flussdiagramm, welches man aus der Programmbesschreibung erhält, befindet sich in Abbildung \ref{abb:1}. Das Assembler-Programm, welches hieraus erzeugt wurde, ist in Listing \ref{lst:32a} zu sehen.
-
-In diesem wird zun"achst der Port 0 als Ausgabe-Port initialisiert. Die Bitbelegung ist dabei \verb|XXX00X00|, wobei X für ein beliebiges Bit steht. Wir haben uns f"ur \verb|0h| entschieden.
-
-Anschließend muss Port 2 als Eingabe-Port initialisiert werden. Hierbei ist Bitbelegung 11111111, demzufolge in Hex FF.
-
-Die Initialisierung des Steuerregisters \verb|P3M| mit dem Wert \verb|XXXXXXX1| (in diesem Fall \verb|1h|) scheint dagegen "uberfl"ussig zu sein, da Port 2 nur als \emph{Ausgabe-Port} aktive Pull-Ups ben"otigt. Wir haben es dennoch nicht entfernt, um keine neue Fehlerquelle in der Ausarbeitung einzubauen.
-
-Nach der Initialisierung wird in einer Endlosschleife der Wert von Register 2 (Port-Register von Port 2) nach Register 0 kopiert (Port-Register von Port 0).
+\label{sec:32a_loesung}
 
 \begin{figure}
 \begin{center}
@@ -229,12 +282,22 @@ Nach der Initialisierung wird in einer Endlosschleife der Wert von Register 2 (P
 \vspace{0.5cm}
 \end{center}
 \caption{Zyklische Abfrage und Ausgabe von Schaltern}
-\label{abb:1}
+\label{aufgabe32a}
 \end{figure}
 
 \begin{figure}
 \lstinputlisting[caption={Zyklische Abfrage und Ausgabe von Schaltern}, language=z8asm, label=lst:32a]{aufgabe32a.asm}
 \end{figure}
+
+Das Flussdiagramm, welches man aus der Programmbesschreibung erhält, befindet sich in Abbildung \ref{abb:aufgabe32a}. Das Assembler-Programm, welches hieraus erzeugt wurde, ist in Listing \ref{lst:32a} zu sehen.
+
+In diesem wird zun"achst der Port 0 als Ausgabe-Port initialisiert. Die Bitbelegung ist dabei \verb|XXX00X00|, wobei X für ein beliebiges Bit steht. Wir haben uns f"ur \verb|0h| entschieden.
+
+Anschließend muss Port 2 als Eingabe-Port initialisiert werden. Hierbei ist Bitbelegung \verb|11111111|, also \verb|FFh|.
+
+Die Initialisierung des Steuerregisters \verb|P3M| mit dem Wert \verb|XXXXXXX1| (in diesem Fall \verb|1h|) scheint dagegen "uberfl"ussig zu sein, da Port 2 nur als \emph{Ausgabe-Port} aktive Pull-Ups ben"otigt. Wir haben es dennoch nicht entfernt, um keine neue Fehlerquelle in der Ausarbeitung einzubauen.
+
+Nach der Initialisierung wird in einer Endlosschleife der Wert von Register 2 (Port-Register von Port 2) nach Register 0 kopiert (Port-Register von Port 0).
 
 \subsection{Zyklische Abfrage und Ausgabe von Schaltern mit Vertauschen von Bitpaaren}
 
@@ -296,7 +359,7 @@ Die Endlosschleife muss gegenüber der vorhergehenden Aufgabe erweitert werden. Z
 
 Da ein Byte 8 Bits enth"alt, muss dies acht mal durchgeführt werden.
 
-Zuletzt wird der Wert von Register 5 nach P0, dem Ausgangsport übertragen und zum Anfang der Schleife zur"uckgesprungen.
+Zuletzt wird der Wert von Register 5 nach \verb|P0|, dem Ausgangsport übertragen und zum Anfang der Schleife zur"uckgesprungen.
 
 \subsection{Z"ahlen von Anzahl Schalter"anderungen}
 \label{abschn:32c}
@@ -448,7 +511,7 @@ Zur Erkl"arung: prinzipiell k"onnte man ein Abwarten durch \verb|NOP|-Befehle er
 
 Stattdessen werden zwei verschachtelte, durch den \verb|DJNZ|-Befehl erzeugte Schleifen verwendet.
 
-In Zeile 29 wird der Registerpointer auf den Wert \verb|10h| gesetzt. Da der \verb|DJNZ| auf Arbeitsregistern operiert (deren absolute Position vom Wert des Registerpointers abh"angt), wird somit garantiert, dass die Nummerierung der aktuellen Arbeitsregister ab Position \verb|10h| (nur die obersten 4 Bits werden ber"ucksichtigt) beginnt.
+In Zeile 29 wird der Registerpointer \verb|RP| auf den Wert \verb|10h| gesetzt. Da der \verb|DJNZ| auf Arbeitsregistern operiert (deren absolute Position vom Wert des Registerpointers abh"angt), wird somit garantiert, dass die Nummerierung der aktuellen Arbeitsregister ab Position \verb|10h| (nur die obersten 4 Bits werden ber"ucksichtigt) beginnt.
 
 Normalerweise w"urde man zur Bestimmung der tats"achlich zu wartenden Dauer oszillographische Methoden benutzen, um die Zeitdauer zu bestimmen und anschlie"send die Werte in den Zeilen 32 und 34 an die gemessenen Werte anpassen. Gem"a"s den Anweisungen des Betreuers wurde jedoch hierauf verzichtet.
 

@@ -4,9 +4,9 @@
 
 	LD P01M, #%10
 	LD RP, #0
+	LD R6, #%12
 
 	LD R4, #10 ; (Konstante)
-	LD R6, #%12
 	LDE @RR6, R4
 	LDE R5, @RR6
 	; Im Einzelschritt-Modus vergleichen,
