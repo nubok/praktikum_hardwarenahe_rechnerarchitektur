@@ -449,8 +449,8 @@ Register & Bedeutung \\
 4 & Anzahl "Anderungen \\
 5 & Alter Wert von Port 2 \\
 6 & Neuer Wert von Port 2 \\
-r0 & Z"ahler "au"sere Schleife \\
-r1 & Z"ahler innere Schleife \\
+R0 & Z"ahler "au"sere Schleife \\
+R1 & Z"ahler innere Schleife \\
 \hline
 \end{tabular}
 \caption{Registerbelegungstabelle f"ur die zweite Version (unter Ber"ucksichtigung von Schwingungen) des Programms zum Z"ahlen der Anzahl von Schalter"anderungen}
@@ -470,12 +470,12 @@ r1 & Z"ahler innere Schleife \\
 	\psframebox{\parbox{4cm}{Lade 10h nach RP}} \\
 	\psframebox{\parbox{4cm}{Lade FFh nach r0}} \\
 	[name=Loop0] \\
-	\psframebox{\parbox{4cm}{Lade FFh nach r1}} \\
+	\psframebox{\parbox{4cm}{Lade FFh nach R1}} \\
 	[name=Loop1] \\
-	\psframebox{\parbox{4cm}{Dekrementiere r1}} \\
-	\psdiabox{\parbox{2.2cm}{Ist r1 $\neq$ 0?}} \\
-	\psframebox{\parbox{4cm}{Dekrementiere r0}} \\
-	\psdiabox{\parbox{2.2cm}{Ist r0 $\neq$ 0?}} \\
+	\psframebox{\parbox{4cm}{Dekrementiere R1}} \\
+	\psdiabox{\parbox{2.2cm}{Ist R1 $\neq$ 0?}} \\
+	\psframebox{\parbox{4cm}{Dekrementiere R0}} \\
+	\psdiabox{\parbox{2.2cm}{Ist R0 $\neq$ 0?}} \\
 	\psframebox{\parbox{4cm}{Inkrementiere Register 4}} \\
 	\psframebox{\parbox{4cm}{Sende den Wert von Register 4 Wert an Port 0}} \\
 	\psframebox{\parbox{4cm}{Speichere den Wert von Register 6 in Register 5}}
@@ -525,18 +525,57 @@ Normalerweise w"urde man zur Bestimmung der tats"achlich zu wartenden Dauer oszi
 Initialisieren Sie Timer 0 (einschlie"slich Prescaler) derart, dass am Portausgang P36 (${T1}_{OUT}$) eine Impulsfolge mit einer Frequenz von 5 kHz geliefert wird (Modulo-N-Mode, OSC=8 MHz, Anlage 5). Porteingang P31 soll hierbei als Toreingang (${T1}_{IN}$) benutzt werden (Aktivierung: High-Pegel über entprellten Schalter S3, Anlage 1).
 
 \subsubsection{L"osung}
+\label{sec:34a}
+
+\begin{figure}
+\begin{center}
+\begin{pspicture}(8,9)
+%\psgrid
+\begin{psmatrix}[rowsep=0.4,colsep=0.5]
+	\psovalbox{Begin} \\
+	~ & [name=Init1] \\
+	\psframebox{\parbox{4cm}{00h in Register P3M schreiben}}  \\
+	\psframebox{\parbox{4cm}{9Ch in Register TMR schreiben}}  \\
+	~ & [name=Init3] \\
+	\psframebox{\parbox{4cm}{5 in Register PRE1 schreiben}}  \\
+	\psframebox{\parbox{4cm}{100 in Register T1 schreiben}} \\
+	[name=PreInit5] & [name=Init5] \\
+	\psframebox{\parbox{4cm}{Tu nichts}} \\
+	& [name=AfterEndlessLoop]
+\end{psmatrix}
+\ncline{->}{1,1}{3,1}
+\ncline{->}{3,1}{4,1}
+\ncline{->}{4,1}{6,1}
+\ncline{->}{6,1}{7,1}
+\ncline{->}{7,1}{9,1}
+\ncangles[angleA=-90, armA=0.5cm, armB=2.5cm]{->}{9,1}{PreInit5}
+\psbrace[ref=lC](Init3)(Init1){\parbox{3cm}{Steuerregister initialisieren}}
+\psbrace[ref=lC](Init5)(Init3){\parbox{3cm}{Prescaler und Timer initialisieren}}
+\psbrace[ref=lC](AfterEndlessLoop)(Init5){\parbox{3cm}{Endlos-Schleife}}
+\end{pspicture}
+\vspace{0.5cm}
+\end{center}
+\caption{Generierung einer Impulsfolge mit 5 kHz}
+\label{abb:aufgabe34a}
+\end{figure}
 
 \begin{figure}
 \lstinputlisting[caption={Generierung einer Impulsfolge mit 5 kHz},language=z8asm,label=lst:34a]{aufgabe34a.asm}
 \end{figure}
 
-%Listing \ref{lst:34a} bildet die Assembler-L"osung der Aufgabe.
+Abbildung \ref{abb:aufgabe34a} bildet das Flussdiagramm zur Aufgabe. Listing \ref{lst:34a} enth"alt den zugeh2origen Assembler-Quelltext.
 
-Als erstes wird das Steuerregister P3M in mit \verb|XX0XXXXX| initialisiert. Das Bit D5 ist dabei zentral, da es P31 auf $T_{in}$ setzt.
+Bevor man die konkreten Werte f"ur den Prescaler (Register \verb|PRE1|) und Timer (Register \verb|T1|) setzen kann, m"ussen die Steuerregister \verb|P3M| und \verb|TMR| (Timer-Mode-Register) korrekt initialisiert werden.
 
-Anschließend muss das Timer-Mode-Register mit \verb|10011100| initialisiert werden. Hier erfolgt die richtige Belegung über die Eingangs- und Ausgangssignale (lt. Aufgabenstellung).
+Als erstes wird das Steuerregister \verb|P3M| in mit \verb|XX0XXXXX| initialisiert. Das Bit D5 ist dabei zentral, da es \verb|P31| auf $T_{in}$ setzt. Wir haben uns f"ur den konkreten Wert \verb|0h| entschieden.
 
-Danach werden die Initialwerte des Prescaler 1 und des Timers 1 gesetzt, um dadurch die gewünschte Frequenz von 5 KHz zu bekommen. 
+Anschließend muss das Timer-Mode-Register \verb|TMR| mit \verb|10011100| initialisiert werden. Hier erfolgt die richtige Belegung über die Eingangs- und Ausgangssignale (lt. Aufgabenstellung).
+
+Danach werden die Initialwerte des Prescaler 1 (Wert 1) und des Timers 1 gesetzt, um dadurch die gewünschte Frequenz von 5 KHz zu bekommen. 
+
+Der Prescaler wird außerdem über das auf 1 gesetzte Bit \verb|D0| in den Modulo N Modus und über das nicht gesetzte Bit \verb|D1| in den Input $T_{in}$ Modus gesetzt.
+
+Letztendlich befindet sich im Programm eine Schleife, sodass das Programm nicht unerwünscht terminiert.
 
 Der Grund, warum sich tats"chlich eine Frequenz von 5~kHz ergibt, l"asst sich aus Abbildung 5 des Aufgabenblattes entnehmen: die am \verb|OSC|-Eingang anliegende Frequenz wird erst einmal durch 2 dividiert. Anschließend wird sie in der Clock Logic nochmals durch  4 dividiert.
 
@@ -549,10 +588,6 @@ f_{T_{OUT}} & = & \frac{8~MHz}{2\cdot 4 \cdot 1 \cdot 100 \cdot 2} \\
 & = & 5~kHz.
 \end{eqnarray*}
 
-Der Prescaler wird außerdem über das Bit D0 in den Modulo N Modus und über D1 in den Input $T_{in}$ Modus gesetzt.
-
-Letztendlich befindet sich im Programm eine Schleife, sodass das Programm nicht unerwünscht terminiert.
-
 \subsection{Frequenzteiler}
 
 \subsubsection{Aufgabe}
@@ -562,18 +597,52 @@ Entwickeln Sie eine Software, die den Timer 1 als Frequenzteiler f"ur eine an P3
 \subsubsection{L"osung}
 
 \begin{figure}
+\begin{center}
+\begin{pspicture}(8,9)
+%\psgrid
+\begin{psmatrix}[rowsep=0.4,colsep=0.5]
+	\psovalbox{Begin} \\
+	~ & [name=Init1] \\
+	\psframebox{\parbox{4cm}{00h in Register P3M schreiben}}  \\
+	\psframebox{\parbox{4cm}{8Ch in Register TMR schreiben}}  \\
+	~ & [name=Init3] \\
+	\psframebox{\parbox{4cm}{05h (minimaler Teilerfaktor) bzw. 01h (maximaler Teilerfaktor) in Register PRE1 schreiben}}  \\
+	\psframebox{\parbox{4cm}{01h (minimaler Teilerfaktor) bzw. 00h (maximaler Teilerfaktor) in Register T1 schreiben}} \\
+	[name=PreInit5] & [name=Init5] \\
+	\psframebox{\parbox{4cm}{Tu nichts}} \\
+	& [name=AfterEndlessLoop]
+\end{psmatrix}
+\ncline{->}{1,1}{3,1}
+\ncline{->}{3,1}{4,1}
+\ncline{->}{4,1}{6,1}
+\ncline{->}{6,1}{7,1}
+\ncline{->}{7,1}{9,1}
+\ncangles[angleA=-90, armA=0.5cm, armB=2.5cm]{->}{9,1}{PreInit5}
+\psbrace[ref=lC](Init3)(Init1){\parbox{3cm}{Steuerregister initialisieren}}
+\psbrace[ref=lC](Init5)(Init3){\parbox{3cm}{Prescaler und Timer initialisieren}}
+\psbrace[ref=lC](AfterEndlessLoop)(Init5){\parbox{3cm}{Endlos-Schleife}}
+\end{pspicture}
+\vspace{0.5cm}
+\end{center}
+\caption{Frequenzteiler}
+\label{abb:aufgabe34b}
+\end{figure}
+
+\begin{figure}
 \lstinputlisting[caption={Frequenzteiler},language=z8asm,label=lst:34b]{aufgabe34b.asm}
 \end{figure}
 
-Listing \ref{lst:34a} bildet die Assembler-L"osung der Aufgabe.
+Listing \ref{lst:34a} bildet die Assembler-L"osung der Aufgabe. das zugehörige Flussdiagramm befindet sich in Abbildung \ref{abb:aufgabe34b}.
 
-Gem"a"s der Abbildung aus Anlage 5 der Aufgabenstellung ist (da der Frequenzgenerator als "`external clock"' an \verb|P31| anliegt und daher nicht als Vorverarbeitungsschritt durch 4 dividiert wird) die an $T_{OUT}$ anliegende Frequenz $f_{T_{OUT}}$ bei Teilerfaktoren von $PRE1_{TF}$ bzw.  $T1_{TF}$ f"ur \verb|PRE1| bzw. \verb|T1|:
+Die Initialisierung der Steuerregister funktioniert nahezu analog zur L"osung der vorherigen Aufgabe in Abschnitt \ref{sec:34a}. Der einzige Unterschied ist, dass das Steuerregister \verb|TMR| mit \verb|8Ch| statt \verb|9Ch| zu initialisieren ist. Der Grund liegt darin, dass als \verb|TIN|-Modus "`External Clock Input"' statt "`Gate Input"' zu benutzen ist.
+
+Gem"a"s der Abbildung aus Anlage 5 der Aufgabenstellung ist (da der Frequenzgenerator als "`External Clock"' an \verb|P31| anliegt und daher nicht als Vorverarbeitungsschritt durch 4 dividiert wird) die an $T_{OUT}$ anliegende Frequenz $f_{T_{OUT}}$ bei Teilerfaktoren von $PRE1_{TF}$ bzw.  $T1_{TF}$ f"ur \verb|PRE1| bzw. \verb|T1|:
 
 \begin{displaymath}
 f_{T_{OUT}} = \frac{1~MHz}{2\cdot PRE1_{TF} \cdot T1_{TF}}.
 \end{displaymath}
 
-In Tabelle \ref{table:1} sind die Werte der praktischen Messungen, die Werte der Teilerfaktoren $T1_{Init}$ bzw. $PRE1_{Init}$, die zu initialisierenden Werte für die zueg"origen Timerregister \verb|PRE1| bzw. \verb|T1|, die theoretisch zu erwartenden Werte f"ur $f_{T_{OUT}}$, sowie dessen praktische Messwerte abgetragen.
+In Tabelle \ref{table:1} sind die Werte der Teilerfaktoren $T1_{Init}$ bzw. $PRE1_{Init}$, die zu initialisierenden Werte für die zugeh"origen Timerregister \verb|PRE1| bzw. \verb|T1|, die theoretisch zu erwartenden Werte f"ur $f_{T_{OUT}}$, sowie deren Messwerte abgetragen.
 
 \begin{table}
 \begin{minipage}[t]{\textwidth}
@@ -594,7 +663,7 @@ In Tabelle \ref{table:1} sind die Werte der praktischen Messungen, die Werte der
 \end{tabular}
 \end{center}
 \end{minipage}
-\caption{In Aufgabe Frequenzteiler zu bestimmende Werte}
+\caption{In Aufgabe "`Frequenzteiler"' zu messende Werte in Abh"angigkeit von den Teilerfaktoren}
 \label{table:1}
 \end{table}
 

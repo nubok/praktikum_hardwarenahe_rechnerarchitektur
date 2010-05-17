@@ -29,12 +29,12 @@
 	LD RP, #%10
 
 	; Schleifen 
-	LD r0, #%FF
+	LD R0, #%FF
 	outer_loop:
-	LD r1, #%FF
+	LD R1, #%FF
 	inner_loop:
-	DJNZ r1, inner_loop
-	DJNZ r0, outer_loop
+	DJNZ R1, inner_loop
+	DJNZ R0, outer_loop
 
 	INC 4
 	LD P0, 4

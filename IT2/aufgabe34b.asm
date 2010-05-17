@@ -13,9 +13,9 @@
 	; Init PRE1
 	; Maximum 6 bit, lower 2 bits: 
 	; 0: TIN Mode, 1: Modulo N
-	LD PRE1, #%01 
+	LD PRE1, #%01 ; 05: Minimum 01: Maximum  
 	; Init T1
-	LD T1, #%00 ; Maximum 8 bit
+	LD T1,   #%00 ; 01: Minimum 00: Maximum
 
 	Label: JP Label
 
