@@ -19,7 +19,7 @@
 
 \lstdefinelanguage{z8asm}
 {
-morekeywords={ORG,CALL,JP,LD,LDE,NOP,RET,RLC,RRC,TITLE,END},
+morekeywords={ORG,CALL,CP,DJNZ,INC,JP,LD,LDE,NOP,RET,RLC,RRC,TITLE,END},
 morecomment=[l]{;}
 }
 
@@ -467,7 +467,8 @@ r1 & Z"ahler innere Schleife \\
 	[name=Begin] \\
 	\psframebox{\parbox{4cm}{Lade Wert von Port 2 nach Register 6}} \\
 	\psdiabox{\parbox{2.2cm}{Ist Register 5 = Register 6?}} \\
-	\psframebox{\parbox{4cm}{Lade 10h nach RP, FFh nach r0}} \\
+	\psframebox{\parbox{4cm}{Lade 10h nach RP}} \\
+	\psframebox{\parbox{4cm}{Lade FFh nach r0}} \\
 	[name=Loop0] \\
 	\psframebox{\parbox{4cm}{Lade FFh nach r1}} \\
 	[name=Loop1] \\
@@ -480,20 +481,21 @@ r1 & Z"ahler innere Schleife \\
 	\psframebox{\parbox{4cm}{Speichere den Wert von Register 6 in Register 5}}
 	\ncline{->}{1,1}{2,1}
 	\ncline{->}{2,1}{4,1}
-	\ncangles[angleA=0, armA=0.5cm, armB=2.5cm]{->}{4,1}{Begin}\nbput{Ja}
-	\ncline{->}{4,1}{5,1}\nbput{Nein}
-	\ncline{->}{5,1}{6,1}
-	\ncline{->}{6,1}{8,1}
-	\ncline{->}{8,1}{10,1}
-	\ncline{->}{10,1}{11,1}
-	\ncangles[angleA=0, armA=0.5cm, armB=2.5cm]{->}{11,1}{Loop1}\nbput{Ja}
-	\ncline{->}{11,1}{12,1}\nbput{Nein}
-	\ncline{->}{12,1}{13,1}
-	\ncline{->}{13,1}{14,1}\nbput{Nein}
-	\ncline{->}{14,1}{15,1}
+	\ncangles[angleA=0, armA=0.5cm, armB=2.5cm]{->}{5,1}{Begin}\nbput{Ja}
+	\ncline{->}{4,1}{5,1}
+	\ncline{->}{5,1}{6,1}\nbput{Nein}
+	\ncline{->}{6,1}{7,1}
+	\ncline{->}{7,1}{9,1}
+	\ncline{->}{9,1}{11,1}
+	\ncline{->}{11,1}{12,1}
+	\ncangles[angleA=0, armA=0.5cm, armB=2.5cm]{->}{12,1}{Loop1}\nbput{Ja}
+	\ncline{->}{12,1}{13,1}\nbput{Nein}
+	\ncline{->}{13,1}{14,1}
+	\ncline{->}{14,1}{15,1}\nbput{Nein}
 	\ncline{->}{15,1}{16,1}
-	\ncangles[angleA=0, armA=1.5cm, armB=2.5cm]{->}{13,1}{Loop0}\nbput{Ja}
-	\ncangles[angleA=-90, armA=0.5cm, armB=3.0cm]{->}{16,1}{5,1}
+	\ncline{->}{16,1}{17,1}
+	\ncangles[angleA=0, armA=1.5cm, armB=2.5cm]{->}{14,1}{Loop0}\nbput{Ja}
+	\ncangles[angleA=-90, armA=0.5cm, armB=5.0cm]{->}{17,1}{Begin}
 \end{psmatrix}
 \end{pspicture}
 \vspace{0.5cm}
