@@ -69,6 +69,20 @@ Mit welchen Befehlen kann auf das RAM zugegriffen werden?
 
 \subsubsection{L"osung}
 
+\begin{table}
+\begin{tabular}[t]{|c|l|}
+\hline
+Register & Bedeutung \\
+\hline
+R4 & Konstante, welche in den Speicher geschrieben wird \\
+R5 & Aus dem Speicher ausgelesener Wert \\
+R6 & Speicheradresse \\
+\hline
+\end{tabular}
+\caption{Registerbelegung des Programms zum Zugriff auf den RAM}
+\label{table:aufgabe31a}
+\end{table}
+
 \begin{figure}
 \begin{center}
 \begin{pspicture}(5,17)
@@ -118,20 +132,6 @@ Mit welchen Befehlen kann auf das RAM zugegriffen werden?
 \begin{figure}
 \lstinputlisting[caption={Zugriff auf den RAM},language=z8asm, label=lsg:aufgabe31a]{aufgabe31a.asm}
 \end{figure}
-
-\begin{table}
-\begin{tabular}[t]{|c|l|}
-\hline
-Register & Bedeutung \\
-\hline
-R4 & Konstante, welche in den Speicher geschrieben wird \\
-R5 & Aus dem Speicher ausgelesener Wert \\
-R6 & Speicheradresse \\
-\hline
-\end{tabular}
-\caption{Registerbelegung des Programms zum Zugriff auf den RAM}
-\label{table:aufgabe31a}
-\end{table}
 
 Abbildung \ref{abb:aufgabe31a} enthält das Flussdiagramm, auf dem die Assembler-L"osung dieser Aufgabe aus Listing \ref{lsg:aufgabe31a} basiert. Die Tabelle \ref{table:aufgabe31a} beinhaltet die Registerbelegung des Programms.
 
@@ -282,7 +282,7 @@ Initialisieren Sie Port 0 als Ausgabe- und Port 2 als Eingabe-Port. Entwickeln S
 \vspace{0.5cm}
 \end{center}
 \caption{Zyklische Abfrage und Ausgabe von Schaltern}
-\label{aufgabe32a}
+\label{abb:aufgabe32a}
 \end{figure}
 
 \begin{figure}
@@ -353,17 +353,16 @@ Das Programm ist insoweit zu erweitern, dass zwischen der Ein- und Ausgabe die B
 
 Abbildung \ref{abb:32a_erweiterung} enthält ein Flussdiagramm eines die Aufgabenstellung l"osenden Programms. Listing \ref{lst:32a_erweiterung} ist die komkrete Assembler-L"osung.
 
-Die Initialisierung erfolgt wie in Abschnitt \ref{sec:3a_loesung} beschrieben.
+Die Initialisierung erfolgt wie in Abschnitt \ref{sec:32a_loesung} beschrieben.
 
-Die Endlosschleife muss gegenüber der vorhergehenden Aufgabe erweitert werden. Zuerst wird der an Port 2 abgefragte Wert der LEDs in das Register 4 geladen. Durch einen Rechts-Rotationsschritt wird das aktuell niedrigste Bit von Register 4 in das Carry-Flag "ubertragen. Anschließend wird dieses als neues h"ochstes Bit nach Register 5 "ubertragen.
+Die Endlosschleife muss gegenüber der vorhergehenden Aufgabe erweitert werden. Zuerst wird der an Port 2 abgefragte Wert der LEDs in das Register 4 geladen. Durch einen Rechts-Rotationsschritt wird das aktuell niedrigste Bit von Register 4 in das Carry-Flag "ubertragen. Anschließend wird dieses durch einen Links-Rotationsschritt als neues h"ochstes Bit nach Register 5 "ubertragen.
 
-Da ein Byte 8 Bits enth"alt, muss dies acht mal durchgeführt werden.
+Da ein Byte acht Bits enth"alt, muss dies acht mal durchgeführt werden.
 
 Zuletzt wird der Wert von Register 5 nach \verb|P0|, dem Ausgangsport übertragen und zum Anfang der Schleife zur"uckgesprungen.
 
 \subsection{Z"ahlen von Anzahl Schalter"anderungen}
 \label{abschn:32c}
-
 
 \subsubsection{Aufgabe}
 
@@ -387,7 +386,7 @@ Register & Bedeutung \\
 6 & Neuer Wert von Port 2 \\
 \hline
 \end{tabular}
-\caption{Registerbelegungstabelle f"ur die erste Version (ohne Ber"ucksichtigung von Schwingungen) des in Abschnitt \ref{abschn:32c} zu erstellende Programms}
+\caption{Registerbelegungstabelle f"ur die erste Version (ohne Ber"ucksichtigung von Schwingungen) des Programms zum Z"ahlen der Anzahl von Schalter"anderungen}
 \label{table:aufgabe32c_ohneschwingung}
 \end{table}
 
@@ -454,7 +453,7 @@ r0 & Z"ahler "au"sere Schleife \\
 r1 & Z"ahler innere Schleife \\
 \hline
 \end{tabular}
-\caption{Registerbelegungstabelle f"ur die zweite Version (unter Ber"ucksichtigung von Schwingungen) des in Abschnitt \ref{abschn:32c} zu erstellende Programms}
+\caption{Registerbelegungstabelle f"ur die zweite Version (unter Ber"ucksichtigung von Schwingungen) des Programms zum Z"ahlen der Anzahl von Schalter"anderungen}
 \label{table:aufgabe32c}
 \end{table}
 
