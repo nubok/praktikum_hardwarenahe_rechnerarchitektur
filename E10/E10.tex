@@ -1,0 +1,192 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[latin1]{inputenc}
+\usepackage{bibgerm}
+\usepackage[english, ngerman]{babel}
+\usepackage[babel]{csquotes}
+\usepackage{cite}
+\usepackage{amsmath} % for eqref
+\author{Denis Dietze \and Wolfgang Keller \and Nico Linke \and Thomas Schulte}
+
+\title{Protokoll Versuch E10/IT7}
+\subtitle{Mikroprozessor -- Grundlagenversuch Z 80 (Z 84 C 0008)}
+\begin{document}
+\maketitle
+\section{Studienkontrollfragen}
+
+\subsection{Maschinenzyklus}
+
+\subsubsection{Frage}
+
+Was ist ein Maschinenzyklus?
+
+\subsubsection{Antwort}
+
+Laut ~\cite[S.~27]{KieserMeder86} ist ein \emph{Maschinenzyklus} durch die Gesamtzahl der Takte einer Grundfunktion definiert. Eine oder mehrere Maschinenzyklen bilden dann einen \emph{Instruktionszyklus}. Grundfunktionen bilden:
+\begin{itemize}
+\item Befehlscode lesen
+\item Speicher lesen
+\item Speicher schreiben
+\item I/O lesen
+\item I/O schreiben
+\item Interruptbestätigung
+\item CPU-interne Operation.
+\end{itemize}
+
+\subsection{Registerstruktur}
+
+\subsubsection{Frage}
+
+Beschreiben Sie die Registerstruktur der Z 80 CPU und erläutern Sie die Besonderheiten und Verwendungsmöglichkeiten der Register!
+
+\subsubsection{Antwort}
+
+\subsection{Daten- vs. Befehlsbytes}
+
+\subsubsection{Frage}
+
+Wodurch werden Daten- und Befehlsbytes unterschieden?
+
+\subsubsection{Antwort}
+
+\subsection{Steuersignale}
+
+\subsubsection{Frage}
+
+Erläutern Sie die Aufgaben der Steuersignale der Z 80 CPU!
+
+\subsubsection{Antwort}
+
+\subsection{Interrupt}
+
+\subsubsection{Frage}
+
+Was ist ein Interrupt?
+
+\subsubsection{Antwort}
+
+\subsection{Interruptmodi}
+
+\subsubsection{Frage}
+
+Erläutern Sie die drei möglichen Interruptmodi der Z 80 CPU!
+
+\subsubsection{Antwort}
+
+\subsection{Nichtmaskierbare vs. maskierbare Interrupts}
+
+\subsubsection{Frage}
+
+Erläutern Sie den Unterschied zwischen nichtmaskierbaren Interrupts (NMI) und
+einem maskierbaren Interrupt!
+
+\subsubsection{Antwort}
+
+\subsection{HALT-Zustand}
+
+\subsubsection{Frage}
+
+Wodurch ist der HALT-Zustand der Z 80 CPU gekennzeichnet?
+
+\subsubsection{Antwort}
+
+Laut ~\cite[S.~34]{KieserMeder86} ist der HALT-Zustand dadurch charakterisiert, dass während sich die CPU in diesem Zustand befindt, NOP-Befehle ausgeführt werden, deren Zweck der Refresh dynamischer Speicher ist.
+
+Der HALT-Zustand kann von der CPU nur verlassen werden, wenn ein INT- oder NMI-Signal best"atigt wird.
+
+\subsection{Adressbereich}
+
+\subsubsection{Frage}
+
+Wie groß ist der Adressbereich für anschließbare Speicher und Ein-/Ausgabe-Tore
+der Z 80 CPU?
+
+\subsubsection{Antwort}
+
+\subsection{Bidirektionaler Datentransfer}
+
+\subsubsection{Frage}
+
+Was bedeutet bidirektionaler Datentransfer?
+
+\subsubsection{Antwort}
+
+\section{Versuchsaufgaben}
+
+\subsection{M1-Zyklus}
+
+\subsubsection{Aufgabe}
+
+Stellen Sie die für diesen Zyklus signifikanten Signale über den Taktimpulsen grafisch dar.
+Überprüfen Sie die Wirkung der WAIT-, RESET- und BUSRQ-Signale.
+
+\subsubsection{L"osung}
+
+\subsection{Speicher-Lese-/Schreib-Zyklus}
+
+\subsubsection{Aufgabe}
+
+Nehmen Sie entsprechend o. a. Muster das Zyklusdiagramm für einen Speicher-Lese-/Schreib-
+Zyklus auf.
+
+\subsubsection{L"osung}
+
+\subsection{E/A-Zyklus}
+
+\subsubsection{Aufgabe}
+
+Programmieren Sie einen E/A-Zyklus und nehmen Sie das Zyklus-Diagramms auf. Halten Sie
+die Inhalte des Adress- und Datenbusses schriftlich fest.
+
+\subsubsection{L"osung}
+
+\subsection{Interruptbehandlungszyklus}
+
+\subsubsection{Aufgabe}
+
+Nehmen Sie das Zyklusdiagramm auf und charakterisieren Sie die Unterschiede zu einem
+normalen M1-Zyklus!
+
+\paragraph{Hinweis} Vor Beginn ist das Interruptfreigabe-Flip-Flop durch einen entsprechenden Befehl
+zu setzten!
+
+\subsubsection{L"osung}
+
+\subsection{NMI-Routine}
+
+\subsubsection{Aufgabe}
+
+Setzten Sie während eines M1-Zyklus ein NMI-Signal und halten Sie den weiteren Verlauf
+fest!
+
+\subsubsection{L"osung}
+
+\subsection{HALT-Zustand}
+
+Programmieren Sie einen Software-HALT und setzten Sie das Programm mit den vorhandenen
+Möglichkeiten fort.
+
+\subsubsection{Aufgabe}
+
+\subsubsection{L"osung}
+
+\subsection{RESTART-Befehl}
+
+\subsubsection{Aufgabe}
+
+Arbeiten Sie einen RST-38H-Befehl ab und halten Sie die Adress- und Datenbussignale fest.
+
+\subsubsection{L"osung}
+
+\subsection{Registeroperationen}
+
+\subsubsection{Aufgabe}
+
+Führen Sie eine Operation mit den zugänglichen Registern der Z 80 CPU nach eigener Wahl
+aus.
+
+\subsubsection{L"osung}
+
+\bibliography{E10}{}
+\bibliographystyle{geralpha}
+
+\end{document}
