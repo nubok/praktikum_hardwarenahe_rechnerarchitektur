@@ -635,13 +635,13 @@ Listing \ref{lst:34a} bildet die Assembler-L"osung der Aufgabe. Das entsprechend
 
 Die Initialisierung der Steuerregister funktioniert nahezu analog zur L"osung der vorherigen Aufgabe in Abschnitt \ref{sec:34a}. Der einzige Unterschied ist, dass das Steuerregister \verb|TMR| mit \verb|8Ch| statt \verb|9Ch| zu initialisieren ist. Der Grund liegt darin, dass als \verb|TIN|-Modus "`External Clock Input"' statt "`Gate Input"' zu benutzen ist.
 
-Gem"a"s der Abbildung aus Anlage 5 der Aufgabenstellung ist (da der Frequenzgenerator als "`External Clock"' an \verb|P31| anliegt und daher nicht als Vorverarbeitungsschritt durch 4 dividiert wird) die an $T_{OUT}$ anliegende Frequenz $f_{T_{OUT}}$ bei Teilerfaktoren von $PRE1_{TF}$ bzw.  $T1_{TF}$ f"ur \verb|PRE1| bzw. \verb|T1|:
+Gem"a"s der Abbildung aus Anlage 5 der Aufgabenstellung ist (da der Frequenzgenerator als "`External Clock"' an \verb|P31| anliegt und daher die Frequenz \emph{nicht} als Vorverarbeitungsschritt durch 4 dividiert wird) die an $T_{OUT}$ anliegende Frequenz $f_{T_{OUT}}$ bei Teilerfaktoren von $PRE1_{TF}$ bzw.  $T1_{TF}$ f"ur \verb|PRE1| bzw. \verb|T1|:
 
 \begin{displaymath}
 f_{T_{OUT}} = \frac{1~MHz}{2\cdot PRE1_{TF} \cdot T1_{TF}}.
 \end{displaymath}
 
-In Tabelle \ref{table:1} sind die Werte der Teilerfaktoren $T1_{Init}$ bzw. $PRE1_{Init}$, die zu initialisierenden Werte für die zugeh"origen Timerregister \verb|PRE1| bzw. \verb|T1|, die theoretisch zu erwartenden Werte f"ur $f_{T_{OUT}}$, sowie deren Messwerte abgetragen.
+In Tabelle \ref{table:1} sind die Werte der Teilerfaktoren $PRE1_{TF}$ bzw. $T1_{TF}$, die zu initialisierenden Werte für die zugeh"origen Timerregister \verb|PRE1| bzw. \verb|T1|, die theoretisch zu erwartenden Werte f"ur $f_{T_{OUT}}$, sowie deren Messwerte abgetragen.
 
 \begin{table}
 \begin{minipage}[t]{\textwidth}
