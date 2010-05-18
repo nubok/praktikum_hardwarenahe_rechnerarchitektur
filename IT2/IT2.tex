@@ -85,17 +85,17 @@ R6 & Speicheradresse \\
 
 \begin{figure}
 \begin{center}
-\begin{pspicture}(5,17)
+\begin{pspicture}(5,18)
 %\psgrid
 \begin{psmatrix}[rowsep=0.4,colsep=0.5]
 	\psovalbox{Begin} \\
-	~ & [name=Init1] & \makebox[3cm]{} & [name=Init1a]\\
+	~ & [name=Init1] & \makebox[5cm]{} & [name=Init1a]\\
 	\psframebox{\parbox{4cm}{10h in P01M schreiben}}  \\
 	~ & [name=Init2] \\
 	\psframebox{\parbox{4cm}{RP mit 0 initialisieren}} \\
 	~ & [name=Init3] \\
 	\psframebox{\parbox{4cm}{R6 auf 12h setzen}} \\
-	~ & [name=Init4] & \makebox[3cm]{} & [name=Init4a]\\
+	~ & [name=Init4] & \makebox[5cm]{} & [name=Init4a]\\
 	\psframebox{\parbox{4cm}{R4 auf 10 setzen}} \\
 	\psframebox{\parbox{4cm}{Wert von R4 in die Speicherzelle, deren Adresse in R6 gespeichert ist ablegen}} \\
 	\psframebox{\parbox{4cm}{Den Wert der Speicherzelle, deren Adresse in R6 gespeichert ist, in R5 ablegen}} \\
@@ -116,12 +116,12 @@ R6 & Speicheradresse \\
 \ncline{->}{13,1}{14,1}
 \ncline{->}{14,1}{15,1}
 \ncline{->}{15,1}{17,1}
-\psbrace[ref=lC](Init2)(Init1){\parbox{3cm}{Konfiguration von Port 1 zur Speichererweiterung durch 256 Byte externen RAM}}
-\psbrace[ref=lC](Init3)(Init2){\parbox{3cm}{R6 mit einer zulässigen Adresse initialisieren}}
-\psbrace[ref=lC](Init4)(Init3){\parbox{3cm}{Initialisierung des Register Pointers}}
+\psbrace[ref=lC](Init2)(Init1){\parbox{5cm}{Konfiguration von Port 1 zur Speichererweiterung durch 256 Byte externen RAM}}
+\psbrace[ref=lC](Init3)(Init2){\parbox{5cm}{R6 mit einer zulässigen Adresse initialisieren}}
+\psbrace[ref=lC](Init4)(Init3){\parbox{5cm}{Initialisierung des Register Pointers}}
 \psbrace[ref=lC](Init4a)(Init1a){\parbox{3cm}{Initialisierung}}
 \psbrace[ref=lC](Check1)(Init4){\parbox{6cm}{Erster Test; nach Durchlauf dieses Blocks im Einzelschrittmodus "uberpr"ufen, ob Inhalte von R4 und R5 "ubereinstimmen}}
-\psbrace[ref=lC](Check2)(Check1){\parbox{6cm}{Zweiter Test; nach Durchlauf dieses Blocks im Einzelschrittmodus "uberpr"ufen, ob Inhalte von R4 und R5 "ubereinstimmt}}
+\psbrace[ref=lC](Check2)(Check1){\parbox{6cm}{Zweiter Test; nach Durchlauf dieses Blocks im Einzelschrittmodus "uberpr"ufen, ob Inhalte von R4 und R5 "ubereinstimmen}}
 \end{pspicture}
 \vspace{0.5cm}
 \end{center}
