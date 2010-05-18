@@ -56,7 +56,7 @@ Der Befehl lautet somit: \verb|LD P01M, #%10|.
 \subsubsection{L"osung}
 Die ersten 4096 (\verb|1000h|) Bytes des Speichers sind durch das interne ROM belegt. Alle darüber hinaus gehenden mit den 13 Adressbits A0-A12 darstellbaren Adressen (also von \verb|1000h| bis \verb|3000h|) gehören somit \emph{theoretisch} zum externen RAM.
 
-Man kann in der Tat über all diese Adressen auf den externen RAM zugreifen. Jedoch tritt in der Praxis eine Besonderheit auf: wie man in ersten Grafik Anlage 1 der Versuchsbeschreibung sehen kann, sind die Adressbits A8 bis A12 mit Masse verbunden. Das heißt im RAM sind nur 256 (\verb|100h|) verschiedene Speicherzellen adressierbar. Die obersten 5 Adressbits (A8-A12) werden ignoriert. 
+Man kann in der Tat über all diese Adressen auf den externen RAM zugreifen. Jedoch tritt in der Praxis eine Besonderheit auf: wie man in der ersten Grafik von Anlage 1 der Versuchsbeschreibung sehen kann, sind die Adressbits A8 bis A12 mit Masse verbunden. Das heißt im RAM sind nur 256 (\verb|100h|) verschiedene Speicherzellen adressierbar. Die obersten 5 Adressbits (A8-A12) werden ignoriert. 
 
 Da somit nur 256 Bytes an RAM physikalisch adressierbar sind, wird der Inhalt dieser 256 Bytes in den restlichen mit A0 bis A12 adressierbaren Adressen des externen RAMs zyklisch wiederholt.
 
@@ -439,7 +439,7 @@ In der Tat arbeitet diese im Einzelschrittmodus so, wie man es erwarten w"urde. 
 
 Der Grund liegt darin, dass es sich bei den Schaltern um mechanische Elemente handelt, die beim Umschalten in Schwingung geraten. Daher kommt es kurz nach dem Umschalten zu weiteren kurzzeitigen Umschaltungen, die der Microcontroller registriert und z"ahlt.
 
-Die L"osung ist damit naheliegend: nachdem eine Schalter"anderung detektiert wurde, kurz warten sich sich die Schwingungen beruhigt haben und erst dann mit dem Programmablauf fortfahren. Dies wurde in dem Programm aus Listing \ref{lst:aufgabe32c} getan. Die zugehörige Registerbelegungstabelle ist Tabelle \ref{table:aufgabe32c} und das Flussdiagramm ist Abbildung \ref{abb:aufgabe32c}.
+Die L"osung ist damit naheliegend: nachdem eine Schalter"anderung detektiert wurde, soll der Microcontroller kurz warten, bis sich die Schwingungen beruhigt haben, und erst dann mit dem Programmablauf fortfahren. Dies wurde in dem Programm aus Listing \ref{lst:aufgabe32c} getan. Die zugehörige Registerbelegungstabelle ist Tabelle \ref{table:aufgabe32c} und das Flussdiagramm ist Abbildung \ref{abb:aufgabe32c}.
 
 \begin{table}
 \begin{tabular}[t]{|c|l|}
@@ -529,7 +529,7 @@ Initialisieren Sie Timer 0 (einschlie"slich Prescaler) derart, dass am Portausga
 
 \begin{figure}
 \begin{center}
-\begin{pspicture}(8,9)
+\begin{pspicture}(8,11)
 %\psgrid
 \begin{psmatrix}[rowsep=0.4,colsep=0.5]
 	\psovalbox{Begin} \\
@@ -563,7 +563,7 @@ Initialisieren Sie Timer 0 (einschlie"slich Prescaler) derart, dass am Portausga
 \lstinputlisting[caption={Generierung einer Impulsfolge mit 5 kHz},language=z8asm,label=lst:34a]{aufgabe34a.asm}
 \end{figure}
 
-Abbildung \ref{abb:aufgabe34a} bildet das Flussdiagramm zur Aufgabe. Listing \ref{lst:34a} enth"alt den zugeh2origen Assembler-Quelltext.
+Abbildung \ref{abb:aufgabe34a} bildet das Flussdiagramm zur Aufgabe. Listing \ref{lst:34a} enth"alt den zugeh"origen Assembler-Quelltext.
 
 Bevor man die konkreten Werte f"ur den Prescaler (Register \verb|PRE1|) und Timer (Register \verb|T1|) setzen kann, m"ussen die Steuerregister \verb|P3M| und \verb|TMR| (Timer-Mode-Register) korrekt initialisiert werden.
 
@@ -577,7 +577,7 @@ Der Prescaler wird außerdem über das auf 1 gesetzte Bit \verb|D0| in den Modulo 
 
 Letztendlich befindet sich im Programm eine Schleife, sodass das Programm nicht unerwünscht terminiert.
 
-Der Grund, warum sich tats"chlich eine Frequenz von 5~kHz ergibt, l"asst sich aus Abbildung 5 des Aufgabenblattes entnehmen: die am \verb|OSC|-Eingang anliegende Frequenz wird erst einmal durch 2 dividiert. Anschließend wird sie in der Clock Logic nochmals durch  4 dividiert.
+Der Grund, warum sich tats"achlich eine Frequenz von 5~kHz ergibt, l"asst sich aus Abbildung 5 des Aufgabenblattes entnehmen: die am \verb|OSC|-Eingang anliegende Frequenz wird erst einmal durch 2 dividiert. Anschließend wird sie in der Clock Logic nochmals durch  4 dividiert.
 
 Desweiteren wird die Frequenz vor der Ausgabe bei $T_{OUT}$ nochmals durch 2 dividiert.
 
@@ -598,7 +598,7 @@ Entwickeln Sie eine Software, die den Timer 1 als Frequenzteiler f"ur eine an P3
 
 \begin{figure}
 \begin{center}
-\begin{pspicture}(8,9)
+\begin{pspicture}(8,11)
 %\psgrid
 \begin{psmatrix}[rowsep=0.4,colsep=0.5]
 	\psovalbox{Begin} \\
@@ -632,7 +632,7 @@ Entwickeln Sie eine Software, die den Timer 1 als Frequenzteiler f"ur eine an P3
 \lstinputlisting[caption={Frequenzteiler},language=z8asm,label=lst:34b]{aufgabe34b.asm}
 \end{figure}
 
-Listing \ref{lst:34a} bildet die Assembler-L"osung der Aufgabe. das zugehörige Flussdiagramm befindet sich in Abbildung \ref{abb:aufgabe34b}.
+Listing \ref{lst:34a} bildet die Assembler-L"osung der Aufgabe. Das entsprechende Flussdiagramm befindet sich in Abbildung \ref{abb:aufgabe34b}.
 
 Die Initialisierung der Steuerregister funktioniert nahezu analog zur L"osung der vorherigen Aufgabe in Abschnitt \ref{sec:34a}. Der einzige Unterschied ist, dass das Steuerregister \verb|TMR| mit \verb|8Ch| statt \verb|9Ch| zu initialisieren ist. Der Grund liegt darin, dass als \verb|TIN|-Modus "`External Clock Input"' statt "`Gate Input"' zu benutzen ist.
 

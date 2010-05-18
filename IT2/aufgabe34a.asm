@@ -7,6 +7,6 @@
 	LD PRE1, #5
 	LD T1,   #100
 
-START	JP START
+begin	JP begin
 
 	END

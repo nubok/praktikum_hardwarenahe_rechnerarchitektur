@@ -17,5 +17,5 @@
 	; Init T1
 	LD T1,   #%00 ; 01: Minimum 00: Maximum
 
-	Label: JP Label
+	begin: JP begin
 

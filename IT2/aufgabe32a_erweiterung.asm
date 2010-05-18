@@ -6,7 +6,7 @@
 	LD P2M, #%FF
 	LD P3M, #%01
 
-START	LD 4,P2
+begin	LD 4,P2
 
 	RRC 4
 	RLC 5
@@ -26,5 +26,5 @@ START	LD 4,P2
 	RLC 5
 
 	LD P0, 5
-	JP START
+	JP begin
 	END
