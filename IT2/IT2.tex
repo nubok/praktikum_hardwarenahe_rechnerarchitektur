@@ -292,7 +292,7 @@ Das Flussdiagramm, welches man aus der Programmbesschreibung erhält, befindet si
 
 In diesem wird zun"achst der Port 0 als Ausgabe-Port initialisiert. Die Bitbelegung ist dabei \verb|XXX00X00|, wobei X für ein beliebiges Bit steht. Wir haben uns f"ur \verb|0h| entschieden.
 
-Anschließend muss Port 2 als Eingabe-Port initialisiert werden. Hierfür ist Bitbelegung \verb|11111111|, also \verb|FFh|, da alle Bits als Eingabe-Bits deklariert werden sollen.
+Anschließend muss Port 2 als Eingabe-Port initialisiert werden. Daher m"ussen im Steuerregister in \verb|P2M| alle Bits gesetzt werden, also \verb|FFh|, da alle Bits des Ports als Eingabe-Bits deklariert werden sollen.
 
 Die Initialisierung des Steuerregisters \verb|P3M| mit dem Wert \verb|XXXXXXX1| (in diesem Fall \verb|1h|) scheint dagegen "uberfl"ussig zu sein, da Port 2 nur als \emph{Ausgabe-Port} aktive Pull-Ups ben"otigt. Wir haben es dennoch nicht entfernt, um keine neue Fehlerquelle in der Ausarbeitung einzubauen.
 
