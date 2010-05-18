@@ -512,7 +512,7 @@ Zur Erkl"arung: prinzipiell k"onnte man ein Abwarten durch \verb|NOP|-Befehle er
 
 Stattdessen werden zwei verschachtelte, durch den \verb|DJNZ|-Befehl erzeugte Schleifen verwendet.
 
-In Zeile 29 wird der Registerpointer \verb|RP| auf den Wert \verb|10h| gesetzt. Da der \verb|DJNZ| auf Arbeitsregistern operiert (deren absolute Position vom Wert des Registerpointers abh"angt), wird somit garantiert, dass die Nummerierung der aktuellen Arbeitsregister ab Position \verb|10h| (nur die obersten 4 Bits werden ber"ucksichtigt) beginnt.
+In Zeile 29 wird der Registerpointer \verb|RP| auf den Wert \verb|10h| gesetzt. Da der \verb|DJNZ|-Befehl auf Arbeitsregistern operiert (deren absolute Position vom Wert des Registerpointers abh"angt), wird somit garantiert, dass die Nummerierung der aktuellen Arbeitsregister ab Position \verb|10h| beginnt.
 
 Normalerweise w"urde man zur Bestimmung der tats"achlich zu wartenden Dauer oszillographische Methoden benutzen, um die Zeitdauer zu bestimmen und anschlie"send die Werte in den Zeilen 32 und 34 an die gemessenen Werte anpassen. Gem"a"s den Anweisungen des Betreuers wurde jedoch hierauf verzichtet.
 
