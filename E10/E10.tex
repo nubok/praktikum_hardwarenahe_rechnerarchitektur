@@ -5,6 +5,7 @@
 \usepackage[babel]{csquotes}
 \usepackage{cite}
 \usepackage{amsmath} % for eqref
+\usepackage{tabularx}
 \author{Denis Dietze \and Wolfgang Keller \and Nico Linke \and Thomas Schulte}
 
 \title{Protokoll Versuch E10/IT7}
@@ -76,6 +77,36 @@ Erläutern Sie die Aufgaben der Steuersignale der Z 80 CPU!
 
 \subsubsection{Antwort}
 
+Wir unterscheiden drei Typen von Steuersignalen:
+
+\paragraph{System Control} Umfasst M1, MREQ, IORQ, RD, WR und RFSH.
+
+\paragraph{CPU Control} Umfasst HALT, WAIT, INT, NMI und RESET.
+
+\paragraph{CPU Bus Control} Umfasst BUSRQ und BUSACK.
+
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+Signal & Bedeutung \\
+\hline
+M1 & Mit diesem Signal meldet die CPU, dass sie sich im Befehlsholzyklus befindet. Falls IORQ aktiv ist, dient es zur Interruptquittierung seitens der CPU. \\
+MREQ & Zeigt eine Speicheroperation der CPU an. \\
+IORQ & Kennzeichnet Datenverkehr zwischen CPU und dem durch den Adressbus adressieren E/A-Ger"at. \\
+RD & Zeigt an, dass auf dem Speicher oder Peripherie Leseoperation ausgef"uhrt wird\\
+WR & Ist aktiv, wenn der Datenbus g"ultige Daten f"ur eine Schreiboperation enth"alt. \\
+RFSH & Falls es aktiv ist, bedeutet dies, dass die niederwertigsten Bits eine Refresh-Adresse f"ur dynamische Speicher benutzten\\
+HALT & Kennzeichnet, dass CPU einen Halt-Befehl ausgef"uhrt hat. Zur Erl"auterung des HALT-Zustands, siehe  Abschnitt \ref{sec:halt_antwort}. \\
+WAIT & Erlaubt Einf"ugen von Wartezyklen in die Lese- und Schreibzyklen der CPU mit dem Speicher un den E/A-Einheiten. Dient somit zur Synchronisation mit diesen. Wenn das Signal aktiv ist, zeigt dieses an, dass der angesprochene Speicher bzw. E/A-Baustein noch nicht bereit zur Daten"ubertragung ist \\
+INT & Zur Bedeutung siehe Abschnitt \ref{sec:interrupt_antwort}. Es wird ein Interrupt ausgel"ost, sofern dieser freigegeben ist und BUSRQ \emph{nicht} aktiv ist. \\
+NMI & Zur Bedeutung vergleiche Abschnitt \ref{sec:interrupt_antwort}. L"ost einen nicht maskierbaren Interrupt aus. \\
+RESET & Bringt den Prozessor in den Anfangszustand. \\
+BUSRQ & Dient zur Anforderung des CPU-Bussystems. Wird von einer Einheit geliefert, um DMA-Betrieb anzumelden. \\
+BUSACK & Mit diesem Signal quittiert CPU die Anmeldung eines BUSRQ. Der Datenverkehr kann somit von einer DMA-Einheit gesteuert werden. \\
+\hline
+\end{tabularx}
+
+(vgl. \cite[S.~25ff]{KieserMeder86})
+
 \subsection{Interrupt}
 
 \subsubsection{Frage}
@@ -83,6 +114,7 @@ Erläutern Sie die Aufgaben der Steuersignale der Z 80 CPU!
 Was ist ein Interrupt?
 
 \subsubsection{Antwort}
+\label{sec:interrupt_antwort}
 
 Ein Interrupt ist eine asynchrone Unterbrechung eines gerade ausgef"uhrten Programms, damit der Prozessor auf bestimmte Forderungen reagieren kann. Gegen"uber einer zyklischen Abfrage (Polling) wird Zeit eingespart.
 
@@ -128,6 +160,7 @@ Nach einem Reset der CPU ist die Verarbeitung des maskierbaren Interrupts gesper
 Wodurch ist der HALT-Zustand der Z 80 CPU gekennzeichnet?
 
 \subsubsection{Antwort}
+\label{sec:halt_antwort}
 
 Laut ~\cite[S.~34]{KieserMeder86} ist der HALT-Zustand dadurch charakterisiert, dass während sich die CPU in diesem Zustand befindt, NOP-Befehle ausgeführt werden, deren Zweck der Refresh dynamischer Speicher ist.
 
