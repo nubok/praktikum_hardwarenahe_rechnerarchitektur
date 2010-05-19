@@ -21,7 +21,7 @@ Was ist ein Maschinenzyklus?
 
 \subsubsection{Antwort}
 
-Laut ~\cite[S.~27]{KieserMeder86} ist ein \emph{Maschinenzyklus} durch die Gesamtzahl der Takte einer Grundfunktion definiert. Eine oder mehrere Maschinenzyklen bilden dann einen \emph{Instruktionszyklus}. Grundfunktionen bilden:
+Laut \cite[S.~27]{KieserMeder86} ist ein \emph{Maschinenzyklus} durch die Gesamtzahl der Takte einer Grundfunktion definiert. Eine oder mehrere Maschinenzyklen bilden dann einen \emph{Instruktionszyklus}. Grundfunktionen bilden:
 \begin{itemize}
 \item Befehlscode lesen
 \item Speicher lesen
@@ -39,6 +39,26 @@ Laut ~\cite[S.~27]{KieserMeder86} ist ein \emph{Maschinenzyklus} durch die Gesam
 Beschreiben Sie die Registerstruktur der Z 80 CPU und erläutern Sie die Besonderheiten und Verwendungsmöglichkeiten der Register!
 
 \subsubsection{Antwort}
+
+Der Registersatz der Z 80 CPU besteht (vgl. \cite[S.~22ff]{KieserMeder86}) aus "`allgemeinen Registern"' und "`Spezialregistern"'. Die allgemeinen Register teilen sich weiter in zwei Registers"atze auf: einen Hauptregistersatz und einen Tauschregistersatz. Jeder dieser beiden Registers"atze enth"alt acht 8-Bit-Register, die wir mit A, F, B, C, D, E, H und L bzw. A', F', B', C', D', E', H' und L' bezeichnen.
+
+Das Register A bzw. A' bezeichnen wir als "'Akkumulator"` und das Register F bzw. F' als "'Flagsregister"`. Diese beiden sind f"ur spezielle Aufgaben vorgesehen. Die anderen 6 allgemeinen Register werden f"ur die allgemeine Verwendung benutzt.
+
+Die Registerpaare B-C, D-E und H-L lassen sich auch als 16-Bit-Registerpaar nutzen.
+
+Mit einem Befehl lassen sich A und F durch den Inhalt der Tauschregister tauschen. Mit einem weiteren lassen sich die sechs Allzweckregister durch ihre Tauschregister ersetzen. Dies kann beispielsweise f"ur eine schnelle Interrupt-Verarbeitung eingesetzt werden, da das Austauschen dieser Register deutlich schneller ist, als den Inhalt der Register auf einen externen Stack zu retten, wie es beispielsweise auf X86-basierenden Architekturen h"aufig in Interrupt-Service-Routinen h"aufig getan wird.
+
+Die \emph{Spezialregister} bestehen aus den zwei 8-Bit-Registern I (Interruptvektor-Register) und R (Refresh-Register), sowie vier 16-Bit-Registern: den zwei Index-Registern IX und IY, dem Stack Pointer SP und dem Program Counter PC.
+
+Der Program Counter PC enth"alt die 16-Bit-Adresse des aktuellen Instruktions-Bytes. Er wird automatisch inkrementiert, wenn sein Inhalt auf den Adressbus geladen wird.
+
+Der Stack Pointer SP enthält die Adresse der aktuellen Spitze des Stacks.
+
+Die Indexregister IX und IY dienen als Basis zur indizierten Adressierung und zur 16-Bit-Datenmanipulation. 
+
+Das Interruptvektor-Register I stellt in der Interrupt-Betriebsart IM2 das High Byte der Adresse der Interrupt Service Routine (ISR) bereit. Das Low Byte wird von dem interruptanordernden peripheren Element geliefert.
+
+Vom Refresh-Register R werden nur die unteren 7 Bits verwendet und dient f"ur den Programmierer transparent zum regelm"a"sigen Auffrischen des Speichers. Es wird beim Holen einer Instruktion inkrementiert -- somit l"asst es sich als Instruktionsz"ahler f"ur M1-Zyklen benutzen. Seine Daten werden im M1-Zyklus als unterer Teil der Adresse zusammen mit dem RSFH-Signal ausgesendet.
 
 \subsection{Daten- vs. Befehlsbytes}
 
@@ -64,6 +84,10 @@ Was ist ein Interrupt?
 
 \subsubsection{Antwort}
 
+Ein Interrupt ist eine asynchrone Unterbrechung eines gerade ausgef"uhrten Programms, damit der Prozessor auf bestimmte Forderungen reagieren kann. Gegen"uber einer zyklischen Abfrage (Polling) wird Zeit eingespart.
+
+Interrupts erm"oglichen au"serdem die parallele Abarbeitung mehrerer Programme durch eine CPU, indem man durch Interrupts und geeignete Priorisierung die CPU auf die zu einem Zeitpunkt wichtigste Aufgabe lenkt (vgl. \cite[S.~70]{KieserMeder86}).
+
 \subsection{Interruptmodi}
 
 \subsubsection{Frage}
@@ -71,6 +95,14 @@ Was ist ein Interrupt?
 Erläutern Sie die drei möglichen Interruptmodi der Z 80 CPU!
 
 \subsubsection{Antwort}
+
+F"ur den maskierbaren Interrupt werden 3 Modi unterschieden (vgl. \cite[S.~75]{KieserMeder86}):
+
+\paragraph{IM0} Das von der unterbrechenden Einheit auf dem Datenbus platzierte Wort wird als \emph{Befehl} betrachtet und ausgef"uhrt. 
+
+\paragraph{IM1} Wenn INT anliegt, erfolgt ein Sprung zur Adresse \verb|0038h|. Dies ist "ahnlich dem NMI -- nur wird dort die Adresse \verb|0066h| verwendet.
+
+\paragraph{IM2} Bei Anwendung dieses Modus baut der Programmierer eine Interruptvektor-Tabelle mit den Anfangsadressen der Interrupt-Service-Routinen (ISR) auf. Jede dieser Adressen umfasst 2 Bytes -- daher ist das von der unterbrechenden Einheit gelieferte Byte gerade. Dieses Byte bildet das untere Byte der Startadresse der ISR. Das obere Byte liefert das I-Register.
 
 \subsection{Nichtmaskierbare vs. maskierbare Interrupts}
 
@@ -80,6 +112,14 @@ Erläutern Sie den Unterschied zwischen nichtmaskierbaren Interrupts (NMI) und
 einem maskierbaren Interrupt!
 
 \subsubsection{Antwort}
+
+Laut \cite[S.~70]{KieserMeder86} besitzt die Z 80 CPU zwei Interrupteing"ange: INT und NMI.
+
+Der nichtmaskierbare Interrupt (NMI) der besitzt die höhere Priorit"at und kann nicht per Programm gesperrt werden. Daher unterbricht die CPU das laufende Programm ausnahmslos, falls dieser Interrupt anliegt. Aus diesem Grund ist dieser im Allgemeinen f"ur sehr wichtige Ereignisse, wie Ausf"alle, Havarien und andere nicht vorhersehbare Ereignisse reserviert.
+
+Der maskierbare Interrupt (INT) kann dagegen gezielt per Programm gesperrt und freigegeben werden. Eine Sperrung kann beispielsweise dann notwendig sein, wenn zwar eine Interruptserviceroutine niedriger Priorit"at abl"auft, aber eine Unterbrechung bestimmter Programmteile aufgrund des geforderten Echtzeitverhaltens nicht tragbar ist. In diesem Fall sperrt man in diesem Programmteil den maskierbaren Interrupt.
+
+Nach einem Reset der CPU ist die Verarbeitung des maskierbaren Interrupts gesperrt. Durch den Befehl EI (enable interrupt) wird diese Sperre aufgehoben und durch DI (disable interrupt) gesetzt. 
 
 \subsection{HALT-Zustand}
 
@@ -102,6 +142,8 @@ der Z 80 CPU?
 
 \subsubsection{Antwort}
 
+Da 16 Adressleitungen zur Verf"gung stehe, ist der Speicherbereich prinzipiell bis zu $2^{16}~\textnormal{Byte}=65536~\textnormal{Byte}=64~KiB$ groß.
+
 \subsection{Bidirektionaler Datentransfer}
 
 \subsubsection{Frage}
@@ -109,6 +151,8 @@ der Z 80 CPU?
 Was bedeutet bidirektionaler Datentransfer?
 
 \subsubsection{Antwort}
+
+Laut ~\cite[S.~348]{KieserMeder86} versteht man unter einem bidirektionalen Datentransfer einen zeitmultiplexten Zweirichtungsbetrieb zur Signal"ubertragung.
 
 \section{Versuchsaufgaben}
 
@@ -162,10 +206,10 @@ fest!
 
 \subsection{HALT-Zustand}
 
+\subsubsection{Aufgabe}
+
 Programmieren Sie einen Software-HALT und setzten Sie das Programm mit den vorhandenen
 Möglichkeiten fort.
-
-\subsubsection{Aufgabe}
 
 \subsubsection{L"osung}
 
