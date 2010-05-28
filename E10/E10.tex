@@ -380,6 +380,70 @@ die Inhalte des Adress- und Datenbusses schriftlich fest.
 
 \subsubsection{L"osung}
 
+Analog zur vorherigen Aufgabe speichern wir diesmal \verb|56h| im Akkumulator:
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+1 & M1, MREQ, RD & \verb|0000| & \verb|3E|${}^*$ \\
+2 & M1, MREQ, RD & \verb|0000| & \verb|3E|${}^*$ \\
+3 & MREQ, RFSH & \verb|0000| & \verb|FF| \\
+4 & RFSH & \verb|0000| & \verb|FF| \\
+5 & MREQ, RD & \verb|0001| & \verb|42|${}^*$ \\
+6 & MREQ, RD & \verb|0001| & \verb|42|${}^*$ \\
+7 & - & \verb|0001| & \verb|FF| \\
+\hline
+\end{tabular}
+\\
+
+Nun benutzen wir den Befehl "ÒUT n"' mit n=\verb|67h| (\verb|D3 67|), um den Wert des Akkumulators auf Port \verb|67h| auszugeben:
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+8 & M1, MREQ, RD & \verb|0002| & \verb|D3|${}^*$ \\
+9 & M1, MREQ, RD & \verb|0002| & \verb|D3|${}^*$ \\
+10 & MREQ, RFSH & \verb|0001| & \verb|FF| \\
+11 & RFSH & \verb|0001| & \verb|FF| \\
+12 & MREQ, RD & \verb|0003| & \verb|67|${}^*$ \\
+13 & MREQ, RD & \verb|0003| & \verb|67|${}^*$ \\
+14 & - & \verb|0003| & \verb|FF| \\
+15 & - & \verb|5667| & \verb|56| \\
+16 & IORQ, WR & \verb|5667| & \verb|56| \\
+17 & IORQ, WR & \verb|5667| & \verb|56| \\
+18 & - & \verb|5667| & \verb|56| \\
+\hline
+\end{tabular}
+\\
+
+Zu der letzten Zeilen eine Bemerkung: es gibt nur 256 Ports, jedoch hat der Adressbus 16 Bits. Daher wird nur das untere Byte des Adressbusses verwendet -- im oberen d"urfte ein beliebiger Wert stehen, da er ignoriert wird. In der Praxis wird im oberen Byte der Wert des Akkumulators gesendet.
+
+Nun zum Lesen aus einem Port (wir haben uns f"ur Port \verb|13h| entschieden): hierf"ur gibt es den Befehl \verb|IN n| (f"ur genanntes n=\verb|13h| ist es \verb|DB 13|).
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+19 & M1, MREQ, RD & \verb|0004| & \verb|DB|${}^*$ \\
+20 & M1, MREQ, RD & \verb|0004| & \verb|DB|${}^*$ \\
+21 & MREQ, RFSH & \verb|0002| & \verb|FF| \\
+22 & RFSH & \verb|0002| & \verb|FF| \\
+23 & MREQ, RD & \verb|0005| & \verb|13|${}^*$ \\
+24 & MREQ, RD & \verb|0005| & \verb|13|${}^*$ \\
+25 & - & \verb|0005| & \verb|FF| \\
+26 & - & \verb|5613| & \verb|FF| \\
+27 & IORQ, RD & \verb|5613| & \verb|FF| \\
+28 & IORQ, RD & \verb|5613| & \verb|FF| \\
+29 & - & \verb|5667| & \verb|FF| \\
+30 & M1, MREQ, RD & \verb|0006| & \verb|00|${}^*$ \\
+\hline
+\end{tabular}
+\\
+
+Da kein Gerät an Port \verb|13h| angeschlossen ist, wird in den Takten 26 bis 28 auf dem Datenbus nur \verb|FF| "ubertragen. Wir h"atten mittels des Kontrollpanels den Wert "andern k"onnen, haben jedoch keinen Gebrauch davon gemacht.
+
 \subsection{Interruptbehandlungszyklus}
 
 \subsubsection{Aufgabe}
