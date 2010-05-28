@@ -191,6 +191,8 @@ Laut ~\cite[S.~348]{KieserMeder86} versteht man unter einem bidirektionalen Date
 
 \section{Versuchsaufgaben}
 
+Als Notation zur Beantwortung der Aufgaben wollen wir Folgendes vereinbaren: wenn hinter einem Wert ein ${}^*$ erscheint, so soll dies bedeuten, dass der Wert in diesem Takt manuell durch uns auf den Wert gesetzt wurde.
+
 \subsection{M1-Zyklus}
 
 \subsubsection{Aufgabe}
@@ -200,6 +202,102 @@ Stellen Sie die für diesen Zyklus signifikanten Signale über den Taktimpulsen gr
 
 \subsubsection{L"osung}
 
+Es wird ein 00 (NOP) auf den Datenbus gelegt.
+
+Zuerst führen wir das Programm aus, ohne das WAIT-, RESET- oder BUSRQ-Signal zu aktivieren.
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+1 & M1, MREQ, RD & \verb|0000| & \verb|00|${}^*$ \\
+2 & M1, MREQ, RD & \verb|0000| & \verb|00|${}^*$ \\
+3 & MREQ, RFSH & \verb|0000| & \verb|FF| \\
+4 & RFSH & \verb|0000| & \verb|FF| \\
+5 & M1, MREQ, RD & \verb|0001| & \verb|00|${}^*$ \\
+\hline
+\end{tabular}
+\\
+
+Nun aktivieren wir in diesem Takt das WAIT-Signal:
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+5 & M1, MREQ, RD, WAIT & \verb|0001| & \verb|00|${}^*$ \\
+6 & M1, MREQ, RD, WAIT & \verb|0001| & \verb|00|${}^*$ \\
+7 & M1, MREQ, RD, WAIT & \verb|0001| & \verb|00|${}^*$ \\
+8 & M1, MREQ, RD, WAIT & \verb|0001| & \verb|00|${}^*$ \\
+9 & M1, MREQ, RD, WAIT & \verb|0001| & \verb|00|${}^*$ \\
+\hline
+\end{tabular}
+\\
+
+Wie man sieht, führt dies dazu \ldots (TODO).
+
+Als folgenden Schritt deaktivieren wir WAIT und aktivieren RESET:
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+9 & M1, MREQ, RD, RESET & \verb|0001| & \verb|00|${}^*$ \\
+10 & M1, MREQ, RD, RESET & \verb|0001| & \verb|00|${}^*$ \\
+11 & MREQ, RFSH, RESET & \verb|0001| & \verb|FF| \\
+12 & RESET & \verb|FFFF| & \verb|FF| \\
+13 & RESET & \verb|FFFF| & \verb|FF| \\
+14 & RESET & \verb|FFFF| & \verb|FF| \\
+\hline
+\end{tabular}
+\\
+
+Nun deaktivieren wir wieder RESET:
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+14 & - & \verb|FFFF| & \verb|FF| \\
+15 & - & \verb|FFFF| & \verb|FF| \\
+16 & - & \verb|FFFF| & \verb|FF| \\
+17 & - & \verb|FFFF| & \verb|FF| \\
+18 & M1, MREQ, RD & \verb|0000| & $31$ \\
+\hline
+\end{tabular}
+\\
+
+Die 31, die in Takt 18 auf dem Datenbus liegt, ist der nach dem Reset vorliegende, zufällige Wert der Speicherzelle \verb|0000|.
+
+Nun zum BUSREQ-Signal:
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+18 & M1, MREQ, RD, BUSREQ & \verb|0000| & \verb|00|${}^*$ \\
+19 & M1, MREQ, RD, BUSREQ & \verb|0000| & \verb|00|${}^*$ \\
+20 & MREQ, RFSH, BUSREQ & \verb|0000| & \verb|FF| \\
+21 & RFSH, BUSREQ & \verb|0001| & \verb|FF| \\
+22 & BUSREQ, BUSACK & \verb|FFFF| & \verb|FF| \\
+23 & BUSREQ, BUSACK & \verb|FFFF| & \verb|FF| \\
+24 & BUSREQ, BUSACK & \verb|FFFF| & \verb|FF| \\
+\hline
+\end{tabular}
+\\
+
+Nun deaktivieren wir wieder BUSREQ:
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+24 & BUSACK & \verb|FFFF| & \verb|FF| \\
+25 & - & \verb|FFFF| & \verb|FF| \\
+26 & M1, MREQ, RD & \verb|0001| & \verb|00|${}^*$ \\
+\hline
+\end{tabular}
+
 \subsection{Speicher-Lese-/Schreib-Zyklus}
 
 \subsubsection{Aufgabe}
@@ -208,6 +306,70 @@ Nehmen Sie entsprechend o. a. Muster das Zyklusdiagramm für einen Speicher-Lese-
 Zyklus auf.
 
 \subsubsection{L"osung}
+
+Wir nutzen den Befehl "`LD A, n"' mit n=\verb|42h| (\verb|3E 42|), um in den Akkumulator den Wert \verb|42h|  zu laden:
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+1 & M1, MREQ, RD & \verb|0000| & \verb|3E|${}^*$ \\
+2 & M1, MREQ, RD & \verb|0000| & \verb|3E|${}^*$ \\
+3 & MREQ, RFSH & \verb|0000| & \verb|FF| \\
+4 & RFSH & \verb|0000| & \verb|FF| \\
+5 & MREQ, RD & \verb|0001| & \verb|42|${}^*$ \\
+6 & MREQ, RD & \verb|0001| & \verb|42|${}^*$ \\
+7 & - & \verb|0001| & \verb|FF| \\
+\hline
+\end{tabular}
+\\
+
+Nun nutzen wir den Befehl "`LD (n, n), A"' mit (n, n)=\verb|8000h| (\verb|32 00 80|), um den Wert des Akkumulators (\verb|42h|) in der Speicheradresse \verb|8000h| abzulegen:
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+8 & M1, MREQ, RD & \verb|0002| & \verb|32|${}^*$ \\
+9 & M1, MREQ, RD & \verb|0000| & \verb|32|${}^*$ \\
+10 & MREQ, RFSH & \verb|0001| & \verb|FF| \\
+11 & RFSH & \verb|0001| & \verb|FF| \\
+12 & MREQ, RD & \verb|0003| & \verb|00|${}^*$ \\
+13 & MREQ, RD & \verb|0003| & \verb|00|${}^*$ \\
+14 & - & \verb|0003| & \verb|FF| \\
+15 & MREQ, RD & \verb|0004| & \verb|80|${}^*$ \\
+16 & MREQ, RD & \verb|0004| & \verb|80|${}^*$ \\
+17 & - & \verb|0003| & \verb|FF| \\
+18 & MREQ & \verb|8000| & 42 \\
+19 & MREQ, WR & \verb|8000| & 42 \\
+20 & - & \verb|8000| & 42 \\
+\hline
+\end{tabular}
+\\
+
+Im Folgenden lesen wir den Wert der Speicherzelle \verb|8000h| wieder aus -- dies geschieht mit dem Befehl "`LD A, (n, n)"' (\verb|3A 00 80|):
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+21 & M1, MREQ, RD & \verb|0005| & \verb|3A|${}^*$ \\
+22 & M1, MREQ, RD & \verb|0005| & \verb|3A|${}^*$ \\
+23 & MREQ, RFSH & \verb|0002| & \verb|FF| \\
+24 & RFSH & \verb|0002| & \verb|FF| \\
+25 & MREQ, RD & \verb|0006| & \verb|00|${}^*$ \\
+26 & MREQ, RD & \verb|0006| & \verb|00|${}^*$ \\
+27 & - & \verb|0006| & \verb|FF| \\
+28 & MREQ, RD & \verb|0007| & \verb|80|${}^*$ \\
+29 & MREQ, RD & \verb|0007| & \verb|80|${}^*$ \\
+30 & - & \verb|0007| & \verb|FF| \\
+31 & MREQ, RD & \verb|8000| & 42 \\
+32 & MREQ, RD & \verb|8000| & 42 \\
+33 & - & \verb|8000| & FF \\
+34 & M1, MREQ, RD & \verb|0008| & \verb|00|${}^*$ \\
+\hline
+\end{tabular}
+\\
 
 \subsection{E/A-Zyklus}
 
