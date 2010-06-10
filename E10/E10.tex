@@ -6,7 +6,7 @@
 \usepackage{cite}
 \usepackage{amsmath} % for eqref
 \usepackage{tabularx}
-\author{Denis Dietze \and Wolfgang Keller \and Nico Linke \and Thomas Schulte}
+\author{Denis Dietze\footnote{denis.dietze@st.ovgu.de} \and Wolfgang Keller\footnote{wolfgang.keller@student.uni-magdeburg.de} \and Nico Linke\footnote{nicolinke@googlemail.com} \and Thomas Schulte\footnote{thomas.schulte.md@googlemail.com}}
 
 \title{Protokoll Versuch E10/IT7}
 \subtitle{Mikroprozessor -- Grundlagenversuch Z 80 (Z 84 C 0008)}
@@ -69,7 +69,7 @@ Wodurch werden Daten- und Befehlsbytes unterschieden?
 
 \subsubsection{Antwort}
 
-???
+Wenn auf dem Steuerbus ein M1-Signal anliegt, so wird das aktuelle Byte als Befehlsbyte betrachtet, sonst als Datenbyte.
 
 \subsection{Steuersignale}
 
@@ -129,6 +129,7 @@ Interrupts erm"oglichen au"serdem die parallele Abarbeitung mehrerer Programme d
 Erläutern Sie die drei möglichen Interruptmodi der Z 80 CPU!
 
 \subsubsection{Antwort}
+\label{sec:interruptmodi_antwort}
 
 F"ur den maskierbaren Interrupt werden 3 Modi unterschieden (vgl. \cite[S.~75]{KieserMeder86}):
 
@@ -442,7 +443,7 @@ Takt & Kontrollbus & Adressbus & Datenbus \\
 \end{tabular}
 \\
 
-Da kein Gerät an Port \verb|13h| angeschlossen ist, wird in den Takten 26 bis 28 auf dem Datenbus nur \verb|FF| "ubertragen. Wir h"atten mittels des Kontrollpanels den Wert "andern k"onnen, haben jedoch keinen Gebrauch davon gemacht.
+Da kein Gerät an Port \verb|13h| angeschlossen ist, wird in den Takten 26 bis 28 auf dem Datenbus nur \verb|FF| "ubertragen. Wir h"atten mittels des Kontrollpanels den auf dem Datenbus übertragenen Wert "andern k"onnen, haben jedoch keinen Gebrauch davon gemacht.
 
 \subsection{Interruptbehandlungszyklus}
 
@@ -456,6 +457,128 @@ zu setzten!
 
 \subsubsection{L"osung}
 
+Wie im Hinweis vorgegeben, m"ussen wir als ersten Schritt die Interrupts freigeben. Dies geschieht mit dem \verb|EI|-Befehl (\verb|FBh|):
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+1 & M1, MREQ, RD & \verb|0000| & \verb|FB|${}^*$ \\
+2 & M1, MREQ, RD & \verb|0000| & \verb|FB|${}^*$ \\
+3 & MREQ, RFSH & \verb|0000| & \verb|FF| \\
+4 & RFSH & \verb|0000| & \verb|FF| \\
+\hline
+\end{tabular}
+\\
+
+Anschließend setzen wir den Interruptmodus auf 1 durch den Befehl \verb|IM1| (\verb|ED 56h|).
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+5 & M1, MREQ, RD & \verb|0001| & \verb|ED|${}^*$ \\
+6 & M1, MREQ, RD & \verb|0001| & \verb|ED|${}^*$ \\
+7 & MREQ, RFSH & \verb|0001| & \verb|FF| \\
+8 & RFSH & \verb|0001| & \verb|FF| \\
+9 & M1, MREQ, RD & \verb|0002| & \verb|56|${}^*$ \\
+10 & M1, MREQ, RD & \verb|0002| & \verb|56|${}^*$ \\
+11 & MREQ, RFSH & \verb|0002| & \verb|FF| \\
+12 & RFSH & \verb|0002| & \verb|FF| \\
+\hline
+\end{tabular}
+\\
+
+Nun legen wir einen \verb|NOP|-Befehl (\verb|00h|), der als Auswirkung nur den Program Counter erhöht, auf  den Datenbus und aktivieren Interrupts.
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+13 & M1, MREQ, RD, INT & \verb|0003| & \verb|00|${}^*$ \\
+14 & M1, MREQ, RD, INT & \verb|0003| & \verb|00|${}^*$ \\
+15 & MREQ, RFSH, INT & \verb|0003| & \verb|FF| \\
+16 & RFSH, INT & \verb|0003| & \verb|FF| \\
+17 & M1, INT & \verb|0004| & \verb|FF| \\
+18 & M1, INT & \verb|0004| & \verb|FF| \\
+\hline
+\end{tabular}
+\\
+
+Wie man sieht, wird der aktuelle Befehl noch fertig abgearbeitet und anschließend mit der Interruptverarbeitung begonnen.
+
+Im folgenden Schritt liefert die unterbrechende Einheit ein Byte auf den Datenbus. Im gewählten IM1-Modus spielt dieses jedoch -- wie in Abschnitt \ref{sec:interruptmodi_antwort} beschrieben -- keine weitere Rolle.  Wir haben f"ur dieses Byte den Wert \verb|12h| verwendet.
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+19 & M1, IORQ, INT  & \verb|0004| & \verb|12|${}^*$ \\
+20 & M1, IORQ, INT & \verb|0004| & \verb|12|${}^*$ \\
+21 & MEMRQ, RFSH, INT & \verb|0004| & \verb|FF| \\
+22 & RFSH, INT & \verb|0004| & \verb|FF| \\
+23 & INT & \verb|0004| & \verb|FF| \\
+\hline
+\end{tabular}
+\\
+
+Nun wird der Wert des Program Counters auf den Stack gelegt.
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+24 & MREQ, INT  & \verb|FFFA| & \verb|00| \\
+25 & MREQ, WR, INT & \verb|FFFA| & \verb|00| \\
+26 & INT & \verb|FFFA| & \verb|00| \\
+27 & MREQ, INT & \verb|FFF9| & \verb|04| \\
+28 & MREQ, WR, INT & \verb|FFF9| & \verb|04| \\
+29 & INT & \verb|FFF9| & \verb|04| \\
+\hline
+\end{tabular}
+\\
+
+Anschließend wird in die Interrupt Service Routine gesprungen, die im IM1-Modus auf der Adresse \verb|00 38h| im Speicher liegt. Gleichzeitig haben wir uns entschieden von nun an das INT-Signal wieder auszuschalten.
+
+Der Befehl, welchen wir ausf"uhren, ist \verb|RETI| (\verb|ED 4Dh|), welcher daf"ur sorgt, dass die Interrupt Service Routine eines maskierbaren Interrupts verlassen wird und der Programmablauf regul"ar fortgesetzt wird.
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+30 & M1, MREQ, RD  & \verb|0038| & \verb|ED|${}^*$ \\
+31 & M1, MREQ, RD & \verb|0038| & \verb|ED|${}^*$ \\
+32 & MREQ, RFSH & \verb|0005| & \verb|FF| \\
+33 & RFSH & \verb|0005| & \verb|FF| \\
+34 & M1, MREQ, RD  & \verb|0039| & \verb|4D|${}^*$ \\
+35 & M1, MREQ, RD & \verb|0039| & \verb|4D|${}^*$ \\
+36 & MREQ, RFSH & \verb|0006| & \verb|FF| \\
+37 & RFSH & \verb|0006| & \verb|FF| \\
+\hline
+\end{tabular}
+\\
+
+Nun wird der vorherige Wert des Program Counters vom Stack zur"uckgeholt und anschließend das Programm an der Speicheradresse \verb|00 04h| fortgesetzt. Zur "Uberpr"ufung f"uhren wir am Ende noch einen NOP-Befehl an dieser Adresse aus.
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+38 & MREQ  & \verb|FFF9| & \verb|04| \\
+39 & MREQ, RD & \verb|FFF9| & \verb|04| \\
+40 & - & \verb|FFF9| & \verb|FF| \\
+41 & MREQ & \verb|FFFA| & \verb|00| \\
+42 & MREQ, RD & \verb|FFFA| & \verb|00| \\
+43 & - & \verb|FFFA| & \verb|FF| \\
+44 & M1, MREQ, RD & \verb|0004| & \verb|00|${}^*$ \\
+45 & M1, MREQ, RD & \verb|0004| & \verb|00|${}^*$ \\
+46 & MREQ, RFSH & \verb|0007| & \verb|FF| \\
+47 & RFSH & \verb|0007| & \verb|FF| \\
+48 & M1, MREQ, RD & \verb|0005| & \verb|00|${}^*$ \\
+\hline
+\end{tabular}
+\\
+
 \subsection{NMI-Routine}
 
 \subsubsection{Aufgabe}
@@ -465,11 +588,106 @@ fest!
 
 \subsubsection{L"osung}
 
+
+Analog zur vorhergehenden Aufgabe schalten wir in den IM1-Modus (nachtr"aglich stellten wir fest, dass dies "uberfl"ssig ist, da die unterschiedlichen Interrupt-Modi nur beim maskierbaren Interrupt unterschieden werden).
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+1 & M1, MREQ, RD & \verb|0000| & \verb|ED|${}^*$ \\
+2 & M1, MREQ, RD & \verb|0000| & \verb|ED|${}^*$ \\
+3 & MREQ, RFSH & \verb|0000| & \verb|FF| \\
+4 & RFSH & \verb|0000| & \verb|FF| \\
+5 & M1, MREQ, RD & \verb|0001| & \verb|56|${}^*$ \\
+6 & M1, MREQ, RD & \verb|0001| & \verb|56|${}^*$ \\
+7 & MREQ, RFSH & \verb|0001| & \verb|FF| \\
+8 & RFSH & \verb|0001| & \verb|FF| \\
+\hline
+\end{tabular}
+\\
+
+W"ahrend wir in der vorhergehenden Aufgabe vor dem ersten M1-Signal das Interrupt-Signal angelegt haben, legen wir es diesmal erst beim zweiten M1 eines Befehls an, um zu sehen, dass dieser Befehl dann noch fertig ausgef"uhrt wird.
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+9 & M1, MREQ, RD & \verb|0002| & \verb|00|${}^*$ \\
+10 & M1, MREQ, RD, NMI & \verb|0002| & \verb|00|${}^*$ \\
+11 & MREQ, RFSH, NMI & \verb|0002| & \verb|FF| \\
+12 & RFSH, NMI & \verb|0002| & \verb|FF| \\
+13 & M1, MREQ, RD, NMI & \verb|0003| & \verb|56|${}^*$ \\
+14 & M1, MREQ, RD, NMI & \verb|0003| & \verb|56|${}^*$ \\
+15 & MREQ, RFSH, NMI & \verb|0003| & \verb|FF| \\
+16 & RFSH, NMI & \verb|0003| & \verb|FF| \\
+17 & NMI & \verb|0003| & \verb|FF| \\
+\hline
+\end{tabular}
+\\
+
+Anschließend wird der Wert des Program Counters auf dem Stack gesichert und in die Interrupt Service Routine des nicht maskierbaren Interrupts gesprungen -- diese befindet sich an der Adresse \verb|0066|.
+
+Wir merken an, dass wir ab Zeile 19 das NMI-Signal wieder ausgeschaltet haben.
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+18 & MREQ, NMI  & \verb|FFFA| & \verb|00| \\
+19 & MREQ, WR & \verb|FFFA| & \verb|00| \\
+20 & - & \verb|FFFA| & \verb|00| \\
+21 & MREQ & \verb|FFF9| & \verb|03| \\
+22 & MREQ, WR & \verb|FFF9| & \verb|03| \\
+23 & - & \verb|FFF9| & \verb|03| \\
+\hline
+\end{tabular}
+\\
+
+Diesmal benutzen wir den Befehl \verb|RETN| (\verb|ED 45|), um die Service Routine des NMI zu beenden.
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+24 & M1, MREQ, RD  & \verb|0066| & \verb|ED|${}^*$ \\
+25 & M1, MREQ, RD & \verb|0066| & \verb|ED|${}^*$ \\
+26 & MREQ, RFSH & \verb|0004| & \verb|FF| \\
+27 & RFSH & \verb|0004| & \verb|FF| \\
+28 & M1, MREQ, RD  & \verb|0067| & \verb|45|${}^*$ \\
+29 & M1, MREQ, RD & \verb|0067| & \verb|45|${}^*$ \\
+30 & MREQ, RFSH & \verb|0005| & \verb|FF| \\
+31 & RFSH & \verb|0005| & \verb|FF| \\
+\hline
+\end{tabular}
+\\
+
+Nun wird -- wie bereits in der vorherigen Aufgabe betrachtet -- der Program Counter vom Stack geholt und das Programm an dieser Stelle fortgesetzt. Auch hier haben wir zu Testzwecken einen NOP-Befehl eingef"ugt.
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+32 & MREQ  & \verb|FFF9| & \verb|03| \\
+33 & MREQ, RD & \verb|FFF9| & \verb|03| \\
+34 & - & \verb|FFF9| & \verb|FF| \\
+35 & MREQ & \verb|FFFA| & \verb|00| \\
+36 & MREQ, RD & \verb|FFFA| & \verb|00| \\
+37 & - & \verb|FFFA| & \verb|FF| \\
+38 & M1, MREQ, RD & \verb|0003| & \verb|00|${}^*$ \\
+39 & M1, MREQ, RD & \verb|0003| & \verb|00|${}^*$ \\
+40 & MREQ, RFSH & \verb|0006| & \verb|FF| \\
+41 & RFSH & \verb|0006| & \verb|FF| \\
+42 & M1, MREQ, RD & \verb|0004| & \verb|00|${}^*$ \\
+\hline
+\end{tabular}
+\\
+
 \subsection{HALT-Zustand}
 
 \subsubsection{Aufgabe}
 
-Programmieren Sie einen Software-HALT und setzten Sie das Programm mit den vorhandenen
+Programmieren Sie einen Software-HALT und setzen Sie das Programm mit den vorhandenen
 Möglichkeiten fort.
 
 \subsubsection{L"osung}
