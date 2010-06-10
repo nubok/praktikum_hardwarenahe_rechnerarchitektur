@@ -700,6 +700,38 @@ Arbeiten Sie einen RST-38H-Befehl ab und halten Sie die Adress- und Datenbussign
 
 \subsubsection{L"osung}
 
+Der genannte Befehl hat den Opcode \verb|FF|. Zuvor f"uhren wir jedoch noch einen NOP-Befehl aus:
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+1 & M1, MREQ, RD & \verb|0000| & \verb|00|${}^*$ \\
+2 & M1, MREQ, RD & \verb|0000| & \verb|00|${}^*$ \\
+3 & MREQ, RFSH & \verb|0000| & \verb|FF| \\
+4 & RFSH & \verb|0000| & \verb|FF| \\
+5 & M1, MREQ, RD & \verb|0001| & \verb|FF|${}^*$ \\
+6 & M1, MREQ, RD & \verb|0001| & \verb|FF|${}^*$ \\
+7 & MREQ, RFSH & \verb|0001| & \verb|FF| \\
+8 & RFSH & \verb|0001| & \verb|FF| \\
+9 & - & \verb|0001| & \verb|00| \\
+10 & MREQ & \verb|FFFA| & \verb|00| \\
+11 & MREQ, WR & \verb|FFFA| & \verb|00| \\
+12 & - & \verb|FFFA| & \verb|02| \\
+13 & MREQ & \verb|FFF9| & \verb|00| \\
+14 & MREQ, WR & \verb|FFF9| & \verb|00| \\
+15 & - & \verb|FFF9| & \verb|02| \\
+16 & M1, MREQ, RD & \verb|0038| & \verb|00|${}^*$ \\
+17 & M1, MREQ, RD & \verb|0038| & \verb|00|${}^*$ \\
+18 & MREQ, RFSH & \verb|0002| & \verb|FF| \\
+19 & RFSH & \verb|0002| & \verb|FF| \\
+20 & M1, MREQ, RD & \verb|0039| & \verb|00|${}^*$ \\
+\hline
+\end{tabular}
+\\
+
+Wie wir sehen: zuerst wird der genannte \verb|NOP|-Befehl ausgef"uhrt. Anschließend f"uhren wir den RST-38H-Befehl aus. Dieser f"uhrt dazu, dass der Inhalt des Program Counters auf dem Stack abgelegt wird und die Ausf"uhrung an der Adresse \verb|0038| fortgesetzt wird. Dort f"uhren wir einmal einen \verb|NOP|-Befehl aus.
+
 \subsection{Registeroperationen}
 
 \subsubsection{Aufgabe}
@@ -708,6 +740,78 @@ Führen Sie eine Operation mit den zugänglichen Registern der Z 80 CPU nach eigen
 aus.
 
 \subsubsection{L"osung}
+
+Als ersten Schritt laden wir den Wert \verb|12h| in das Register E. Dazu dient der Befehl \verb|LD E, n| (Opcode \verb|1E| gefolgt vom zu ladenden Wert -- in unserem Fall \verb|12h|):
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+1 & M1, MREQ, RD & \verb|0000| & \verb|1E|${}^*$ \\
+2 & M1, MREQ, RD & \verb|0000| & \verb|1E|${}^*$ \\
+3 & MREQ, RFSH & \verb|0000| & \verb|FF| \\
+4 & RFSH & \verb|0000| & \verb|FF| \\
+5 & MREQ, RD & \verb|0001| & \verb|12|${}^*$ \\
+6 & MREQ, RD & \verb|0001| & \verb|12|${}^*$ \\
+7 & - & \verb|0001| & \verb|FF| \\
+\hline
+\end{tabular}
+\\
+
+Analog laden wir mittels \verb|LD A, n| (\verb|3E| gefolgt vom zu ladenden Wert) den Wert \verb|13h| in das Register A.
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+8 & M1, MREQ, RD & \verb|0002| & \verb|3E|${}^*$ \\
+9 & M1, MREQ, RD & \verb|0002| & \verb|3E|${}^*$ \\
+10 & MREQ, RFSH & \verb|0001| & \verb|FF| \\
+11 & RFSH & \verb|0001| & \verb|FF| \\
+12 & MREQ, RD & \verb|0003| & \verb|13|${}^*$ \\
+13 & MREQ, RD & \verb|0003| & \verb|13|${}^*$ \\
+14 & - & \verb|0003| & \verb|FF| \\
+\hline
+\end{tabular}
+\\
+
+Folgend f"uhren wir den Befehl \verb|add E| (\verb|83|) aus, welcher zum Akkumulator A den Inhalt des Registers E addiert:
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+15 & M1, MREQ, RD & \verb|0004| & \verb|83|${}^*$ \\
+16 & M1, MREQ, RD & \verb|0004| & \verb|83|${}^*$ \\
+17 & MREQ, RFSH & \verb|0002| & \verb|FF| \\
+18 & RFSH & \verb|0002| & \verb|FF| \\
+\hline
+\end{tabular}
+\\
+
+Um an das Ergebnis der Berechnung zu kommen, benutzen wir den Befehl \verb|OUT n| (\verb|D3|), um das Ergebnis auf Port 4 auszugeben und somit bei der Übertragung mitlesen zu k"onnen:
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Takt & Kontrollbus & Adressbus & Datenbus \\
+\hline
+19 & M1, MREQ, RD & \verb|0005| & \verb|D3|${}^*$ \\
+20 & M1, MREQ, RD & \verb|0005| & \verb|D3|${}^*$ \\
+21 & MREQ, RFSH & \verb|0003| & \verb|FF| \\
+22 & RFSH & \verb|0003| & \verb|FF| \\
+23 & MREQ, RD & \verb|0006| & \verb|04|${}^*$ \\
+24 & MREQ, RD & \verb|0006| & \verb|04|${}^*$ \\
+25 & - & \verb|0006| & \verb|FF| \\
+26 & - & \verb|2504| & \verb|25| \\
+27 & IORQ, WR & \verb|2504| & \verb|25| \\
+28 & IORQ, WR & \verb|2504| & \verb|25| \\
+29 & - & \verb|2504| & \verb|25| \\
+30 & M1, MREQ, RD & \verb|0007| & \verb|00|${}^*$ \\
+\hline
+\end{tabular}
+\\
+
+Wie wir sehen, wird auf Port 4 der Wert 25 ausgegeben.
 
 \bibliography{E10}{}
 \bibliographystyle{geralpha}
