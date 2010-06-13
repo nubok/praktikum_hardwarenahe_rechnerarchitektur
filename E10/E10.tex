@@ -894,11 +894,25 @@ Nun führen wir wieder den \verb|HALT|-Befehl aus, aktivieren anschließend den ma
 \hline
 Takt & Kontrollbus & Adressbus & Datenbus \\
 \hline
-13 & M1, MREQ, RD & verb|0003| & \verb|76|${}^*$ \\
-14 & M1, MREQ, RD & verb|0003| & \verb|76|${}^*$ \\
+13 & M1, MREQ, RD & \verb|0003| & \verb|76|${}^*$ \\
+14 & M1, MREQ, RD & \verb|0003| & \verb|76|${}^*$ \\
 15 & MREQ, RFSH & \verb|0003| & \verb|FF| \\
 16 & RFSH & \verb|0003| & \verb|FF| \\
-
+17 & M1, MREQ, RD, HALT & \verb|0004| & \verb|00|${}^*$ \\
+18 & M1, MREQ, RD, HALT & \verb|0004| & \verb|00|${}^*$ \\
+19 & MREQ, RFSH, HALT & \verb|0004| & \verb|FF| \\
+20 & RFSH, HALT & \verb|0004| & \verb|FF| \\
+21 & M1, MREQ, RD, HALT, INT & \verb|0004| & \verb|00|${}^*$ \\
+22 & M1, MREQ, RD, HALT, INT & \verb|0004| & \verb|00|${}^*$ \\
+23 & MREQ, RFSH, HALT, INT & \verb|0005| & \verb|FF|  \\
+24 & RFSH, INT & \verb|0005| & \verb|FF|  \\
+25 & M1, INT & \verb|0004| & \verb|FF|  \\
+26 & M1, INT & \verb|0004| & \verb|FF|  \\
+27 & M1, IORQ, INT & \verb|0006| & \verb|FF| \\
+28 & M1, IORQ, INT & \verb|0006| & \verb|FF| \\
+29 & MREQ, RFSH & \verb|0006| & \verb|FF|  \\
+30 & RFSH & \verb|0006| & \verb|FF|  \\
+31 & - & \verb|0006| & \verb|FF| \\
 32 & MREQ  & \verb|FFFA| & \verb|00| \\
 33 & MREQ, WR & \verb|FFFA| & \verb|00| \\
 34 & - & \verb|FFFA| & \verb|00| \\
