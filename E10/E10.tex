@@ -7,11 +7,14 @@
 \usepackage{amsmath} % for eqref
 \usepackage{tabularx}
 \author{Denis Dietze\footnote{denis.dietze@st.ovgu.de} \and Wolfgang Keller\footnote{wolfgang.keller@student.uni-magdeburg.de} \and Nico Linke\footnote{nicolinke@googlemail.com} \and Thomas Schulte\footnote{thomas.schulte.md@googlemail.com}}
-
 \title{Protokoll Versuch E10/IT7}
 \subtitle{Mikroprozessor -- Grundlagenversuch Z 80 (Z 84 C 0008)}
+
 \begin{document}
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{3}
 \maketitle
+\tableofcontents
 \section{Studienkontrollfragen}
 
 \subsection{Maschinenzyklus}
@@ -41,13 +44,48 @@ Beschreiben Sie die Registerstruktur der Z 80 CPU und erläutern Sie die Besonder
 
 \subsubsection{Antwort}
 
-Der Registersatz der Z 80 CPU besteht (vgl. \cite[S.~22ff]{KieserMeder86}) aus "`allgemeinen Registern"' und "`Spezialregistern"'. Die allgemeinen Register teilen sich weiter in zwei Registers"atze auf: einen Hauptregistersatz und einen Tauschregistersatz. Jeder dieser beiden Registers"atze enth"alt acht 8-Bit-Register, die wir mit A, F, B, C, D, E, H und L bzw. A', F', B', C', D', E', H' und L' bezeichnen.
+Der Registersatz der Z 80 CPU besteht (vgl. \cite[S.~22ff]{KieserMeder86}) aus "`allgemeinen Registern"' und "`Spezialregistern"'. 
+
+\paragraph{Allgemeine Register} ~\\
+
+\begin{tabular}{|c|c|c|c|}
+\multicolumn{2}{c}{Hauptregistersatz} & \multicolumn{2}{c}{Tauschregistersatz} \\
+\hline
+    Akkumulator A & Flags F & Akkumulator A' & Flags F' \\
+    \hline
+    B & C & B' & C' \\
+    \hline
+    D & E & D' & E' \\
+    \hline
+    H & L & H' & L' \\
+\hline
+\end{tabular}
+\\
+
+Die allgemeinen Register teilen sich weiter in zwei Registers"atze auf: einen Hauptregistersatz und einen Tauschregistersatz. Jeder dieser beiden Registers"atze enth"alt acht 8-Bit-Register, die wir mit A, F, B, C, D, E, H und L bzw. A', F', B', C', D', E', H' und L' bezeichnen.
 
 Das Register A bzw. A' bezeichnen wir als "'Akkumulator"` und das Register F bzw. F' als "'Flagsregister"`. Diese beiden sind f"ur spezielle Aufgaben vorgesehen. Die anderen 6 allgemeinen Register werden f"ur die allgemeine Verwendung benutzt.
 
 Die Registerpaare B-C, D-E und H-L lassen sich auch als 16-Bit-Registerpaar nutzen.
 
 Mit einem Befehl lassen sich A und F durch den Inhalt der Tauschregister tauschen. Mit einem weiteren lassen sich die sechs Allzweckregister durch ihre Tauschregister ersetzen. Dies kann beispielsweise f"ur eine schnelle Interrupt-Verarbeitung eingesetzt werden, da das Austauschen dieser Register deutlich schneller ist, als den Inhalt der Register auf einen externen Stack zu retten, wie es beispielsweise auf X86-basierenden Architekturen h"aufig in Interrupt-Service-Routinen h"aufig getan wird.
+
+\paragraph{Spezialregister} ~\\
+
+\begin{tabular}{|c|c|}
+\hline
+Interruptvektorregister I & Refreshregister R \\
+\hline
+\multicolumn{2}{|c|}{Indexregister IX} \\
+\hline
+\multicolumn{2}{|c|}{Indexregister IY} \\
+\hline
+\multicolumn{2}{|c|}{Stack Pointer SP} \\
+\hline
+\multicolumn{2}{|c|}{Program Counter PC} \\
+\hline
+\end{tabular}
+\\
 
 Die \emph{Spezialregister} bestehen aus den zwei 8-Bit-Registern I (Interruptvektor-Register) und R (Refresh-Register), sowie vier 16-Bit-Registern: den zwei Index-Registern IX und IY, dem Stack Pointer SP und dem Program Counter PC.
 
@@ -81,11 +119,15 @@ Erläutern Sie die Aufgaben der Steuersignale der Z 80 CPU!
 
 Wir unterscheiden drei Typen von Steuersignalen:
 
-\paragraph{System Control} Umfasst M1, MREQ, IORQ, RD, WR und RFSH.
+\begin{itemize}
+\item System Control
+\item CPU Control
+\item CPU Bus Control
+\end{itemize}
 
-\paragraph{CPU Control} Umfasst HALT, WAIT, INT, NMI und RESET.
+\paragraph{System Control}
 
-\paragraph{CPU Bus Control} Umfasst BUSRQ und BUSACK.
+Umfasst M1, MREQ, IORQ, RD, WR und RFSH.\\
 
 \begin{tabularx}{\textwidth}{|l|X|}
 \hline
@@ -97,12 +139,35 @@ IORQ & Kennzeichnet Datenverkehr zwischen CPU und dem durch den Adressbus adress
 RD & Zeigt an, dass auf dem Speicher oder Peripherie Leseoperation ausgef"uhrt wird\\
 WR & Ist aktiv, wenn der Datenbus g"ultige Daten f"ur eine Schreiboperation enth"alt. \\
 RFSH & Falls es aktiv ist, bedeutet dies, dass die niederwertigsten Bits eine Refresh-Adresse f"ur dynamische Speicher benutzten\\
+\hline
+\end{tabularx}
+
+\paragraph{CPU Control}
+
+Umfasst HALT, WAIT, INT, NMI und RESET.\\
+
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+Signal & Bedeutung \\
+\hline
 HALT & Kennzeichnet, dass CPU einen Halt-Befehl ausgef"uhrt hat. Zur Erl"auterung des HALT-Zustands, siehe  Abschnitt \ref{sec:halt_antwort}. \\
 WAIT & Erlaubt Einf"ugen von Wartezyklen in die Lese- und Schreibzyklen der CPU mit dem Speicher un den E/A-Einheiten. Dient somit zur Synchronisation mit diesen. Wenn das Signal aktiv ist, zeigt dieses an, dass der angesprochene Speicher bzw. E/A-Baustein noch nicht bereit zur Daten"ubertragung ist \\
 INT & Zur Bedeutung siehe Abschnitt \ref{sec:interrupt_antwort}. Es wird ein Interrupt ausgel"ost, sofern dieser freigegeben ist und BUSRQ \emph{nicht} aktiv ist. \\
 NMI & Zur Bedeutung vergleiche Abschnitt \ref{sec:interrupt_antwort}. L"ost einen nicht maskierbaren Interrupt aus. \\
 RESET & Bringt den Prozessor in den Anfangszustand. \\
-BUSRQ & Dient zur Anforderung des CPU-Bussystems. Wird von einer Einheit geliefert, um DMA-Betrieb anzumelden. \\
+\hline
+\end{tabularx}
+
+\paragraph{CPU Bus Control}
+
+Die CPU Bus Control Signale dienen zur Anforderung des Buses für den DMA-Betrieb. Sie umfassen BUSRQ und BUSACK.
+\\
+
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+Signal & Bedeutung \\
+\hline
+BUSRQ & Dieses Signal von einer Einheit geliefert, um DMA-Betrieb anzumelden, also das Anforderung des CPU-Bussystems anzufordern. \\
 BUSACK & Mit diesem Signal quittiert CPU die Anmeldung eines BUSRQ. Der Datenverkehr kann somit von einer DMA-Einheit gesteuert werden. \\
 \hline
 \end{tabularx}
@@ -150,7 +215,7 @@ einem maskierbaren Interrupt!
 
 Laut \cite[S.~70]{KieserMeder86} besitzt die Z 80 CPU zwei Interrupteing"ange: INT und NMI.
 
-Der nichtmaskierbare Interrupt (NMI) der besitzt die höhere Priorit"at und kann nicht per Programm gesperrt werden. Daher unterbricht die CPU das laufende Programm ausnahmslos, falls dieser Interrupt anliegt. Aus diesem Grund ist dieser im Allgemeinen f"ur sehr wichtige Ereignisse, wie Ausf"alle, Havarien und andere nicht vorhersehbare Ereignisse reserviert.
+Der nichtmaskierbare Interrupt (NMI) besitzt die höhere Priorit"at und kann nicht per Programm gesperrt werden. Daher unterbricht die CPU das laufende Programm ausnahmslos, falls dieser Interrupt anliegt. Aus diesem Grund ist dieser im Allgemeinen f"ur sehr wichtige Ereignisse, wie Ausf"alle, Havarien und andere nicht vorhersehbare Ereignisse reserviert.
 
 Der maskierbare Interrupt (INT) kann dagegen gezielt per Programm gesperrt und freigegeben werden. Eine Sperrung kann beispielsweise dann notwendig sein, wenn zwar eine Interruptserviceroutine niedriger Priorit"at abl"auft, aber eine Unterbrechung bestimmter Programmteile aufgrund des geforderten Echtzeitverhaltens nicht tragbar ist. In diesem Fall sperrt man in diesem Programmteil den maskierbaren Interrupt.
 
@@ -452,7 +517,7 @@ Da kein Gerät an Port \verb|13h| angeschlossen ist, wird in den Takten 26 bis 28
 Nehmen Sie das Zyklusdiagramm auf und charakterisieren Sie die Unterschiede zu einem
 normalen M1-Zyklus!
 
-\paragraph{Hinweis} Vor Beginn ist das Interruptfreigabe-Flip-Flop durch einen entsprechenden Befehl
+\subparagraph{Hinweis} Vor Beginn ist das Interruptfreigabe-Flip-Flop durch einen entsprechenden Befehl
 zu setzten!
 
 \subsubsection{L"osung}
@@ -691,6 +756,17 @@ Programmieren Sie einen Software-HALT und setzen Sie das Programm mit den vorhan
 Möglichkeiten fort.
 
 \subsubsection{L"osung}
+
+Da in der Aufgabenstellung explizit von \emph{den} vorhandenen Möglichkeiten gesprochen wurde, sind wir auf zwei Möglichkeiten eingegangen:
+
+\begin{itemize}
+\item Unter Verwendung eines NMI
+\item Unter Verwendung eines maskierbaren Interrupts (sofern dieser freigeschalten wurde)
+\end{itemize}
+
+\paragraph{Programmfortsetzung unter Verwendung eines NMI}
+
+\paragraph{Programmfortsetzung unter Verwendung eines maskierbaren Interrupts}
 
 \subsection{RESTART-Befehl}
 
