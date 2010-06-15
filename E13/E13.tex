@@ -1,0 +1,95 @@
+\documentclass[10pt]{scrbook}
+\usepackage[latin1]{inputenc}
+\usepackage{bibgerm}
+\usepackage[english, ngerman]{babel}
+\usepackage[babel]{csquotes}
+\usepackage{cite}
+\usepackage{amsmath} % for eqref
+\usepackage{tabularx}
+\author{Denis Dietze\footnote{denis.dietze@st.ovgu.de} \and Wolfgang Keller\footnote{wolfgang.keller@student.uni-magdeburg.de} \and Nico Linke\footnote{nicolinke@googlemail.com} \and Thomas Schulte\footnote{thomas.schulte.md@googlemail.com}}
+\title{Protokoll Versuch IT1/E13}
+\subtitle{Schnittstellen}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\chapter{Vorbereitungsaufgaben}
+
+\section{Baugruppen eines Rechners}
+
+\subsection{Frage} Aus welchen Baugruppen besteht ein Rechner ähnlich der von-Neumann-Architektur,
+wie sind sie verbunden, und wie erfolgt die Kommunikation mit der Peripherie?
+
+\section{Aufgabe von Schnittstellen}
+
+\subsection{Frage} Welche Aufgabe haben Schnittstellen im Rechner?
+
+\section{Datenaustausch über eine parallele Schnittstelle mit
+Handshaking}
+
+\subsection{Frage} Wie funktioniert ein Datenaustausch über eine parallele Schnittstelle mit
+Handshaking?
+
+\subsection{Antwort}
+Die konkreten Details des Austausch h"angen davon, in welchem Modus der Parallelport betrieben wird. Daher beschr"anken wir uns in der Beschreibung auf den Fall der Centronics-Schnittstelle.
+
+Laut \cite[S.~447-448]{Baehring} beginnt die "Ubertragung damit, dass der Prozessor ein Ausgabedatum auf auf die Ausg"ange \verb|DATA1|-\verb|DATA8| der Schnittstelle schaltet. Fr"uhestens $0,5 \mu{}s$ sp"ater wird das \verb|STROBE|-Signal aktiviert, um das Vorliegen eines g"ultigen Datums anzuzeigen.
+
+Anschließend kann das Ger"at die Daten entweder annehmen oder durch Aktivieren eines \verb|BUSY|-Signals anzeigen, dass es besch"aftigt ist. Wenn es bereit ist die Daten anzunehmen, deaktiviert es das \verb|BUSY|-Signal und quittiert die Datenannahme durch ein mindestens $0,5 \mu{}s$ langes \verb|ACKNLG|-Signal.
+
+In \cite[S.~9]{PreussMusa} wird weiter zwischen einem \emph{Dreidraht-Handshake-Protokoll}, was dem soeben Beschriebenen entspricht und einem \emph{Zweidraht-Handshake-Protokoll} unterschieden.
+
+In letzterem bleibt beim Anlegen der Daten auf den Datenleitungen die \verb|STROBE|-Leitung so lange aktiviert, bis der Rechner ein Signal auf der \verb|ACKNOWLEDGE|-Leitung empf"angt. Dieses setzt das \verb|STROBE|-Signal zur"uck und das Peripherieger"at kann neue Daten empfangen.
+
+\section{Funktionsweise einer seriellen Datenübertragung}
+
+\subsection{Frage} Wie funktioniert eine serielle Datenübertragung?
+
+\section{Das Prinzip der Stromschleife}
+
+\subsection{Frage} Erläutern Sie das Prinzip der Stromschleife! Was ist der Vorteil gegenüber einer
+spannungsbasierten Übertragung?
+
+\section{Merkmale des PPI 8255}
+
+\subsection{Frage} Nennen Sie wesentliche Merkmale des PPI 8255! Wie funktionieren die
+Betriebsarten?
+
+\section{Interruptverarbeitung im PC}
+
+\subsection{Frage} Wie ist die Interruptverarbeitung im PC organisiert? Wie sind CPU,
+Interruptcontroller und -quellen miteinander verschaltet? Wie funktioniert
+Vektorinterrupt?
+
+\section{Hardware- vs. Software-Interrupts}
+
+\subsection{Frage}
+Was unterscheidet Hardware- von Software-Interrupts, was haben sie gemeinsam?
+
+\subsection{Antwort}
+Hardware-Interrupts werden durch ein Peripherie-Ger"at ausgel"ost, w"ahrend Software-Interrupts durch einen \verb|INT|-Befehl ausgel"ost werden.
+
+In beiden F"allen wird der Wert des Stack Pointers \verb|SP| auf dem Stack gesichert und der dem Interrupt zugeh"orige Wert aus der Interrupt-Einsprungtabelle in den Program Counter \verb|PC| geladen.
+
+Somit stellen Software-Interrupts eine Art Funktionsaufruf dar, w"ahrend Hardware-Interrupts eine asynchrone Unterbrechung des Programmablaufs darstellen.
+
+\section{M"oglichkeiten der Schnittstellenkonfigurierung}
+
+\subsection{Frage} Informieren Sie sich über M"oglichkeiten der Schnittstellenkonfigurierung. Welche
+Rolle spielen dabei Softwareinterrupts?
+
+\subsection{Antwort}
+
+\section{Befehle zum Zugriff auf Ein-/Ausgabe-Baugruppen}
+
+\subsection{Frage} Wiederholen Sie die Syntax des 80x86-Assemblers (siehe Anlage 12 der Versuchsanleitung). Mit welchen
+Befehlen wird auf die Ein-/Ausgabe-Baugruppen zugegriffen?
+
+\subsection{Antwort} Die Befehle zum Zugriff auf Ports sind \verb|IN| zum Einlesen und \verb|OUT| zum Ausgeben eines Wertes aus einem Port. Außerdem sind viele Baugruppen unter DOS "uber Interrupts ansteuerbar, wie in Anlagen 3-5 der Versuchsanleitung bez"uglich Interrupt 14h, 15h bzw. 21h f"ur die serielle bzw. parallele Schnittstelle. In diesem Fall erfolgt der Zugriff durch Belegen der Prozessorregister mit den gew"unschten Werten gefolgt von einem \verb|INT|-Befehl.
+
+\chapter{Aufgaben und Auswertung}
+
+\bibliography{E13}{}
+\bibliographystyle{geralpha}
+
+\end{document}
