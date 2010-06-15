@@ -68,7 +68,7 @@ Das Register A bzw. A' bezeichnen wir als "'Akkumulator"` und das Register F bzw
 
 Die Registerpaare B-C, D-E und H-L lassen sich auch als 16-Bit-Registerpaar nutzen.
 
-Mit einem Befehl lassen sich A und F durch den Inhalt der Tauschregister tauschen. Mit einem weiteren lassen sich die sechs Allzweckregister durch ihre Tauschregister ersetzen. Dies kann beispielsweise f"ur eine schnelle Interrupt-Verarbeitung eingesetzt werden, da das Austauschen dieser Register deutlich schneller ist, als den Inhalt der Register auf einen externen Stack zu retten, wie es beispielsweise auf X86-basierenden Architekturen h"aufig in Interrupt-Service-Routinen h"aufig getan wird.
+Mit einem Befehl lassen sich A und F durch den Inhalt der Tauschregister tauschen. Mit einem weiteren lassen sich die sechs Allzweckregister durch ihre Tauschregister ersetzen. Dies kann beispielsweise f"ur eine schnelle Interrupt-Verarbeitung eingesetzt werden, da das Austauschen dieser Register deutlich schneller ist, als den Inhalt der Register auf einen externen Stack zu retten, wie es beispielsweise auf X86-basierenden Architekturen h"aufig in Interrupt-Service-Routinen getan wird.
 
 \paragraph{Spezialregister} ~\\
 
@@ -143,6 +143,7 @@ RFSH & Falls es aktiv ist, bedeutet dies, dass die niederwertigsten Bits eine Re
 \end{tabularx}
 
 \paragraph{CPU Control}
+\label{sec:cpu_control}
 
 Umfasst HALT, WAIT, INT, NMI und RESET.\\
 
@@ -151,7 +152,7 @@ Umfasst HALT, WAIT, INT, NMI und RESET.\\
 Signal & Bedeutung \\
 \hline
 HALT & Kennzeichnet, dass CPU einen Halt-Befehl ausgef"uhrt hat. Zur Erl"auterung des HALT-Zustands, siehe  Abschnitt \ref{sec:halt_antwort}. \\
-WAIT & Erlaubt Einf"ugen von Wartezyklen in die Lese- und Schreibzyklen der CPU mit dem Speicher un den E/A-Einheiten. Dient somit zur Synchronisation mit diesen. Wenn das Signal aktiv ist, zeigt dieses an, dass der angesprochene Speicher bzw. E/A-Baustein noch nicht bereit zur Daten"ubertragung ist \\
+WAIT & Erlaubt das Einf"ugen von Wartezyklen in die Lese- und Schreibzyklen der CPU mit dem Speicher und den E/A-Einheiten. Es dient somit zur Synchronisation mit diesen. Wenn das Signal aktiv ist, zeigt dieses an, dass der angesprochene Speicher bzw. E/A-Baustein noch nicht bereit zur Daten"ubertragung ist \\
 INT & Zur Bedeutung siehe Abschnitt \ref{sec:interrupt_antwort}. Es wird ein Interrupt ausgel"ost, sofern dieser freigegeben ist und BUSRQ \emph{nicht} aktiv ist. \\
 NMI & Zur Bedeutung vergleiche Abschnitt \ref{sec:interrupt_antwort}. L"ost einen nicht maskierbaren Interrupt aus. \\
 RESET & Bringt den Prozessor in den Anfangszustand. \\
@@ -167,8 +168,8 @@ Die CPU Bus Control Signale dienen zur Anforderung des Buses für den DMA-Betrieb
 \hline
 Signal & Bedeutung \\
 \hline
-BUSRQ & Dieses Signal von einer Einheit geliefert, um DMA-Betrieb anzumelden, also das Anforderung des CPU-Bussystems anzufordern. \\
-BUSACK & Mit diesem Signal quittiert CPU die Anmeldung eines BUSRQ. Der Datenverkehr kann somit von einer DMA-Einheit gesteuert werden. \\
+BUSRQ & Dieses Signal wird von einer Einheit geliefert, um DMA-Betrieb anzumelden, also zur Anforderung des CPU-Bussystems. \\
+BUSACK & Mit diesem Signal quittiert die CPU die Anmeldung eines BUSRQ. Der Datenverkehr kann somit von einer DMA-Einheit gesteuert werden. \\
 \hline
 \end{tabularx}
 
@@ -243,7 +244,7 @@ der Z 80 CPU?
 
 \subsubsection{Antwort}
 
-Da 16 Adressleitungen zur Verf"gung stehe, ist der Speicherbereich prinzipiell bis zu $2^{16}~\textnormal{Byte}=65536~\textnormal{Byte}=64~KiB$ groß.
+Da 16 Adressleitungen zur Verf"ugung stehe, ist der Speicherbereich prinzipiell bis zu $2^{16}~\textnormal{Byte}=65536~\textnormal{Byte}=64~KiB$ groß.
 
 \subsection{Bidirektionaler Datentransfer}
 
@@ -253,7 +254,7 @@ Was bedeutet bidirektionaler Datentransfer?
 
 \subsubsection{Antwort}
 
-Laut ~\cite[S.~348]{KieserMeder86} versteht man unter einem bidirektionalen Datentransfer einen zeitmultiplexten Zweirichtungsbetrieb zur Signal"ubertragung.
+Laut ~\cite[S.~348]{KieserMeder86} versteht man unter einem bidirektionalen Datentransfer einen zeitmultiplexen Zweirichtungsbetrieb zur Signal"ubertragung.
 
 \section{Versuchsaufgaben}
 
@@ -300,7 +301,7 @@ Takt & Kontrollbus & Adressbus & Datenbus \\
 \end{tabular}
 \\
 
-Wie man sieht, führt dies dazu \ldots (TODO).
+Wie man sieht, führt dies dazu, dass -- wie in Abschnitt \ref{sec:cpu_control} beschrieben -- die CPU Wartezyklen einf"ugt, da das Signal anzeigt, dass der Speicher bzw. das E/A-Ger"at noch nicht bereit ist.
 
 Als folgenden Schritt deaktivieren wir WAIT und aktivieren RESET:
 
@@ -657,7 +658,7 @@ fest!
 
 \label{sec:nmi_lsg}
 
-Analog zur vorhergehenden Aufgabe schalten wir in den IM1-Modus (nachtr"aglich stellten wir fest, dass dies "uberfl"ssig ist, da die unterschiedlichen Interrupt-Modi nur beim maskierbaren Interrupt unterschieden werden).
+Analog zur vorhergehenden Aufgabe schalten wir in den IM1-Modus (nachtr"aglich stellten wir fest, dass dies "uberfl"ussig ist, da die unterschiedlichen Interrupt-Modi nur beim maskierbaren Interrupt unterschieden werden).
 
 \begin{tabular}[t]{|l|l|l|l|}
 \hline
