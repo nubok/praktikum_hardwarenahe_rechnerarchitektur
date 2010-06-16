@@ -147,7 +147,7 @@ Was unterscheidet Hardware- von Software-Interrupts, was haben sie gemeinsam?
 \subsection{Antwort}
 Hardware-Interrupts werden durch ein Peripherie-Ger"at ausgel"ost, w"ahrend Software-Interrupts durch einen \verb|INT|-Befehl ausgel"ost werden.
 
-In beiden F"allen wird laut \cite[S.~107]{Althaus}  der Wert des Stack Pointers \verb|SP| und des Flag-Registers auf dem Stack gesichert und der dem Interrupt zugeh"orige Wert aus der Interrupt-Einsprungtabelle in den Program Counter \verb|PC| geladen.
+In beiden F"allen wird laut \cite[S.~107]{althaus}  der Wert des Stack Pointers \verb|SP| und des Flag-Registers auf dem Stack gesichert und der dem Interrupt zugeh"orige Wert aus der Interrupt-Einsprungtabelle in den Program Counter \verb|PC| geladen.
 
 Somit stellen Software-Interrupts eine Art Funktionsaufruf dar, bei dem zus"atzlich das Flag-Register gesichert und wiederhergestellt wird, w"ahrend Hardware-Interrupts eine asynchrone Unterbrechung des Programmablaufs darstellen.
 
@@ -184,7 +184,7 @@ parallelen und Bits 9 und 10 die Anzahl der seriellen Ports. Ab Adresse 0:400h s
 Basisadressen von COM1 und COM2 und ab Adresse 0:408h die Basisadressen von
 LPT1-3 (jeweils 16 Bit). Zeigen Sie die Werte mit <d> an. Notieren Sie sich die Werte.
 
-\paragraph{Durchf"uhrung} Alle folgenden Ausgaben notieren:
+\paragraph{Durchf"uhrung} alle folgenden Ausgaben notieren:
 
 \begin{verbatim}
 d0:410 l 2 (Systemkonfigurations-Wort)
@@ -256,7 +256,40 @@ Um auf Mode 1 mit den gew"unschten Eigenschaften zu wechseln, m"ussen wir das Co
 e0:303 ...
 \end{verbatim}
 
+\section{Aufgabe 3}
 
+Interrupt-Service-Routine
+
+\begin{verbatim}
+push ax
+push dx
+mov dx, PORT_A_ADRESSE ; 301?
+in dx, al 
+mov dx, PORT_B_ADRESSE
+out dx, al
+mov al, 20 ; Ruecksetzbefehl des PIC (EOI)
+mov dx, 20 ; Portadresse PIC
+out dx, al
+pop dx
+pop ax
+iret
+\end{verbatim}
+
+\section{Aufgabe 5}
+
+Programm 
+
+\begin{verbatim}
+mov ah, 00h ; Initialisiere Schnittstelle
+mov dx, 0   ; 0: COM1, 1: COM2
+mov al, a7h
+int 14
+mov ah, 01h ; Sende Zeichen
+mov dx, 0   ; 0: COM1, 1: COM2
+mov al, ZEICHEN
+int 14
+; Ggf. fuer weitere Zeichen fortsetzen
+\end{verbatim}
 
 \bibliography{E13}{}
 \bibliographystyle{geralpha}
