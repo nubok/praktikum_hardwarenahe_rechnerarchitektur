@@ -244,7 +244,7 @@ der Z 80 CPU?
 
 \subsubsection{Antwort}
 
-Da 16 Adressleitungen zur Verf"ugung stehen, ist der Speicherbereich prinzipiell bis zu $2^{16}~\textnormal{Byte}=65536~\textnormal{Byte}=64~KiB$ groﬂ.
+Da 16 Adressleitungen zur Verf"ugung stehen, ist der Speicherbereich prinzipiell bis zu $2^{16}~\textnormal{Byte}=65536~\textnormal{Byte}=64~\textnormal{KiB}$ groﬂ.
 
 \subsection{Bidirektionaler Datentransfer}
 
@@ -334,7 +334,7 @@ Takt & Kontrollbus & Adressbus & Datenbus \\
 \end{tabular}
 \\
 
-Die 31, die in Takt 18 auf dem Datenbus liegt, ist der nach dem Reset vorliegende, zuf‰llige Wert der Speicherzelle \verb|0000|.
+Die 31, die in Takt 18 auf dem Datenbus liegt, ist der nach dem Reset vorliegende Wert der Speicherzelle \verb|0000|.
 
 Nun zum BUSREQ-Signal:
 
@@ -398,7 +398,7 @@ Nun nutzen wir den Befehl "`LD (n, n), A"' mit (n, n)=\verb|8000h| (\verb|32 00 
 Takt & Kontrollbus & Adressbus & Datenbus \\
 \hline
 8 & M1, MREQ, RD & \verb|0002| & \verb|32|${}^*$ \\
-9 & M1, MREQ, RD & \verb|0000| & \verb|32|${}^*$ \\
+9 & M1, MREQ, RD & \verb|0002| & \verb|32|${}^*$ \\
 10 & MREQ, RFSH & \verb|0001| & \verb|FF| \\
 11 & RFSH & \verb|0001| & \verb|FF| \\
 12 & MREQ, RD & \verb|0003| & \verb|00|${}^*$ \\
@@ -406,7 +406,7 @@ Takt & Kontrollbus & Adressbus & Datenbus \\
 14 & - & \verb|0003| & \verb|FF| \\
 15 & MREQ, RD & \verb|0004| & \verb|80|${}^*$ \\
 16 & MREQ, RD & \verb|0004| & \verb|80|${}^*$ \\
-17 & - & \verb|0003| & \verb|FF| \\
+17 & - & \verb|0004| & \verb|FF| \\
 18 & MREQ & \verb|8000| & 42 \\
 19 & MREQ, WR & \verb|8000| & 42 \\
 20 & - & \verb|8000| & 42 \\
@@ -485,7 +485,7 @@ Takt & Kontrollbus & Adressbus & Datenbus \\
 \end{tabular}
 \\
 
-Zu der letzten Zeilen eine Bemerkung: es gibt nur 256 Ports, jedoch hat der Adressbus 16 Bits. Daher wird nur das untere Byte des Adressbusses verwendet -- im oberen d"urfte ein beliebiger Wert stehen, da er ignoriert wird. In der Praxis wird im oberen Byte der Wert des Akkumulators gesendet.
+Zu der letzten Zeilen eine Bemerkung: es gibt nur 256 Ports, jedoch hat der Adressbus 16 Bits. Daher wird nur das untere Byte des Adressbusses tats‰chlich verarbeitet -- im oberen d"urfte theoretisch ein beliebiger Wert stehen, da er ignoriert wird. In der Praxis wird im oberen Byte der Wert des Akkumulators gesendet.
 
 Nun zum Lesen aus einem Port (wir haben uns f"ur Port \verb|13h| entschieden): hierf"ur gibt es den Befehl \verb|IN n| (f"ur genanntes n=\verb|13h| ist es \verb|DB 13|).
 
@@ -503,7 +503,7 @@ Takt & Kontrollbus & Adressbus & Datenbus \\
 26 & - & \verb|5613| & \verb|FF| \\
 27 & IORQ, RD & \verb|5613| & \verb|FF| \\
 28 & IORQ, RD & \verb|5613| & \verb|FF| \\
-29 & - & \verb|5667| & \verb|FF| \\
+29 & - & \verb|5613| & \verb|FF| \\
 30 & M1, MREQ, RD & \verb|0006| & \verb|00|${}^*$ \\
 \hline
 \end{tabular}
