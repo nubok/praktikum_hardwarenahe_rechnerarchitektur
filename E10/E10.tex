@@ -64,7 +64,7 @@ Der Registersatz der Z 80 CPU besteht (vgl. \cite[S.~22ff]{KieserMeder86}) aus "
 
 Die allgemeinen Register teilen sich weiter in zwei Registers"atze auf: einen Hauptregistersatz und einen Tauschregistersatz. Jeder dieser beiden Registers"atze enth"alt acht 8-Bit-Register, die wir mit A, F, B, C, D, E, H und L bzw. A', F', B', C', D', E', H' und L' bezeichnen.
 
-Das Register A bzw. A' bezeichnen wir als "'Akkumulator"` und das Register F bzw. F' als "'Flagsregister"`. Diese beiden sind f"ur spezielle Aufgaben vorgesehen. Die anderen 6 allgemeinen Register werden f"ur die allgemeine Verwendung benutzt.
+Das Register A bzw. A' bezeichnen wir als "`Akkumulator"' und das Register F bzw. F' als "`Flagsregister"'. Diese beiden sind f"ur spezielle Aufgaben vorgesehen. Die anderen 6 allgemeinen Register werden f"ur die allgemeine Verwendung benutzt.
 
 Die Registerpaare B-C, D-E und H-L lassen sich auch als 16-Bit-Registerpaar nutzen.
 
@@ -116,6 +116,8 @@ Wenn auf dem Steuerbus ein M1-Signal anliegt, so wird das aktuelle Byte als Befe
 Erl‰utern Sie die Aufgaben der Steuersignale der Z 80 CPU!
 
 \subsubsection{Antwort}
+
+Zur Beschreibung der Aufgaben der Steuersignale vgl. \cite[S.~25ff]{KieserMeder86}.
 
 Wir unterscheiden drei Typen von Steuersignalen:
 
@@ -172,8 +174,6 @@ BUSRQ & Dieses Signal wird von einer Einheit geliefert, um DMA-Betrieb anzumelde
 BUSACK & Mit diesem Signal quittiert die CPU die Anmeldung eines BUSRQ. Der Datenverkehr kann somit von einer DMA-Einheit gesteuert werden. \\
 \hline
 \end{tabularx}
-
-(vgl. \cite[S.~25ff]{KieserMeder86})
 
 \subsection{Interrupt}
 
@@ -244,7 +244,7 @@ der Z 80 CPU?
 
 \subsubsection{Antwort}
 
-Da 16 Adressleitungen zur Verf"ugung stehe, ist der Speicherbereich prinzipiell bis zu $2^{16}~\textnormal{Byte}=65536~\textnormal{Byte}=64~KiB$ groﬂ.
+Da 16 Adressleitungen zur Verf"ugung stehen, ist der Speicherbereich prinzipiell bis zu $2^{16}~\textnormal{Byte}=65536~\textnormal{Byte}=64~KiB$ groﬂ.
 
 \subsection{Bidirektionaler Datentransfer}
 
