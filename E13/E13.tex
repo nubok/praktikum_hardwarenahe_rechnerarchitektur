@@ -24,6 +24,9 @@ wie sind sie verbunden, und wie erfolgt die Kommunikation mit der Peripherie?
 
 \subsection{Frage} Welche Aufgabe haben Schnittstellen im Rechner?
 
+\subsection{Antwort}
+Schnittstellen dienen zum Anschluss von Peripherieger"aten.
+
 \section{Datenaustausch über eine parallele Schnittstelle mit
 Handshaking}
 
@@ -31,9 +34,9 @@ Handshaking}
 Handshaking?
 
 \subsection{Antwort}
-Die konkreten Details des Austausch h"angen davon, in welchem Modus der Parallelport betrieben wird. Daher beschr"anken wir uns in der Beschreibung auf den Fall der Centronics-Schnittstelle.
+Die konkreten Details des Austausch h"angen davon, in welchem Modus der Parallelport betrieben wird. Daher beschr"anken wir uns in der Beschreibung auf den Fall der .
 
-Laut \cite[S.~447-448]{Baehring} beginnt die "Ubertragung damit, dass der Prozessor ein Ausgabedatum auf auf die Ausg"ange \verb|DATA1|-\verb|DATA8| der Schnittstelle schaltet. Fr"uhestens $0,5 \mu{}s$ sp"ater wird das \verb|STROBE|-Signal aktiviert, um das Vorliegen eines g"ultigen Datums anzuzeigen.
+Laut \cite[S.~447-448]{Baehring} beginnt die "Ubertragung "uber die Centronics-Schnittstelle damit, dass der Prozessor ein Ausgabedatum auf auf die Ausg"ange \verb|DATA1|-\verb|DATA8| der Schnittstelle schaltet. Fr"uhestens $0,5 \mu{}s$ sp"ater wird das \verb|STROBE|-Signal aktiviert, um das Vorliegen eines g"ultigen Datums anzuzeigen.
 
 Anschließend kann das Ger"at die Daten entweder annehmen oder durch Aktivieren eines \verb|BUSY|-Signals anzeigen, dass es besch"aftigt ist. Wenn es bereit ist die Daten anzunehmen, deaktiviert es das \verb|BUSY|-Signal und quittiert die Datenannahme durch ein mindestens $0,5 \mu{}s$ langes \verb|ACKNLG|-Signal.
 
@@ -45,10 +48,18 @@ In letzterem bleibt beim Anlegen der Daten auf den Datenleitungen die \verb|STRO
 
 \subsection{Frage} Wie funktioniert eine serielle Datenübertragung?
 
+\subsection{Antwort}
+
 \section{Das Prinzip der Stromschleife}
 
 \subsection{Frage} Erläutern Sie das Prinzip der Stromschleife! Was ist der Vorteil gegenüber einer
 spannungsbasierten Übertragung?
+
+\subsection{Antwort}
+
+Die Stromschleife besteht aus einer aktiven (meist PC) und passiven (meist Peripherieger"at) Seite. Wie im Bild in Abschnitt 2.1.2 der Versuchsanleitung zu sehen, wird ein Strom von $20~mA$ "uber diese gesendet, wenn eine logische 1 "ubertragen wird und kein Strom, wenn eine logische 0 "ubertragen wird. Auf der passiven Seite wird durch einen Optokoppler bzw. Relais das Signal ausgewertet.
+
+Der Vorteil gegen"uber einer spannungsbasierten "Ubertragung besteht darin, dass nicht beachtet werden muss, ob die beiden Seite unterschiedliche elektrische Potentiale besitzen, da Sender und Empf"anger voneinander isoliert sind.
 
 \section{Merkmale des PPI 8255}
 
@@ -88,6 +99,86 @@ Befehlen wird auf die Ein-/Ausgabe-Baugruppen zugegriffen?
 \subsection{Antwort} Die Befehle zum Zugriff auf Ports sind \verb|IN| zum Einlesen und \verb|OUT| zum Ausgeben eines Wertes aus einem Port. Außerdem sind viele Baugruppen unter DOS "uber Interrupts ansteuerbar, wie in Anlagen 3-5 der Versuchsanleitung bez"uglich Interrupt 14h, 15h bzw. 21h f"ur die serielle bzw. parallele Schnittstelle. In diesem Fall erfolgt der Zugriff durch Belegen der Prozessorregister mit den gew"unschten Werten gefolgt von einem \verb|INT|-Befehl.
 
 \chapter{Aufgaben und Auswertung}
+
+\section{Aufgabe 1a}
+
+\paragraph{Aufgabenstellung} Ab Adresse Segment:Offset=0:410h speichert das Betriebssystem das
+Systemkonfigurations-Wort (16 Bit) ab. Bits 15 und 14 enthalten die Anzahl der
+parallelen und Bits 9 und 10 die Anzahl der seriellen Ports. Ab Adresse 0:400h stehen die
+Basisadressen von COM1 und COM2 und ab Adresse 0:408h die Basisadressen von
+LPT1-3 (jeweils 16 Bit). Zeigen Sie die Werte mit <d> an. Notieren Sie sich die Werte.
+
+\paragraph{Durchf"uhrung} Alle folgenden Ausgaben notieren:
+
+\begin{verbatim}
+d0:410 l 2 (Systemkonfigurations-Wort)
+\end{verbatim}
+
+\paragraph{Auswertung}
+\begin{itemize}
+\item Bit 1, 2 von 0:411h (Bit 9, 10 des Systemkonfigurations-Worts): Anzahl serieller Ports
+\item Bit 7, 8 von 0:411h (Bit 14, 15 des Systemkonfigurations-Worts): Anzahl paralleler Ports
+\end{itemize}
+
+\begin{verbatim}
+d0:400 l 2 (Basisadresse COM1)
+
+d0:402 l 2 (Basisadresse COM2)
+
+d0:408 l 2 (Basisadresse LPT1)
+
+d0:40A l 2 (Basisadresse LPT2)
+
+d0:40C l 2 (Basisadresse LPT3)
+\end{verbatim}
+
+\section{Aufgabe 1b}
+
+\paragraph{Aufgabenstellung} Auf welcher Speicheradresse befindet sich der Interruptvektor von IRQ 7 und welchen
+Wert hat er? Vergleichen Sie den Wert, wie er mit 'si' angezeigt wird, mit der Anzeige in
+'debug'. Lassen Sie sich die Interrupt-Serviceroutine als Assemblercode anzeigen
+(Befehl \textless u\textgreater ).
+
+\paragraph{Durchf"uhrung} Laut Tabelle 9 der Versuchsanleitung hat IRQ 7 die Nummer INT 0F. Da die Interruptvektortabelle an an der Adresse 0:0 beginnt und jeder Eintrag vier Bytes lang ist, liegt der Interruptvektor von IRQ 7 an der Speicheradresse \verb|3C|.
+
+Um den Wert anzuzeigen, benutzen wir also
+
+\begin{verbatim}
+d0:3C l 4
+\end{verbatim}
+
+Ausgabe ist in Segment:Offset (also Segment [d0:3F][d0:3E], Offset [d0:3D][d0:3C]).
+
+\paragraph{Vermutung} In 'si' wird es
+\begin{itemize}
+\item als direkte Speicheradresse (Segment*10h+Offset)
+\item in Big-Endian-Schreibweise
+\end{itemize}
+dargestellt.
+
+Um den Assemblercode anzuzeigen, benutzen wir
+\begin{verbatim}
+U Segment:Offset
+\end{verbatim}
+
+\section{Aufgabe 2}
+
+\paragraph{Aufgabenstellung} Initialisieren Sie den PPI 8255 der E/A-Karte PIO-12 im Mode 1 (Portadressen siehe
+Anlagen 6 und 8) für Byteeingabe Port A, Byteausgabe Port B mit Handshaking-
+Protokoll an Port C. Ermitteln Sie die notwendigen Steuerworte anhand Anlage 7 und
+geben Sie diese mit Hilfe des DOS-Debuggers auf die Steuerwortaderesse des PPI aus
+(Befehlsübersicht in Anlage 2). Simulieren Sie einen asynchronen Datenaustausch mit
+Hilfe der Leuchtdioden und Schalter des Steuerpults, indem Sie mit dem Debugger Einund
+Ausgaben durchführen. Stellen Sie das Signalspiel auf dem Digitaloszilloskop dar
+(Digitalmodus, Ablenkung ca. 1-2 s).
+
+
+\paragraph{Durchf"uhrung}
+Um auf Mode 1 mit den gew"unschten Eigenschaften zu wechseln, m"ussen wir das Control Word auf \verb|1011?10?| setzen. Da das Steuerwort die Adresse \verb|303h| (?) hat, ergibt sich somit:
+
+\begin{verbatim}
+e0:303 ...
+\end{verbatim}
 
 \bibliography{E13}{}
 \bibliographystyle{geralpha}
