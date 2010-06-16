@@ -20,6 +20,12 @@
 \subsection{Frage} Aus welchen Baugruppen besteht ein Rechner ‰hnlich der von-Neumann-Architektur,
 wie sind sie verbunden, und wie erfolgt die Kommunikation mit der Peripherie?
 
+\subsection{Antwort}
+Laut \cite[S.~41ff]{Schiffmann} besteht ein Von-Neumann-Rechner aus einem Schaltwerk, Speicher und Eingabe/Ausgabe. Das Schaltwerk besteht hierbei aus Rechenwerk und Leitwerk.
+
+Vom Leitwerk geht ein Adress- und Steuerbus zu den drei anderen Baugruppen. Der Datenbus besteht bidirektional zwischen Speicher zum Rechenwerk, sowie zwischen Rechenwerk und Ein-/Ausgabe. Auﬂerdem besteht eine Datenbusverbindung vom Speicher zum Leitwerk.
+
+
 \section{Aufgabe von Schnittstellen}
 
 \subsection{Frage} Welche Aufgabe haben Schnittstellen im Rechner?
@@ -34,7 +40,23 @@ Handshaking}
 Handshaking?
 
 \subsection{Antwort}
-Die konkreten Details des Austausch h"angen davon, in welchem Modus der Parallelport betrieben wird. Daher beschr"anken wir uns in der Beschreibung auf den Fall der .
+Die konkreten Details des Austausch h"angen davon, in welchem Modus der Parallelport betrieben wird. Daher unterscheiden wir drei F"alle:
+
+\begin{itemize}
+\item 8255 im Modus 1 (im Modus 0 findet kein Handshaking statt)
+\item 8255 im Modus 2
+\item Centronics-Schnittstelle
+\end{itemize}
+
+\subsubsection{8255 im Modus 1}
+
+Je drei Leitungen des Port PC werden laut \cite[S.~441]{Baehring} den Ports PA und PB als Handshake-Leitungen (\verb|STB|, \verb|ACK| und \verb|INT| zugeordnet. 
+
+\paragraph{Eingabe} Die "Ubertragung beginnt damit, dass das Ger"at ein Datum in \verb|PA0|-\verb|PA7| bzw. \verb|PB0|-\verb|PB7| gelegt wird. Anschlieﬂend wird ein kurzes \verb|STB|-Signal erzeugt. Das Ausgangssignal \verb|IBF| zeigt dem Ger"at an, dass das Eingaberegister \verb|IB| noch gef"ullt ist.
+
+\ldots
+
+\subsubsection{Centronics-Schnittstelle}
 
 Laut \cite[S.~447-448]{Baehring} beginnt die "Ubertragung "uber die Centronics-Schnittstelle damit, dass der Prozessor ein Ausgabedatum auf auf die Ausg"ange \verb|DATA1|-\verb|DATA8| der Schnittstelle schaltet. Fr"uhestens $0,5 \mu{}s$ sp"ater wird das \verb|STROBE|-Signal aktiviert, um das Vorliegen eines g"ultigen Datums anzuzeigen.
 
@@ -49,6 +71,18 @@ In letzterem bleibt beim Anlegen der Daten auf den Datenleitungen die \verb|STRO
 \subsection{Frage} Wie funktioniert eine serielle Daten¸bertragung?
 
 \subsection{Antwort}
+
+Laut \cite[S.~455ff]{Baehring} schreibt der Sender ein auszugebendes Datum in das Sende-Datenregister \verb|TDR|. Von der Bausteinsteuerung wird es automatisch in das Sende-Schieberegister \verb|TSR| "ubertragen. Von der Sende-Synchronisationsschaltung wird das Startbit die Daten-Ausgabeleitung \verb|TxD| gegeben. Anschlieﬂend wird durch eine Anzahl Impulse als Sendetakt das Datum Bit f"ur Bit "ubertragen -- mit jedem Takt wird ein Bit aus dem Register auf \verb|TxD| geschoben.
+
+Parallel dazu wird die Parit"at ausgerechnet und nach dem letzten Bit "ubertragen. Nach Abschluss der "Ubertragung erzeugt die Synchronisationsschaltung ein oder mehrere Stoppbits.
+
+Wenn mehrere Daten "ubertragen werden sollen, so wird durch die Ausgangsleitung \verb|TxRDY| dem Prozessor mitgeteilt, dass der Inhalt von \verb|TDR| nach \verb|TSR| "ubertragen wurde.
+
+Der Empfang funktioniert analog: auf eine negative Flanke von \verb|RxD| wird die Empfangs-Synchronisationsschaltung aktiviert. Die folgenden Bits werden in das Empfangs-Schiebe\-register \verb|RSR| eingelesen. Ein empfangenes Datum wird in \verb|RDR| abgelegt. "Uber den Ausgang \verb|RxRDY| teilt der Baustein dem Prozessor mit, wenn in \verb|RDR| ein Datum zur Abholung bereit liegt.
+
+Parallel wird ein Parit"atsbit berechnet. Wenn dieses nicht mit dem "ubertragenen Parit"atsbit "ubereinstimmt, wird im Statusregister ein Parit"atsfehler festgehalten.
+
+Zuletzt wird "uberpr"uft, ob die geforderte Anzahl Stoppbits "ubertragen wurde. Falls dies nicht der Fall ist, wird im Statusregister ein Bit gesetzt (Framing Error). Auﬂerdem wird ebenfalls ein Statusbit gesetzt, wenn ein neues Datum empfangen wird, der Prozessor aber noch nicht das alte abgeholt hat (Overrun Error).
 
 \section{Das Prinzip der Stromschleife}
 
@@ -66,11 +100,44 @@ Der Vorteil gegen"uber einer spannungsbasierten "Ubertragung besteht darin, dass
 \subsection{Frage} Nennen Sie wesentliche Merkmale des PPI 8255! Wie funktionieren die
 Betriebsarten?
 
+\subsection{Antwort} 3 Betriebsmodi (vgl. \cite[S.~440-447]{Baehring})
+\begin{itemize}
+\item Modus 0
+\item Modus 1
+\item Modus 2
+\end{itemize}
+
+\subsubsection{Modus 0}
+
+\begin{itemize}
+\item Port \verb|PC| in zwei Teilports $\verb|PC|_{\verb|H|}$ und $\verb|PC|_{\verb|L|}$ aufgeteilt
+\item Jeder Teilport als paralleler Ein-/Ausgabeport mit immer selben "Ubertragungsrichtung (wird f"ur jeden der \verb|PA|, \verb|PB| $\verb|PC|_{\verb|H|}$ und $\verb|PC|_{\verb|L|}$ im Steuerwort individuell festgelegt)
+\end{itemize}
+
+\subsubsection{Modus 1}
+
+\begin{itemize}
+\item Je drei Leitungen von \verb|PC| werden \verb|PA| und \verb|PB| als Handshake-Leitungen zugeordnet
+\item Restliche beiden Leitungen von \verb|PC| werden \verb|PA| zugeordnet
+\end{itemize}
+
+\subsubsection{Modus 2}
+
+
+\begin{itemize}
+\item Von Port \verb|PC| werden drei Leitungen \verb|PB| zugeordnet
+\item \verb|PB| entweder Ein- oder Ausgangsport
+\item Die drei Leitungen von \verb|PC| wahlweise f"ur E/A oder Handshake
+\item Restliche f"unf Leitungen von \verb|PC| f"ur Handshake von \verb|PA| (erlaubt bidirektionale "Ubertragung im Halbduplex-Modus)
+\end{itemize}
+
 \section{Interruptverarbeitung im PC}
 
 \subsection{Frage} Wie ist die Interruptverarbeitung im PC organisiert? Wie sind CPU,
 Interruptcontroller und -quellen miteinander verschaltet? Wie funktioniert
 Vektorinterrupt?
+
+\subsection{Antwort} \ldots (Antwort bekannt -- zu faul jetzt aufzuschreiben)
 
 \section{Hardware- vs. Software-Interrupts}
 
@@ -80,9 +147,9 @@ Was unterscheidet Hardware- von Software-Interrupts, was haben sie gemeinsam?
 \subsection{Antwort}
 Hardware-Interrupts werden durch ein Peripherie-Ger"at ausgel"ost, w"ahrend Software-Interrupts durch einen \verb|INT|-Befehl ausgel"ost werden.
 
-In beiden F"allen wird der Wert des Stack Pointers \verb|SP| auf dem Stack gesichert und der dem Interrupt zugeh"orige Wert aus der Interrupt-Einsprungtabelle in den Program Counter \verb|PC| geladen.
+In beiden F"allen wird laut \cite[S.~107]{Althaus}  der Wert des Stack Pointers \verb|SP| und des Flag-Registers auf dem Stack gesichert und der dem Interrupt zugeh"orige Wert aus der Interrupt-Einsprungtabelle in den Program Counter \verb|PC| geladen.
 
-Somit stellen Software-Interrupts eine Art Funktionsaufruf dar, w"ahrend Hardware-Interrupts eine asynchrone Unterbrechung des Programmablaufs darstellen.
+Somit stellen Software-Interrupts eine Art Funktionsaufruf dar, bei dem zus"atzlich das Flag-Register gesichert und wiederhergestellt wird, w"ahrend Hardware-Interrupts eine asynchrone Unterbrechung des Programmablaufs darstellen.
 
 \section{M"oglichkeiten der Schnittstellenkonfigurierung}
 
@@ -90,6 +157,15 @@ Somit stellen Software-Interrupts eine Art Funktionsaufruf dar, w"ahrend Hardwar
 Rolle spielen dabei Softwareinterrupts?
 
 \subsection{Antwort}
+
+(vgl. Versuchsbeschreibung, Abschnitt 2.4):
+\begin{itemize}
+\item Direkter Zugriff im E/A-Adressraum
+\item Verwendung von BIOS-Interrupts
+\item Verwendung von DOS-Interrupts
+\end{itemize}
+
+Letztere beide M"ochlichkeiten sind Softwareinterrupts.
 
 \section{Befehle zum Zugriff auf Ein-/Ausgabe-Baugruppen}
 
@@ -179,6 +255,8 @@ Um auf Mode 1 mit den gew"unschten Eigenschaften zu wechseln, m"ussen wir das Co
 \begin{verbatim}
 e0:303 ...
 \end{verbatim}
+
+
 
 \bibliography{E13}{}
 \bibliographystyle{geralpha}
