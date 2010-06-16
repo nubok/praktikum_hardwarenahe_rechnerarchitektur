@@ -277,6 +277,13 @@ iret
 
 \section{Aufgabe 5}
 
+\paragraph{Aufgabe} Geben Sie mit Hilfe von BIOS-Funktionen Daten vom PC über die serielle Schnittstelle
+auf das A/N-Display aus. Beachten Sie die notwendige Initialisierung der seriellen
+Schnittstelle (2400 Baud, 8 Bit Daten). Stellen Sie das Datentelegramm auf dem
+Oszilloskop dar (Digitalmodus, Ablenkung ca. 1 ms) und protokollieren Sie es.
+
+\paragraph{Durchf"uhrung}
+
 Programm 
 
 \begin{verbatim}
@@ -290,6 +297,9 @@ mov al, ZEICHEN
 int 14
 ; Ggf. fuer weitere Zeichen fortsetzen
 \end{verbatim}
+
+\paragraph{Zusatzaufgabe} Wiederholen Sie die Datenübertragung unter Verwendung der
+Stromschleife!
 
 \bibliography{E13}{}
 \bibliographystyle{geralpha}
