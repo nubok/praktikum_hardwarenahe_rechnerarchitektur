@@ -178,7 +178,7 @@ Befehlen wird auf die Ein-/Ausgabe-Baugruppen zugegriffen?
 
 \section{Verwendete Notation}
 
-Wir haben uns, da dies der Anzeige von \verb|Debug| auf dem Bildschirm entspricht, daf"ur entschieden, dass die Verwendung eines \verb|-| am Anfang einer Zeile bedeuten soll, dass dies -- bis zum Ende der Zeile -- von uns so eingegeben wurde. Den Rest der hier dokumentierten Screendumps sollen die Ausgaben von \verb|debug| darstellen.
+Wir haben uns daf"ur entschieden, die Ein- und Ausgaben von \verb|debug| m"oglicht exakt so wiederzugeben, wie diese auf dem Bildschirm erscheinen. Da im Allgemeinen klar ist, was Ausgabe von \verb|debug| und Eingabe darstellt, ist dies kein Problem.
 
 \section{Aufgabe 1}
 
@@ -192,7 +192,7 @@ Hilfsprogramm \verb|si| bzw. \verb|debug|.
 \subsection{Durchf"uhrung und Auswertung}
 \label{sec:aufg1_durchf}
 
-\verb|si| liefert folgende Informationen:
+\verb|si| liefert folgende f"ur die L"osung der Aufgabe relevanten Informationen:
 
 \paragraph{Schnittstellen}
 \begin{itemize}
@@ -202,26 +202,26 @@ Hilfsprogramm \verb|si| bzw. \verb|debug|.
 
 \paragraph{Hardware-Interrupts}
 
-\begin{tabular}[t]{|l|l|l|l|}
+\begin{tabular}[t]{|l|l|l|}
 \hline
-Nummer & Adresse & Name & Besitzer \\
+Nummer & Adresse & Name \\
 \hline
-IRQ 03 & \verb|0DCA:006F| & \verb|COM2| & DOS \\
-IRQ 04 & \verb|0DCA:0087| & \verb|COM1| & DOS \\
-IRQ 07 & \verb|0070:06F4| & \verb|LPT1| & Unbekannt \\
+IRQ 03 & \verb|0DCA:006F| & \verb|COM2| \\
+IRQ 04 & \verb|0DCA:0087| & \verb|COM1| \\
+IRQ 07 & \verb|0070:06F4| & \verb|LPT1| \\
 \hline
 \end{tabular}
 
 \paragraph{Software-Interrupts}
 
-\begin{tabular}[t]{|l|l|l|l|l|}
+\begin{tabular}[t]{|l|l|l|}
 \hline
-Nummer & Name & Adresse & Name & Besitzer \\
+Nummer & Name & Adresse  \\
 \hline
-\verb|0B| & IRQ 03 & \verb|0DCA:006F| & \verb|COM2| & DOS \\
-\verb|0C| & IRQ 04 & \verb|0DCA:0087| & \verb|COM1| & DOS \\
-\verb|0F| & IRQ 7 - Drucker & \verb|0070:06F4| & \verb|LPT1| & Unbekannt \\
-\verb|17| & Drucker & \verb|0070:06F4| & \verb|BIOS| & \\ 
+\verb|0B| & IRQ 03 & \verb|0DCA:006F| \\
+\verb|0C| & IRQ 04 & \verb|0DCA:0087| \\
+\verb|0F| & IRQ 7 - Drucker & \verb|0070:06F4| \\
+\verb|17| & Drucker & \verb|0070:06F4| \\ 
 \hline
 \end{tabular}
 
@@ -298,6 +298,7 @@ Ausgaben durchführen. Stellen Sie das Signalspiel auf dem Digitaloszilloskop dar
 
 
 \paragraph{Durchf"uhrung}
+\label{sec:aufg2_durchf}
 Um auf Mode 1 mit den gew"unschten Eigenschaften zu wechseln, m"ussen wir das Steuerwort von LPT1 auf \verb|10110100| (\verb|b4|) setzen. Der Wert setzt sich folgendermaßen zusammen (für die Bedeutung der Bits vgl. oberen Teil der von Anlagen 7 der Versuchsanleitung):
 \begin{itemize}
 \item Bit 7: auf 1 setzen, da wir den Modus setzen wollen
@@ -390,28 +391,73 @@ Auch hier eine Erkl"arung: nachdem die Daten in den Output Buffer geschoben wurd
 
 \subsection{Durchf"uhrung}
 
-Als ersten Schritt initialisieren wir das Steuerwort 
+Als ersten Schritt initialisieren wir das Steuerwort (der Grund, warum das Steuerwort auf \verb|b4| zu setzen ist, ist Abschnitt \ref{sec:aufg2_durchf} zu entnehmen).
 
 \begin{verbatim}
 -O 303 b4
 \end{verbatim}
 
-Interrupt-Service-Routine
+Wie Abschnitt \label{sec:aufg1_durchf} bzw. der Tabelle in Anlage 9 der Versuchsanleitung zu entnehmen ist, hat der IRQ 7 von \verb|LPT1| den Eintrag mit Nummer \verb|0F| in der Interruptvektortabelle. Da jeder Eintrag 4 Bytes hat (16 Bit Offset+16 Bit Segment), liegt der zu IRQ 7 korrespondierende Eintrag in der Interruptvektortabelle an der Adresse \verb|4*OF=3c|, was in der segmentierten Notation der Adresse \verb|0:3c| entspricht.
+
+Wir wollen die Interrupt Service Routine an der Adresse \verb|500:0| ablegen. Somit geben wir in \verb|debug| ein:
 
 \begin{verbatim}
-push ax
-push dx
-mov dx, PORT_A_ADRESSE ; 301?
-in dx, al 
-mov dx, PORT_B_ADRESSE
-out dx, al
-mov al, 20 ; Ruecksetzbefehl des PIC (EOI)
-mov dx, 20 ; Portadresse PIC
-out dx, al
-pop dx
-pop ax
-iret
+-e0:3c 00 00 00 05
 \end{verbatim}
+
+Als folgenden Schritt assemblieren wir die Interrupt Service Routine an genannter Adresse \verb|500:0|:
+
+\begin{verbatim}
+-a 500:0
+0500:0000 push ax
+0500:0001 push dx
+0500:0002 mov dx, 300
+0500:0005 in al, dx
+0500:0006 mov dx, 301
+0500:0009 out dx, al
+0500:000A mov al, 20 ; Ruecksetzbefehl des PIC (EOI)
+0500:000C mov dx, 20 ; Portadresse PIC
+0500:000F out dx, al
+0500:0010 pop dx
+0500:0011 pop ax
+0500:0012 iret
+0500:0013
+\end{verbatim}
+
+Nun lesen wir den Wert des Interruptmaskenregisters ein
+\begin{verbatim}
+-i21
+98
+\end{verbatim}
+(also bin"ar \verb|10011000|) und setzen Bit 7 auf 0, um die Maskierung von Interrupt 7 zu entfernen
+\begin{verbatim}
+-o 21 18
+\end{verbatim}
+
+Als nächstes muss das ei-Flag der CPU gesetzt werden:
+\begin{verbatim}
+-rf
+NV UP EI PL NZ NA PO NC  -ei
+\end{verbatim}
+Wie man sieht, war dieses bereits aktiviert, weswegen die Eingabe keine "Anderung bewirkt.
+
+Wir wollen einstellen, dass durch ein Handshaking der Interrupt aktiviert werden soll. Dazu betrachten wir die letzte Grafik von Anlage 7 der Versuchsanleitung: diese sagt, dass f"ur den in die E/A-Adresse \verb|303| einzutragenden Wert
+\begin{itemize}
+\item Bit 7 auf 0 zu setzen ist
+\item Bits 6-4 don't care sind (wir setzen sie auf 0
+\item Bits 3-1 auf 100 zu setzen sind, da PC4 im Input Mode INTEA steuert, somit m"ussen wir in der Spalte 4 schauen
+\item Bit 0 auf 1 zu setzen ist
+\end{itemize}
+
+Somit m"ussen wir \verb|09| in die E/A-Adresse 303 schreiben:
+
+\begin{verbatim}
+-o 303 09
+\end{verbatim}
+
+Damit die geforderte Aufgabenstellung umgesetzt wird, ist noch $\texttt{PC}_\texttt{3}$ mit $\texttt{INT}_\texttt{IN}$ zu verbinden und der Schalter \verb|EN| anzuschalten.
+
+Nun k"onnen wir tats"achlich das Experiment durchf"uhren: dazu stellen wir auf Port A etwas ein (in unserem Fall \verb|12|), schalten $\texttt{PC}_\texttt{4}$ (negiertes \verb|STB|) aus und wieder ein. Nun sehen wir, wie der eingestellte Wert auf Port B erscheint.
 
 \section{Aufgabe 5}
 
@@ -422,22 +468,36 @@ Oszilloskop dar (Digitalmodus, Ablenkung ca. 1 ms) und protokollieren Sie es.
 
 \paragraph{Durchf"uhrung}
 
-Programm 
-
 \begin{verbatim}
-mov ah, 00h ; Initialisiere Schnittstelle
-mov dx, 0   ; 0: COM1, 1: COM2
-mov al, a7h
-int 14
-mov ah, 01h ; Sende Zeichen
-mov dx, 0   ; 0: COM1, 1: COM2
-mov al, ZEICHEN
-int 14
-; Ggf. fuer weitere Zeichen fortsetzen
+-A600:0
+0600:0000 mov ah, 0   ; Initialisiere Schnittstelle
+0600:0002 mov dx, 1   ; 0: COM1, 1: COM2
+0600:0005 mov al, bf
+0600:0007 int 14
+0600:0009 mov ah, 1   ; Sende Zeichen
+0600:000B mov al, 48
+0600:000D int 14
+0600:000F mov ah, 1   ; Sende Zeichen
+0600:0011 mov al, 69
+0600:0013 int 14
+0600:0015 mov ah, 1   ; Sende Zeichen
+0600:0017 mov al, 21
+0600:0019 int 14
+0600:001B
+
+-G =600:0 600:1B
 \end{verbatim}
 
-\paragraph{Zusatzaufgabe} Wiederholen Sie die Datenübertragung unter Verwendung der
-Stromschleife!
+\psset{xunit=0.6cm,yunit=0.6cm}
+\begin{center}
+\begin{pspicture}(0,0)(20,7)
+\readdata{\serielle}{serielle_schnittstelle.dat}
+\dataplot[plotstyle=line,linecolor=blue]{\serielle}
+\psline{->}(0,0)(20,0)
+\psline[linestyle=dashed]{-}(0,3)(20,3)
+\psline{->}(0,0)(0,7)
+\end{pspicture}
+\end{center}
 
 \bibliography{E13}{}
 \bibliographystyle{geralpha}
