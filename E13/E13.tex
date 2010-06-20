@@ -4,9 +4,9 @@
 \usepackage[english, ngerman]{babel}
 \usepackage[babel]{csquotes}
 \usepackage{cite}
-\usepackage{amsmath} % for eqref
+\usepackage{pst-plot}
 \usepackage{tabularx}
-\author{Denis Dietze\footnote{denis.dietze@st.ovgu.de} \and Wolfgang Keller\footnote{wolfgang.keller@student.uni-magdeburg.de} \and Nico Linke\footnote{nicolinke@googlemail.com} \and Thomas Schulte\footnote{thomas.schulte.md@googlemail.com}}
+\author{Denis Dietze\footnote{denis.dietze@st.ovgu.de} \and Stephan Ebeling\footnote{red\_crow@t-online.de} \and Wolfgang Keller\footnote{wolfgang.keller@student.uni-magdeburg.de} \and Nico Linke\footnote{nicolinke@googlemail.com} \and Thomas Schulte\footnote{thomas.schulte.md@googlemail.com}}
 \title{Protokoll Versuch IT1/E13}
 \subtitle{Schnittstellen}
 
@@ -176,37 +176,89 @@ Befehlen wird auf die Ein-/Ausgabe-Baugruppen zugegriffen?
 
 \chapter{Aufgaben und Auswertung}
 
+\section{Verwendete Notation}
+
+Wir haben uns, da dies der Anzeige von \verb|Debug| auf dem Bildschirm entspricht, daf"ur entschieden, dass die Verwendung eines \verb|-| am Anfang einer Zeile bedeuten soll, dass dies -- bis zum Ende der Zeile -- von uns so eingegeben wurde. Den Rest der hier dokumentierten Screendumps sollen die Ausgaben von \verb|debug| darstellen.
+
+\section{Aufgabe 1}
+
+\subsection{Aufgabenstellung} Überprüfen Sie die Kabelverbindungen, wie in obiger Abb. gezeigt, zwischen Steuerpult
+und PC sowie den Peripheriegeräten, wie A/N-Display oder Drucker. Beachten Sie die
+am Versuchsplatz ausliegende Mappe mit zusätzlichen Informationen. Booten Sie den PC
+und kontrollieren Sie die Anmeldung der verfügbaren Schnittstellen im "Setup", und
+verschaffen Sie sich einen Überblick über die Rechnerkonfiguration mit dem
+Hilfsprogramm \verb|si| bzw. \verb|debug|.
+
+\subsection{Durchf"uhrung und Auswertung}
+\label{sec:aufg1_durchf}
+
+\verb|si| liefert folgende Informationen:
+
+\paragraph{Schnittstellen}
+\begin{itemize}
+\item Serielle Ports: 2
+\item Parallele Ports: 1
+\end{itemize}
+
+\paragraph{Hardware-Interrupts}
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Nummer & Adresse & Name & Besitzer \\
+\hline
+IRQ 03 & \verb|0DCA:006F| & \verb|COM2| & DOS \\
+IRQ 04 & \verb|0DCA:0087| & \verb|COM1| & DOS \\
+IRQ 07 & \verb|0070:06F4| & \verb|LPT1| & Unbekannt \\
+\hline
+\end{tabular}
+
+\paragraph{Software-Interrupts}
+
+\begin{tabular}[t]{|l|l|l|l|l|}
+\hline
+Nummer & Name & Adresse & Name & Besitzer \\
+\hline
+\verb|0B| & IRQ 03 & \verb|0DCA:006F| & \verb|COM2| & DOS \\
+\verb|0C| & IRQ 04 & \verb|0DCA:0087| & \verb|COM1| & DOS \\
+\verb|0F| & IRQ 7 - Drucker & \verb|0070:06F4| & \verb|LPT1| & Unbekannt \\
+\verb|17| & Drucker & \verb|0070:06F4| & \verb|BIOS| & \\ 
+\hline
+\end{tabular}
+
 \section{Aufgabe 1a}
 
-\paragraph{Aufgabenstellung} Ab Adresse Segment:Offset=0:410h speichert das Betriebssystem das
+\subsection{Aufgabenstellung} Ab Adresse Segment:Offset=0:410h speichert das Betriebssystem das
 Systemkonfigurations-Wort (16 Bit) ab. Bits 15 und 14 enthalten die Anzahl der
 parallelen und Bits 9 und 10 die Anzahl der seriellen Ports. Ab Adresse 0:400h stehen die
 Basisadressen von COM1 und COM2 und ab Adresse 0:408h die Basisadressen von
 LPT1-3 (jeweils 16 Bit). Zeigen Sie die Werte mit <d> an. Notieren Sie sich die Werte.
 
-\paragraph{Durchf"uhrung} alle folgenden Ausgaben notieren:
+\subsection{Durchf"uhrung} alle folgenden Ausgaben notieren:
 
 \begin{verbatim}
-d0:410 l 2 (Systemkonfigurations-Wort)
+-d0:410 l 2
+0000:0410  21 44
 \end{verbatim}
 
-\paragraph{Auswertung}
-\begin{itemize}
-\item Bit 1, 2 von 0:411h (Bit 9, 10 des Systemkonfigurations-Worts): Anzahl serieller Ports
-\item Bit 7, 8 von 0:411h (Bit 14, 15 des Systemkonfigurations-Worts): Anzahl paralleler Ports
-\end{itemize}
+Man beachte, dass die Ausgabe in Little-Endian-Darstellung ist. Daher hat das Systemkonfigurations-Wort den Wert \verb|55 21|. Bit 15 und 14 haben den Wert \verb|01| -- wir haben also einen parallelen Port. Der Wert von Bits 10 und 9 ist \verb|10| -- also zwei serielle Ports.
+
+Als n"chstes ermitteln wir die Basisadressen der beiden seriellen Ports:
 
 \begin{verbatim}
-d0:400 l 2 (Basisadresse COM1)
-
-d0:402 l 2 (Basisadresse COM2)
-
-d0:408 l 2 (Basisadresse LPT1)
-
-d0:40A l 2 (Basisadresse LPT2)
-
-d0:40C l 2 (Basisadresse LPT3)
+-d0:400 l 4
+0000:0400  F8 03 F8 02
 \end{verbatim}
+
+Die Basisadresse von COM1 (Little-Endian-Darstellung in der Ausgabe von Debug beachten) ist also \verb|03F8| und die von COM2 ist \verb|02F8|.
+
+Zuletzt ermitteln wir die Basisadresse von LPT1-3:
+
+\begin{verbatim}
+-d0:408 l 6
+0000:0400                          BC 03 00 00 00 00
+\end{verbatim}
+
+Die Basisadresse von LPT1 ist also \verb|03BC|, w"ahrend f"ur LPT2 und LPT3, da diese nicht existieren, vom System die Adresse \verb|0000| abgespeichert wird.
 
 \section{Aufgabe 1b}
 
@@ -215,27 +267,23 @@ Wert hat er? Vergleichen Sie den Wert, wie er mit 'si' angezeigt wird, mit der A
 'debug'. Lassen Sie sich die Interrupt-Serviceroutine als Assemblercode anzeigen
 (Befehl \textless u\textgreater ).
 
-\paragraph{Durchf"uhrung} Laut Tabelle 9 der Versuchsanleitung hat IRQ 7 die Nummer INT 0F. Da die Interruptvektortabelle an an der Adresse 0:0 beginnt und jeder Eintrag vier Bytes lang ist, liegt der Interruptvektor von IRQ 7 an der Speicheradresse \verb|3C|.
+\paragraph{Durchf"uhrung} Laut Tabelle 9 der Versuchsanleitung bzw. der zweiten Tabelle aus \ref{sec:aufg1_durchf} hat IRQ 7 die Nummer INT 0F. Da die Interruptvektortabelle an an der Adresse 0:0 beginnt und jeder Eintrag vier Bytes lang ist, liegt der Interruptvektor von IRQ 7 an der Speicheradresse \verb|3C|.
 
 Um den Wert anzuzeigen, benutzen wir also
 
 \begin{verbatim}
-d0:3C l 4
+-d0:3C l 4
+0000:0030                                                  F4 06 70 00
 \end{verbatim}
 
-Ausgabe ist in Segment:Offset (also Segment [d0:3F][d0:3E], Offset [d0:3D][d0:3C]).
-
-\paragraph{Vermutung} In 'si' wird es
-\begin{itemize}
-\item als direkte Speicheradresse (Segment*10h+Offset)
-\item in Big-Endian-Schreibweise
-\end{itemize}
-dargestellt.
+Der Interruptvektor von IRQ 7 hat also die Adresse \verb|0070:06F4|. Wie man im Vergleich mit den Tabellen aus Abschnitt \ref{sec:aufg1_durchf} sehen kann, ist die Darstellung von \verb|debug| in Little-Endian-Darstellung, w"ahrend \verb|si| die Speicheradresse in Big-Endian-Darstellung anzeigt.
 
 Um den Assemblercode anzuzeigen, benutzen wir
 \begin{verbatim}
-U Segment:Offset
+-U 0070:06F4
+0070:06F4 CF            IRET
 \end{verbatim}
+(in der Ausgabe von \verb|debug| folgen zahlreiche weitere Zeilen). Wie man sieht, besteht die Interrupt Service Routine ausschließlich aus einem \verb|IRET|-Befehl, welcher f"ur einen sofortigen R"ucksprung aus der Interrupt Service Routine sorgt. Daher sind die folgenden Zeilen der Ausgabe von \verb|debug| f"ur die gestellte Aufgabenstellung unerheblich und wurden daher weggelassen.
 
 \section{Aufgabe 2}
 
@@ -250,13 +298,103 @@ Ausgaben durchführen. Stellen Sie das Signalspiel auf dem Digitaloszilloskop dar
 
 
 \paragraph{Durchf"uhrung}
-Um auf Mode 1 mit den gew"unschten Eigenschaften zu wechseln, m"ussen wir das Control Word auf \verb|1011?10?| setzen. Da das Steuerwort die Adresse \verb|303h| (?) hat, ergibt sich somit:
+Um auf Mode 1 mit den gew"unschten Eigenschaften zu wechseln, m"ussen wir das Steuerwort von LPT1 auf \verb|10110100| (\verb|b4|) setzen. Der Wert setzt sich folgendermaßen zusammen (für die Bedeutung der Bits vgl. oberen Teil der von Anlagen 7 der Versuchsanleitung):
+\begin{itemize}
+\item Bit 7: auf 1 setzen, da wir den Modus setzen wollen
+\item Bit 6 und 5: auf 01 setzen, da wir Mode 1 f"ur Port A benutzen wollen
+\item Bit 4: auf 1 setzen, da Port A als Input dienen soll
+\item Bit 3: da Port A f"ur Mode 1 initialisiert wird, kann dieses Bit ignoriert werden -- wir setzen es auf 0
+\item Bit 2: auf 1 setzen, da wir Mode 1 f"ur Port B benutzen wollen
+\item Bit 1: auf 0 setzen, da Port B als Output dienen soll
+\item Bit 0: da Port A f"ur Mode 1 initialisiert wird, kann dieses Bit ignoriert werden -- wir setzen es auf 0
+\end{itemize}
+
+Da das Steuerwort von LPT1 die Adresse \verb|303h| hat (vgl. Tabellen in den Anlagen 6 und 8 der Versuchsanleitung), ergibt sich somit:
 
 \begin{verbatim}
-e0:303 ...
+-O 303 b4
 \end{verbatim}
 
+Als ersten Schritt simulierten wir eine "Ubertragung vom Peripherieger"at zum Rechner. Dazu stellen wir auf dem PPI-12 auf Port A den Wert \verb|A2| ein.
+
+Da $\textnormal{PC}_\textnormal{4}$ ein negiertes \verb|STB|-Signal darstellt, deaktivieren wir dieses, um \verb|STB| zu aktivieren. Wir sehen an den LEDs des PPI-12, dass $\textnormal{IBF}_\textnormal{A}$ aktiviert wird. Da das \verb|STB|-Signal nur eine kurze Flanke darstellt, deaktivieren wir es anschließend wieder.
+
+Nun tippen wir in \verb|debug| ein:
+
+\begin{verbatim}
+-I 300
+A2
+\end{verbatim}
+
+\verb|300| ist -- wie man in den Tabellen in den Anlagen 6 und 8 der Versuchsanleitung sehen kann -- die E/A-Adresse von Port A.
+
+Wir beobachten, dass außer, dass \verb|debug| das zu "ubertragende Byte anzeigt, außerdem PC5 ($\textnormal{IBF}_\textnormal{A}$) sich ausschaltet.
+
+Auf dem Oszillographen sieht dies folgendermaßen aus:
+
+\psset{xunit=0.8cm,yunit=0.8cm}
+\begin{center}
+\begin{pspicture}(0,0)(15,10)
+\readdata{\stb}{stb.dat}
+\readdata{\ibfa}{ibfa.dat}
+\dataplot[plotstyle=line,linecolor=blue]{\stb}
+\dataplot[plotstyle=line,linecolor=blue]{\ibfa}
+\psline{->}(0,0)(12,0)
+\psline[linestyle=dashed]{-}(0,5)(12,5)
+\psline{->}(0,0)(0,10)
+\rput[l](12.2,8){$\overline{\texttt{STB}}$ ($\texttt{PC}_\texttt{4}$)}
+\psline{-}(4,8.2)(4,8.9)
+\rput[r](4,9.2){$\overline{\texttt{STB}}$ deaktivieren}
+\psline{-}(5,8.2)(5,8.9)
+\rput[l](5,9.2){$\overline{\texttt{STB}}$ aktivieren}
+\rput[l](12.2,2.5){$\texttt{IBF}_\texttt{A}$ ($\texttt{PC}_\texttt{5}$)}
+\psline{-}(7.5, 2.4)(7.5, 1.6)
+\rput[c](7.5,1.3){In \texttt{debug} "`\texttt{-I 300}"' eintippen}
+\end{pspicture}
+\end{center}
+
+Zur Erkl"arung: wenn wir \verb|STB| auf $\textnormal{PC}_\textnormal{4}$ aktivieren, so wird zur"uckgegeben, dass der Input Buffer von Port A voll ist ($\textnormal{IBF}_\textnormal{A}$ auf $\textnormal{PC}_\textnormal{5}$). Sobald dieses ausgelesen wurde, wird dieses Signal zur"uckgenommen und es kann ein weiteres Byte "ubertragen werden.
+
+Nun kommen wir zur Ausgabe auf Port B. Hierzu tippen wir in \verb|debug| ein:
+\begin{verbatim}
+-O 301 32
+\end{verbatim}
+Hierbei stellt 301 die E/A-Adresse von Port B dar (vgl. Tabellen in den Anlagen 6 und 8 der Versuchsanleitung).
+
+Nachdem dieser Befehl abgesetzt wurde, schalten wir das negierte ACK ($\textnormal{PC}_\textnormal{2}$) aus und wieder ein.
+
+\psset{xunit=0.8cm,yunit=0.8cm}
+\begin{center}
+\begin{pspicture}(0,0)(15,10)
+\readdata{\obfb}{obfb.dat}
+\readdata{\ack}{ack.dat}
+\dataplot[plotstyle=line,linecolor=blue]{\obfb}
+\dataplot[plotstyle=line,linecolor=blue]{\ack}
+\psline{->}(0,0)(12,0)
+\psline[linestyle=dashed]{-}(0,5)(12,5)
+\psline{->}(0,0)(0,10)
+\rput[l](12.2,8){$\overline{\texttt{OBF}_\texttt{B}}$ ($\texttt{PC}_\texttt{1}$)}
+\psline{-}(3,8.2)(3,8.9)
+\rput[l](3,9.2){In \texttt{debug} "`\texttt{-O 301 32}"' eintippen}
+\rput[l](12.2,2.5){$\overline{\texttt{ACK}}$ ($\texttt{PC}_\texttt{2}$)}
+\psline{-}(5,1.4)(5,0.9)
+\rput[r](5,0.7){$\overline{\texttt{ACK}}$ deaktivieren}
+\psline{-}(8,1.4)(8,0.9)
+\rput[l](8,0.7){$\overline{\texttt{ACK}}$ aktivieren}
+\end{pspicture}
+\end{center}
+
+Auch hier eine Erkl"arung: nachdem die Daten in den Output Buffer geschoben wurden und somit der Output Buffer voll ist {$\textnormal{OBF}_\textnormal{B}$), wird, sobald die Daten empfangen wurden, ein ACK gesendet. Dieses wird anschließend wieder zur"uckgenommen, so dass weitere Daten gesendet werden k"onnen.
+
 \section{Aufgabe 3}
+
+\subsection{Durchf"uhrung}
+
+Als ersten Schritt initialisieren wir das Steuerwort 
+
+\begin{verbatim}
+-O 303 b4
+\end{verbatim}
 
 Interrupt-Service-Routine
 
