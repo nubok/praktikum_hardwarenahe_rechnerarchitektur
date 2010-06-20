@@ -5,7 +5,6 @@
 \usepackage[babel]{csquotes}
 \usepackage{cite}
 \usepackage{pst-plot}
-\usepackage{tabularx}
 \author{Denis Dietze\footnote{denis.dietze@st.ovgu.de} \and Stephan Ebeling\footnote{red\_crow@t-online.de} \and Wolfgang Keller\footnote{wolfgang.keller@student.uni-magdeburg.de} \and Nico Linke\footnote{nicolinke@googlemail.com} \and Thomas Schulte\footnote{thomas.schulte.md@googlemail.com}}
 \title{Protokoll Versuch IT1/E13}
 \subtitle{Schnittstellen}
@@ -389,6 +388,34 @@ Auch hier eine Erkl"arung: nachdem die Daten in den Output Buffer geschoben wurd
 
 \section{Aufgabe 3}
 
+\subsection{Aufgabe}
+Schreiben Sie eine Interruptserviceroutine, die ein Zeichen von Port A einliest und auf
+Port B des PPI wieder ausgibt. Dabei soll der Interrupt durch das Handshaking für den
+Eingabeport (Port A) ausgelöst werden. Die Unterbrechung kann aus dem DEBUGProgramm
+heraus erfolgen.
+
+Sie können ähnlich wie im Beispiel in Abschnitt 3. vorgehen. Der PPI muß (wie in
+Aufgabe 2) in der entsprechenden Handshaking-Betriebsart initialisiert worden sein
+(siehe Anlage 7). Stellen Sie sicher, dass der Interruptcontroller aufnahmebereit für den
+entsprechenden Interrupt ist (Interruptmaske, EOI-Befehl) und dass die CPU Interrupt
+erlaubt (EI). Das zur Interruptauslösung für den Handshakingbetrieb vorgesehene Bit von
+Port C des PPI muß mit der Interruptleitung verbunden werden. Das INTE-Flag des
+benutzten Ports muß gesetzt sein (siehe Anlage 7, Bemerkung unten). Außerdem muß die
+Interruptleitung der PIO-12-Karte über den Schalter an der Frontplatte durchgeschaltet
+sein (INTERRUPT ENABLE, siehe Anlage 6). Schreiben Sie die Startadresse der ISR
+auf die richtige Position in der Interrupttabelle mit Hilfe des Debuggers. Assemblieren
+Sie dann die ISR zur Zeichenausgabe auf diese Adresse.
+
+Zunächst können Sie Ihre ISR testen, indem Sie mit dem Befehl g=<startadresse>
+<endadresse> ausgeführt wird. Da hier iret noch nicht ausgeführt werden darf, muss die
+Ausführung davor beendet werden (endadresse=Adresse von iret).
+
+Testen Sie die Funktion, indem Sie mit dem entsprechenden Schalter an Port C
+Handshake-Signale erzeugen und dadurch Interrrupts auslösen. Dabei wir das laufende
+Konsolenprogramm unterbrochen. Das zuvor an Port A mit den Schaltern eingestellte
+Datenwort muss dann an den Leuchtdioden von Port B wieder erscheinen. Protokollieren
+den Zeitverlauf des Handshakings.
+
 \subsection{Durchf"uhrung}
 
 Als ersten Schritt initialisieren wir das Steuerwort (der Grund, warum das Steuerwort auf \verb|b4| zu setzen ist, ist Abschnitt \ref{sec:aufg2_durchf} zu entnehmen).
@@ -397,7 +424,7 @@ Als ersten Schritt initialisieren wir das Steuerwort (der Grund, warum das Steue
 -O 303 b4
 \end{verbatim}
 
-Wie Abschnitt \label{sec:aufg1_durchf} bzw. der Tabelle in Anlage 9 der Versuchsanleitung zu entnehmen ist, hat der IRQ 7 von \verb|LPT1| den Eintrag mit Nummer \verb|0F| in der Interruptvektortabelle. Da jeder Eintrag 4 Bytes hat (16 Bit Offset+16 Bit Segment), liegt der zu IRQ 7 korrespondierende Eintrag in der Interruptvektortabelle an der Adresse \verb|4*OF=3c|, was in der segmentierten Notation der Adresse \verb|0:3c| entspricht.
+Wie Abschnitt \ref{sec:aufg1_durchf} bzw. der Tabelle in Anlage 9 der Versuchsanleitung zu entnehmen ist, hat der IRQ 7 von \verb|LPT1| den Eintrag mit Nummer \verb|0F| in der Interruptvektortabelle. Da jeder Eintrag 4 Bytes hat (16 Bit Offset+16 Bit Segment), liegt der zu IRQ 7 korrespondierende Eintrag in der Interruptvektortabelle an der Adresse \verb|4*OF=3c|, was in der segmentierten Notation der Adresse \verb|0:3c| entspricht.
 
 Wir wollen die Interrupt Service Routine an der Adresse \verb|500:0| ablegen. Somit geben wir in \verb|debug| ein:
 
@@ -490,12 +517,48 @@ Oszilloskop dar (Digitalmodus, Ablenkung ca. 1 ms) und protokollieren Sie es.
 
 \psset{xunit=0.6cm,yunit=0.6cm}
 \begin{center}
-\begin{pspicture}(0,0)(20,7)
+\begin{pspicture}(,-2)(22,7)
 \readdata{\serielle}{serielle_schnittstelle.dat}
 \dataplot[plotstyle=line,linecolor=blue]{\serielle}
-\psline{->}(0,0)(20,0)
-\psline[linestyle=dashed]{-}(0,3)(20,3)
+\psline{->}(0,0)(22,0)
+\psline[linestyle=dashed]{-}(0,3)(22,3)
 \psline{->}(0,0)(0,7)
+\rput[c]( 2.25,0.7){0}
+\rput[c]( 2.75,0.7){0}
+\rput[c]( 3.25,0.7){0}
+\rput[c]( 3.75,0.7){0}
+\rput[c]( 4.25,0.7){1}
+\rput[c]( 4.75,0.7){0}
+\rput[c]( 5.25,0.7){0}
+\rput[c]( 5.75,0.7){1}
+\rput[c]( 6.25,0.7){0}
+\rput[c]( 6.75,0.7){0}
+\rput[c]( 7.25,0.7){1}
+\rput[c]( 7.75,0.7){1}
+\rput[c]( 8.25,0.7){0}
+\rput[c]( 8.75,0.7){1}
+\rput[c]( 9.25,0.7){0}
+\rput[c]( 9.75,0.7){0}
+\rput[c](10.25,0.7){1}
+\rput[c](10.75,0.7){0}
+\rput[c](11.25,0.7){1}
+\rput[c](11.75,0.7){1}
+\rput[c](12.25,0.7){0}
+\rput[c](12.75,0.7){0}
+\rput[c](13.25,0.7){1}
+\rput[c](13.75,0.7){1}
+\rput[c](14.25,0.7){0}
+\rput[c](14.75,0.7){1}
+\rput[c](15.25,0.7){0}
+\rput[c](15.75,0.7){0}
+\rput[c](16.25,0.7){0}
+\rput[c](16.75,0.7){0}
+\rput[c](17.25,0.7){1}
+\rput[c](17.75,0.7){0}
+\rput[c](18.25,0.7){0}
+\rput[c](18.75,0.7){1}
+\rput[c](19.25,0.7){1}
+\rput[c](19.75,0.7){1}
 \end{pspicture}
 \end{center}
 
