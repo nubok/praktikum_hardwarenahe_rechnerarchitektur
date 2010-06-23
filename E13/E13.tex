@@ -495,6 +495,23 @@ Oszilloskop dar (Digitalmodus, Ablenkung ca. 1 ms) und protokollieren Sie es.
 
 \paragraph{Durchf"uhrung}
 
+Laut Anlage 3 der Versuchsanleitung dient die Funkion \verb|00| (deren Nummer im Register \verb|AH| "ubergeben wird) des Interrupts 14 zur Initialisierung der seriellen Schnittstelle.
+
+Die serielle Schnittstelle, welche wir benutzen, ist COM2. Somit ist der Wert von \verb|DX| auf 1 zu setzen. Der Konfigurations-Parameter in \verb|AL| setzt sich folgenderma"sen zusammen:
+\begin{itemize}
+\item Bit 0: auf 1 setzen, da wir acht Datenbits benutzen wollen
+\item Bit 1: auf 1 setzen, da es immer gesetzt sein muss
+\item Bit 2: auf 1 setzen, da wir zwei Stoppbits benutzen wollen (uns wurde freigestellt uns f"uer ein oder zwei Stoppbits zu entscheiden)
+\item Bit 3: auf 1 setzen, da wir in R"ucksprache mit dem Betreuer Parit"atsbits benutzen sollen
+\item Bit 4: auf 1 setzen, da wir gerade Parit"at benutzen wollen (uns wurde freigestellt gerade oder ungerade Parit"at nach eigener Wahl zu benutzen
+\item Bit 7-5: auf \verb|101| setzen, da 2400 Baud einzustellen sind
+\end{itemize}
+Somit ergibt sich \verb|BF| als Konfigurationswert.
+
+Den Text, den wir "ubertragen wollen, ist "`Hi!"' (hexadezimal codiert \verb|48 69 21|). Zur "Ubertragung benutzen wir die Funktion \verb|01| des Interrupts 14. Man beachte, dass die Funktionen \verb|00| und \verb|01| des Interrupts 14 nicht den Wert von \verb|DX| "andern, weswegen dieser nur einmal am Anfang des Programms gesetzt werden muss.
+
+Somit ergibt sich als Programm (inklusive Anweisung zum Ausf"uhren):
+
 \begin{verbatim}
 -A600:0
 0600:0000 mov ah, 0   ; Initialisiere Schnittstelle
@@ -514,6 +531,8 @@ Oszilloskop dar (Digitalmodus, Ablenkung ca. 1 ms) und protokollieren Sie es.
 
 -G =600:0 600:1B
 \end{verbatim}
+
+Das zugeh"orige Oszillogramm sieht folgendermaßen aus.
 
 \psset{xunit=0.6cm,yunit=0.6cm}
 \begin{center}
@@ -561,6 +580,54 @@ Oszilloskop dar (Digitalmodus, Ablenkung ca. 1 ms) und protokollieren Sie es.
 \rput[c](19.75,0.7){1}
 \end{pspicture}
 \end{center}
+
+Zur Erkl"arung: eine logische 0 wird durch ein elektrisches High und eine logische 1 durch ein elektrisches Low codiert.
+
+Insgesamt werden 36 Bits "ubertragen:
+
+\begin{tabular}[t]{|l|l|l|l|}
+\hline
+Nummer & Bitwert & Bedeutung \\
+\hline
+1 & 0 & Startbit erstes "ubetragenes Byte \\
+2 & 0 & Bit 0 den erstes "ubetragenes Byte \\
+3 & 0 & Bit 1 erstes "ubetragenes Byte \\
+4 & 0 & Bit 2 erstes "ubetragenes Byte \\
+5 & 1 & Bit 3 erstes "ubetragenes Byte \\
+6 & 0 & Bit 4 erstes "ubetragenes Byte \\
+7 & 0 & Bit 5 erstes "ubetragenes Byte \\
+8 & 1 & Bit 6 erstes "ubetragenes Byte \\
+9 & 0 & Bit 7 erstes "ubetragenes Byte \\
+10 & 0 & Parit"atsbit des ersten "ubetragenes Bytes \\
+11 & 1 & Erstes Stoppbit des ersten "ubetragenen Bytes \\
+12 & 1 & Zweites Stoppbit des ersten "ubetragenen Bytes \\
+13 & 0 & Startbit zweites "ubetragenes Byte \\
+14 & 1 & Bit 0 zweites "ubetragenes Byte \\
+15 & 0 & Bit 1 zweites "ubetragenes Byte \\
+16 & 0 & Bit 2 zweites "ubetragenes Byte \\
+17 & 1 & Bit 3 zweites "ubetragenes Byte \\
+18 & 0 & Bit 4 zweites "ubetragenes Byte \\
+19 & 1 & Bit 5 zweites "ubetragenes Byte \\
+20 & 1 & Bit 6 zweites "ubetragenes Byte \\
+21 & 0 & Bit 7 zweites "ubetragenes Byte \\
+22 & 0 & Parit"atsbit des zweiten "ubetragenen Bytes \\
+23 & 1 & Erstes Stoppbit des zweiten "ubetragenen Bytes \\
+24 & 1 & Zweites Stoppbit des zweiten "ubetragenen Bytes \\
+25 & 0 & Startbit drittes "ubetragenes Byte \\
+26 & 1 & Bit 0 drittes "ubetragenes Byte \\
+27 & 0 & Bit 1 drittes "ubetragenes Byte \\
+28 & 0 & Bit 2 drittes "ubetragenes Byte \\
+29 & 0 & Bit 3 drittes "ubetragenes Byte \\
+30 & 0 & Bit 4 drittes "ubetragenes Byte \\
+31 & 1 & Bit 5 drittes "ubetragenes Byte \\
+32 & 0 & Bit 6 drittes "ubetragenes Byte \\
+33 & 0 & Bit 7 drittes "ubetragenes Byte \\
+34 & 1 & Parit"atsbit des dritten "ubetragenen Bytes \\
+35 & 1 & Erstes Stoppbit des dritten "ubetragenen Bytes \\
+36 & 1 & Zweites Stoppbit des dritten "ubetragenen Bytes \\
+\hline
+\end{tabular}
+
 
 \bibliography{E13}{}
 \bibliographystyle{geralpha}
