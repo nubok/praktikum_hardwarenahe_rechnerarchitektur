@@ -201,36 +201,36 @@ Hilfsprogramm \verb|si| bzw. \verb|debug|.
 
 \paragraph{Hardware-Interrupts}
 
-\begin{tabular}[t]{|l|l|l|}
+\begin{tabular}[t]{|l|l|l|l|}
 \hline
-Nummer & Adresse & Name \\
+Nummer & Adresse & Name & Besitzer \\
 \hline
-IRQ 03 & \verb|0DCA:006F| & \verb|COM2| \\
-IRQ 04 & \verb|0DCA:0087| & \verb|COM1| \\
-IRQ 07 & \verb|0070:06F4| & \verb|LPT1| \\
+IRQ 03 & \verb|0DCA:006F| & \verb|COM2| & DOS \\
+IRQ 04 & \verb|0DCA:0087| & \verb|COM1| & DOS \\
+IRQ 07 & \verb|0070:06F4| & \verb|LPT1| & Unbekannt \\
 \hline
 \end{tabular}
 
 \paragraph{Software-Interrupts}
 
-\begin{tabular}[t]{|l|l|l|}
+\begin{tabular}[t]{|l|l|l|l|}
 \hline
-Nummer & Name & Adresse  \\
+Nummer & Name & Adresse & Besitzer \\
 \hline
-\verb|0B| & IRQ 03 & \verb|0DCA:006F| \\
-\verb|0C| & IRQ 04 & \verb|0DCA:0087| \\
-\verb|0F| & IRQ 7 - Drucker & \verb|0070:06F4| \\
-\verb|17| & Drucker & \verb|0070:06F4| \\ 
+\verb|0B| & IRQ 03 & \verb|0DCA:006F| & DOS \\
+\verb|0C| & IRQ 04 & \verb|0DCA:0087| & DOS \\
+\verb|0F| & IRQ 7 -- Drucker & \verb|0070:06F4| & Unbekannt \\
+\verb|17| & Drucker & \verb|F000:EFD2| & BIOS \\ 
 \hline
 \end{tabular}
 
 \section{Aufgabe 1a}
 
 \subsection{Aufgabenstellung} Ab Adresse Segment:Offset=0:410h speichert das Betriebssystem das
-Systemkonfigurations-Wort (16 Bit) ab. Bits 15 und 14 enthalten die Anzahl der
+System\-konfi\-gu\-ra\-tions\-wort (16 Bit) ab. Bits 15 und 14 enthalten die Anzahl der
 parallelen und Bits 9 und 10 die Anzahl der seriellen Ports. Ab Adresse 0:400h stehen die
 Basisadressen von COM1 und COM2 und ab Adresse 0:408h die Basisadressen von
-LPT1-3 (jeweils 16 Bit). Zeigen Sie die Werte mit <d> an. Notieren Sie sich die Werte.
+LPT1-3 (jeweils 16 Bit). Zeigen Sie die Werte mit \textless d\textgreater{} an. Notieren Sie sich die Werte.
 
 \subsection{Durchf"uhrung} alle folgenden Ausgaben notieren:
 
@@ -239,16 +239,16 @@ LPT1-3 (jeweils 16 Bit). Zeigen Sie die Werte mit <d> an. Notieren Sie sich die 
 0000:0410  21 44
 \end{verbatim}
 
-Man beachte, dass die Ausgabe in Little-Endian-Darstellung ist. Daher hat das Systemkonfigurations-Wort den Wert \verb|55 21|. Bit 15 und 14 haben den Wert \verb|01| -- wir haben also einen parallelen Port. Der Wert von Bits 10 und 9 ist \verb|10| -- also zwei serielle Ports.
+Man beachte, dass die Ausgabe in Little-Endian-Darstellung ist. Daher hat das System\-konfi\-gu\-ra\-tions\-wort den Wert \verb|44 21|. Bit 15 und 14 haben den Wert \verb|01| -- wir haben also einen parallelen Port. Der Wert von Bits 10 und 9 ist \verb|10| -- also zwei serielle Ports.
 
-Als n"chstes ermitteln wir die Basisadressen der beiden seriellen Ports:
+Als n"achstes ermitteln wir die Basisadressen der beiden seriellen Ports:
 
 \begin{verbatim}
 -d0:400 l 4
 0000:0400  F8 03 F8 02
 \end{verbatim}
 
-Die Basisadresse von COM1 (Little-Endian-Darstellung in der Ausgabe von Debug beachten) ist also \verb|03F8| und die von COM2 ist \verb|02F8|.
+Die Basisadresse von COM1 (Little-Endian-Darstellung in der Ausgabe von Debug beachten) ist also \verb|03 F8| und die von COM2 ist \verb|02 F8|.
 
 Zuletzt ermitteln wir die Basisadresse von LPT1-3:
 
@@ -257,7 +257,7 @@ Zuletzt ermitteln wir die Basisadresse von LPT1-3:
 0000:0400                          BC 03 00 00 00 00
 \end{verbatim}
 
-Die Basisadresse von LPT1 ist also \verb|03BC|, w"ahrend f"ur LPT2 und LPT3, da diese nicht existieren, vom System die Adresse \verb|0000| abgespeichert wird.
+Die Basisadresse von LPT1 ist also \verb|03 BC|, w"ahrend f"ur LPT2 und LPT3, da diese nicht existieren, vom System die Adresse \verb|00 00| abgespeichert wird.
 
 \section{Aufgabe 1b}
 
