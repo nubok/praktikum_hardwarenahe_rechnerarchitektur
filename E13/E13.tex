@@ -24,13 +24,12 @@ Laut \cite[S.~41ff]{Schiffmann} besteht ein Von-Neumann-Rechner aus einem Schalt
 
 Vom Leitwerk geht ein Adress- und Steuerbus zu den drei anderen Baugruppen. Der Datenbus besteht bidirektional zwischen Speicher zum Rechenwerk, sowie zwischen Rechenwerk und Ein-/Ausgabe. Außerdem besteht eine Datenbusverbindung vom Speicher zum Leitwerk.
 
-
 \section{Aufgabe von Schnittstellen}
 
 \subsection{Frage} Welche Aufgabe haben Schnittstellen im Rechner?
 
 \subsection{Antwort}
-Schnittstellen dienen zum Anschluss von Peripherieger"aten.
+Schnittstellen in dem Rahmen, wie sie in diesem Experiment behandelt wurden, dienen zum Anschluss von Peripherieger"aten an den Rechner.
 
 \section{Datenaustausch über eine parallele Schnittstelle mit
 Handshaking}
@@ -42,18 +41,33 @@ Handshaking?
 Die konkreten Details des Austausch h"angen davon, in welchem Modus der Parallelport betrieben wird. Daher unterscheiden wir drei F"alle:
 
 \begin{itemize}
-\item 8255 im Modus 1 (im Modus 0 findet kein Handshaking statt)
-\item 8255 im Modus 2
+\item 8255 im Modus 1 oder 2 (im Modus 0 findet kein Handshaking statt)
 \item Centronics-Schnittstelle
 \end{itemize}
 
-\subsubsection{8255 im Modus 1}
+\subsubsection{8255 im Modus 1 oder 2}
 
-Je drei Leitungen des Port PC werden laut \cite[S.~441]{Baehring} den Ports PA und PB als Handshake-Leitungen (\verb|STB|, \verb|ACK| und \verb|INT| zugeordnet. 
+Je drei Leitungen des Port PC werden laut \cite[S.~441-445]{Baehring} den Ports PA und PB als Handshake-Leitungen (\verb|STB|, \verb|ACK| und \verb|INT| zugeordnet. 
 
 \paragraph{Eingabe} Die "Ubertragung beginnt damit, dass das Ger"at ein Datum in \verb|PA0|-\verb|PA7| bzw. \verb|PB0|-\verb|PB7| gelegt wird. Anschließend wird ein kurzes \verb|STB|-Signal erzeugt. Das Ausgangssignal \verb|IBF| zeigt dem Ger"at an, dass das Eingaberegister \verb|IB| noch gef"ullt ist.
 
-\ldots
+Anschließend wird ein kurzes $\overline{\texttt{STB}}$-Signal erzeugt, dessen negative Flanke ein Flipflop setzen, dessen Ausgangssignal \verb|IBF| anzeigt, dass das Eingaberegister \verb|IB| noch gefüllt ist. Die folgende positive Flanke von $\overline{\texttt{STB}}$ verursacht, die tats"achliche "Ubernahme der Daten ins Eingaberegister \verb|IB|.
+
+Unter der angenommenen Voraussetzung, dass das \verb|IE|-Bit aktiviert ist, verursacht die positive Flanke von $\overline{\texttt{STB}}$ und das aktivierte \verb|IBF|, dass ein Interruptsignal "uber den Ausgang \verb|INT| ein Interruptsignal erzeugt wird.
+
+Die negative Flanke des Lesesignals $\overline{\texttt{RD}}$ f"uhrt zu einer R"ucknahme des Interrupts. Die darauf folgende positive Flanke des Lesesignals f"uhrt anschließend zu einer R"ucknahme des \verb|IBF|-Signals.
+
+\paragraph{Ausgabe}
+
+Das auszugebende Datum wird zuerst auf den Datenbus $\texttt{D}_\texttt{7}, \ldots, \texttt{D}_\texttt{0}$ gelegt. Anschließend wird ein negativer Schreibimpuls $\overline{\texttt{WR}}$ erzeugt. Die folgende positive Flanke f"uhrt dazu, dass das Datum in das Ausgaberegister \verb|DR| "ubertragen wird. Kurze Zeit sp"ater erscheint es auf den Portleitungen $\texttt{PA}_\texttt{7}, \ldots, \texttt{PA}_\texttt{0}$ bzw. $\texttt{PB}_\texttt{7}, \ldots, \texttt{PB}_\texttt{0}$. Außerdem wird ein eventuelles \verb|INT|-Signal gel"oscht und ein Flipflop zur"uckgesetzt, dessen Ausgangssignal (ein nun negatives $\overline{\texttt{OBF}}$) anzeigt, dass ein Datum auf den Portleitungen liegt.
+
+Nach einer gewissen Zeit "ubernimmt das Peripherieger"at das Datum und quittiert es durch ein $\overline{\texttt{ACK}}$. Seine negative Flanke setzt das Flipflop zur"uck  und verursacht eine R"ucknahme des negativen $\overline{\texttt{OBF}}$.
+
+Falls das \verb|IE|-Bit gesetzt ist, erzeugt die positive Flanke des $\overline{\texttt{OBF}}$-Signals ein Signal, welches "uber die \verb|INT|-Leitung gesendet wird.
+
+im Datenregister \verb|DR| zwischengespeichert, bis es vom Peripherieger"at abgeholt wird. 
+
+Die "Ubertragung mit Handshaking im Modus 2 funktioniert analog. 
 
 \subsubsection{Centronics-Schnittstelle}
 
@@ -70,6 +84,7 @@ In letzterem bleibt beim Anlegen der Daten auf den Datenleitungen die \verb|STRO
 \subsection{Frage} Wie funktioniert eine serielle Datenübertragung?
 
 \subsection{Antwort}
+\label{sec:antw_serielle}
 
 Laut \cite[S.~455ff]{Baehring} schreibt der Sender ein auszugebendes Datum in das Sende-Datenregister \verb|TDR|. Von der Bausteinsteuerung wird es automatisch in das Sende-Schieberegister \verb|TSR| "ubertragen. Von der Sende-Synchronisationsschaltung wird das Startbit die Daten-Ausgabeleitung \verb|TxD| gegeben. Anschließend wird durch eine Anzahl Impulse als Sendetakt das Datum Bit f"ur Bit "ubertragen -- mit jedem Takt wird ein Bit aus dem Register auf \verb|TxD| geschoben.
 
@@ -92,14 +107,15 @@ spannungsbasierten Übertragung?
 
 Die Stromschleife besteht aus einer aktiven (meist PC) und passiven (meist Peripherieger"at) Seite. Wie im Bild in Abschnitt 2.1.2 der Versuchsanleitung zu sehen, wird ein Strom von $20~mA$ "uber diese gesendet, wenn eine logische 1 "ubertragen wird und kein Strom, wenn eine logische 0 "ubertragen wird. Auf der passiven Seite wird durch einen Optokoppler bzw. Relais das Signal ausgewertet.
 
-Der Vorteil gegen"uber einer spannungsbasierten "Ubertragung besteht darin, dass nicht beachtet werden muss, ob die beiden Seite unterschiedliche elektrische Potentiale besitzen, da Sender und Empf"anger voneinander isoliert sind.
+Der Vorteil gegen"uber einer spannungsbasierten "Ubertragung besteht darin, dass nicht beachtet werden muss, ob die beiden Seite unterschiedliche elektrische Potentiale besitzen, da Sender und Empf"anger voneinander galvanisch getrennt sind.
 
 \section{Merkmale des PPI 8255}
 
 \subsection{Frage} Nennen Sie wesentliche Merkmale des PPI 8255! Wie funktionieren die
 Betriebsarten?
 
-\subsection{Antwort} 3 Betriebsmodi (vgl. \cite[S.~440-447]{Baehring})
+\subsection{Antwort} 
+Der PPI 8255 verfügt "uber drei Betriebsmodi (vgl. \cite[S.~440-447]{Baehring})
 \begin{itemize}
 \item Modus 0
 \item Modus 1
@@ -121,7 +137,6 @@ Betriebsarten?
 \end{itemize}
 
 \subsubsection{Modus 2}
-
 
 \begin{itemize}
 \item Von Port \verb|PC| werden drei Leitungen \verb|PB| zugeordnet
@@ -232,7 +247,9 @@ parallelen und Bits 9 und 10 die Anzahl der seriellen Ports. Ab Adresse 0:400h s
 Basisadressen von COM1 und COM2 und ab Adresse 0:408h die Basisadressen von
 LPT1-3 (jeweils 16 Bit). Zeigen Sie die Werte mit \textless d\textgreater{} an. Notieren Sie sich die Werte.
 
-\subsection{Durchf"uhrung} alle folgenden Ausgaben notieren:
+\subsection{Durchf"uhrung}
+
+Wir geben in \verb|debug| ein:
 
 \begin{verbatim}
 -d0:410 l 2
@@ -406,9 +423,12 @@ sein (INTERRUPT ENABLE, siehe Anlage 6). Schreiben Sie die Startadresse der ISR
 auf die richtige Position in der Interrupttabelle mit Hilfe des Debuggers. Assemblieren
 Sie dann die ISR zur Zeichenausgabe auf diese Adresse.
 
-Zunächst können Sie Ihre ISR testen, indem Sie mit dem Befehl g=<startadresse>
-<endadresse> ausgeführt wird. Da hier iret noch nicht ausgeführt werden darf, muss die
-Ausführung davor beendet werden (endadresse=Adresse von iret).
+Zunächst können Sie Ihre ISR testen, indem Sie mit dem Befehl 
+\begin{verbatim}
+g=<startadresse> <endadresse>
+\end{verbatim}
+ausgeführt wird. Da hier iret noch nicht ausgeführt werden darf, muss die
+Ausführung davor beendet werden (\verb|endadresse|=Adresse von iret).
 
 Testen Sie die Funktion, indem Sie mit dem entsprechenden Schalter an Port C
 Handshake-Signale erzeugen und dadurch Interrrupts auslösen. Dabei wir das laufende
@@ -532,7 +552,7 @@ Somit ergibt sich als Programm (inklusive Anweisung zum Ausf"uhren):
 -G =600:0 600:1B
 \end{verbatim}
 
-Das zugeh"orige Oszillogramm sieht folgendermaßen aus.
+Das zugeh"orige Oszillogramm sieht folgendermaßen aus. Da eine logische 0 durch ein elektrisches High und eine logische 1 durch ein elektrisches Low codiert wird, haben wir unter dem Vorwissen, dass 36 Bits "ubertragen werden, die Werte in das Oszillogramm eingetragen. Darauf folgt die tabellarische Darstellung der "ubertragenen Bits mit ihrer Bedeutung.
 
 \psset{xunit=0.6cm,yunit=0.6cm}
 \begin{center}
@@ -575,15 +595,11 @@ Das zugeh"orige Oszillogramm sieht folgendermaßen aus.
 \rput[c](17.25,0.7){1}
 \rput[c](17.75,0.7){0}
 \rput[c](18.25,0.7){0}
-\rput[c](18.75,0.7){1}
+\rput[c](18.75,0.7){0}
 \rput[c](19.25,0.7){1}
 \rput[c](19.75,0.7){1}
 \end{pspicture}
 \end{center}
-
-Zur Erkl"arung: eine logische 0 wird durch ein elektrisches High und eine logische 1 durch ein elektrisches Low codiert.
-
-Insgesamt werden 36 Bits "ubertragen:
 
 \begin{tabular}[t]{|l|l|l|l|}
 \hline
@@ -622,12 +638,35 @@ Nummer & Bitwert & Bedeutung \\
 31 & 1 & Bit 5 drittes "ubetragenes Byte \\
 32 & 0 & Bit 6 drittes "ubetragenes Byte \\
 33 & 0 & Bit 7 drittes "ubetragenes Byte \\
-34 & 1 & Parit"atsbit des dritten "ubetragenen Bytes \\
+34 & 0 & Parit"atsbit des dritten "ubetragenen Bytes \\
 35 & 1 & Erstes Stoppbit des dritten "ubetragenen Bytes \\
 36 & 1 & Zweites Stoppbit des dritten "ubetragenen Bytes \\
 \hline
-\end{tabular}
+\end{tabular}\\
 
+Zur Erl"auterung der Tabelle: die "Ubertragung von jedem der Bits beginnt, wie in Abschnitt \ref{sec:antw_serielle} dargestellt mit der "Ubertragung eines Startbits. Darauf folgend werden die acht Datenbits -- beginnend mit dem niederwertigsten -- "ubertragen.
+
+Dies entspricht in der Tat den "ubertragenen Daten (man vergleiche die Hexadezimal-Werte mit den Werten im obigen Assembler-Programm):
+
+\begin{eqnarray*}
+01001000_2 & = & 48_{16} \\
+01101001_2 & = & 69_{16} \\
+00100001_2 & = & 21_{16}
+\end{eqnarray*}
+
+Nach jedem "ubertragenen Byte wird ein Parit"atbit bez"uglich der gew"ahlten geraden Parit"at "ubertragenen. Das heißt: ein Bit, welches die Eigenschaft hat, dass die Summe der Datenbits und des Parit"atsbits modulo 2 (bzw. die xor-Verknüpfung dieser) 0 ist.
+
+Auch dies ist erf"ullt:
+
+\begin{eqnarray*}
+\underbrace{0 \oplus 1 \oplus 0 \oplus 0 \oplus 1 \oplus 0 \oplus 0 \oplus 0}_{Datenbits} \oplus \underbrace{0}_{Parit"atsbit} & = & 0 \\
+\underbrace{0 \oplus 1 \oplus 1 \oplus 0 \oplus 1 \oplus 0 \oplus 0 \oplus 1}_{Datenbits} \oplus \underbrace{0}_{Parit"atsbit} & = & 0 \\
+\underbrace{0 \oplus 0 \oplus 1 \oplus 0 \oplus 0 \oplus 0 \oplus 0 \oplus 1}_{Datenbits} \oplus \underbrace{0}_{Parit"atsbit} & = & 0.
+\end{eqnarray*}
+
+Zuletzt erfolgen gem"a"s der Einstellungen zwei Stoppbits. Diese sind als logische 1 bzw. elektrisches Low zu erkennen.
+
+Das genannte erfolgt bei jedem "ubertragenen Byte.
 
 \bibliography{E13}{}
 \bibliographystyle{geralpha}
