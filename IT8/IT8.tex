@@ -1,0 +1,55 @@
+\documentclass[10pt]{scrartcl}
+\usepackage[latin1]{inputenc}
+\usepackage[english, ngerman]{babel}
+\usepackage[babel]{csquotes}
+\usepackage{amsmath} % for eqref
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{pstricks}
+\usepackage{pst-node}
+\usepackage{pstricks-add}
+\usepackage{listings} % for listings - of course ;-)
+\author{Denis Dietze\footnote{denis.dietze@st.ovgu.de} \and Wolfgang Keller\footnote{wolfgang.keller@student.uni-magdeburg.de} \and Nico Linke\footnote{nicolinke@googlemail.com} \and Thomas Schulte\footnote{thomas.schulte.md@googlemail.com}}
+\title{Protokoll Versuch IT2}
+\subtitle{Microcontroller Z8}
+\begin{document}
+\maketitle
+\section{Zyklisches Auslösen der Analog-Digital-Umsetzung}
+\subsection{Aufgabe}
+\label{sec:aufg_3_2}
+Entwickeln Sie eine Software, die zyklisch den ADU des USER-Boards über das Signal $\overline{\textnormal{CEN}}$ (Conversion Enable) startet und zunächst die Spannung an Kanal 1 (CH1) in einen Digitalwert wandelt. Danach testen Sie die Software, modifiziert zur Erfassung der Spannung am Kanal 2 (siehe Anlage 2/3 der Versuchsanleitung).
+
+Geben Sie zusätzlich die oberen 4-Bit der ADU-Daten auf die LED-Balkenanzeige (arbeitet binär kodiert) aus (siehe Anlage 2/3 der Versuchsanleitung).
+
+\paragraph{Anmerkung 1} Mit jeder Low/High-Flanke des Signals $\overline{\textnormal{CEN}}$ (P35) werden automatisch die binären ADU-Daten (vorzeichenlose Darstellung) in das LED-Modul (Leuchtdioden $2^0$ \ldots $2^7$) eingeschrieben und somit sichtbar gemacht.
+
+\paragraph{Anmerkung 2} Port 2 als Ausgabe-Port muß mit aktiven 'pull ups' betrieben werden. Dazu muss Steuerregister P3M entsprechend konfiguriert werden!
+
+\subsection{L"osung}
+
+
+
+\section{Bin"ar/BCD-Konvertierung für 7-Segment-Anzeige}
+\subsection{Aufgabe}
+
+Entwickeln Sie eine Software, die zyklisch den ADU startet und das Ergebnis-Byte der AD-Umsetzung (Daten D0 \ldots D7) in einen 3-stelligen BCD-Code wandelt und über das 7-Segment-Anzeigemodul ausgibt (siehe Anlage 2/3 der Versuchsanleitung).
+
+Hierbei soll zunächst nur die Spannung am Kanal 1 des ADU ausgewertet werden.
+
+Geben Sie auch hierbei die oberen 4-Bit der ADU-Daten auf die LED-Balkenanzeige aus
+(P24 ... P27).
+
+\paragraph{Anmerkung} Der ADU ist so kalibriert, dass er eine unipolare Eingangangsspannung von maximal 25,5 V verarbeiten kann. Da diese Spannung auf einen Digitalwert von 255 (FFh) abgebildet wird, ist somit \emph{keine} spezielle Skalierung vor der Binär/ BCD-Konvertierung erforderlich.
+
+\subsection{L"osung}
+
+\section{Zeitmultiplexbetrieb der ADU-Kanäle}
+\subsection{Aufgabe}
+
+Erweitern Sie die Software von Aufgabe \ref{sec:aufg_3_2} derart, dass Sie im Zeitmultiplexverfahren beide Kanaleingangsspannungen des ADU digitalisieren. Jeder Kanal sollte dabei für ca. 4 s aktiviert werden (Software-Zeitschleife generieren).
+
+\subsection{L"osung}
+
+
+\end{document}
