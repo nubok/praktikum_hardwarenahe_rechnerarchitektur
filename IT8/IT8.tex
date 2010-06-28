@@ -40,9 +40,80 @@ Hierbei soll zun‰chst nur die Spannung am Kanal 1 des ADU ausgewertet werden.
 Geben Sie auch hierbei die oberen 4-Bit der ADU-Daten auf die LED-Balkenanzeige aus
 (P24 ... P27).
 
-\paragraph{Anmerkung} Der ADU ist so kalibriert, dass er eine unipolare Eingangangsspannung von maximal 25,5 V verarbeiten kann. Da diese Spannung auf einen Digitalwert von 255 (FFh) abgebildet wird, ist somit \emph{keine} spezielle Skalierung vor der Bin‰r/ BCD-Konvertierung erforderlich.
+\paragraph{Anmerkung} Der ADU ist so kalibriert, dass er eine unipolare Eingangangsspannung von maximal 25,5 V verarbeiten kann. Da diese Spannung auf einen Digitalwert von 255 (FFh) abgebildet wird, ist somit \emph{keine} spezielle Skalierung vor der Bin‰r/BCD-Konvertierung erforderlich.
 
 \subsection{L"osung}
+
+Sei Register 4 das Register, welches das Ergebnis-Byte der AD-Umsetzung beinhaltet. Die Register 5 und das untere Nibble von Register 6 sollen den BSD-codierten Wert beinhalten. Als Register f"ur Zwischenwerte werden auﬂerdem die Register 10, 11, 12
+
+\begin{verbatim}
+	; Initialisierung
+	
+	; externen Stack anlegen (vgl. Versuch IT2)
+	LD P01M, #%10
+	LD SPH,  #%11
+	LD SPL,  #%00
+	
+	; ...
+	
+	
+	
+main_loop:
+	; Eingabe auslesen
+	; ...
+
+
+
+	; Situation: in Register 4 soll der ausgelesene Wert liegen
+	
+	LD 10, 4
+	CALL begin_routine
+	LD 5, 11           ; Register 5 enthaelt kleinstes Nibble des BCD-Wertes
+
+	LD 10, 12
+	CALL begin_routine
+	LD 6, 11
+	
+	; Register 6 um 4 Bits nach oben
+	; shiften = 4 * nach rechts rotieren
+	; + nun untere 4 Bits auf 0 setzen
+	RL 6
+	RL 6
+	RL 6
+	RL 6
+	AND 6, #F0
+	
+	; Nun diese 4 Bits nach Register 5 bringen
+	OR 5, 6
+	
+	LD 10, 12
+	CALL moddiv10
+	LD 6, 11
+	
+	; Ausgabe
+	; ...
+	
+	JMP main_loop
+	
+	; Routine, die Byte in Register 10 annimmt
+	; und in Register 11 den Modulus  bzgl. 10
+	; und in Register 12 die Division bzgl. 10
+	; ablegt
+	;
+	; Keines der Register bleibt unveraendert
+moddiv10:
+	LD 11, 0
+	LD 12, 0
+begin_loop_routine:
+	CP 10, #9          ; Vergleiche Wert mit 9
+	JP MI, end_loop0
+	SUB 10, #10
+	INC 12             ; Wir ziehen #10 ab - also Register 12 inkrementieren
+	JP loop1
+end_loop0: 
+	LD 11, 10
+	RET
+\end{verbatim}
 
 \section{Zeitmultiplexbetrieb der ADU-Kan‰le}
 \subsection{Aufgabe}
