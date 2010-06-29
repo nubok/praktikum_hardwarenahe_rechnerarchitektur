@@ -145,6 +145,18 @@ Vektorinterrupt?
 \subsection{Antwort}
 
 
+Da die CPU im PC nur einen Eingang f"ur Interrupts (\verb|INT|) besitzt, es jedoch mehrere Interruptquellen gibt, werden an den genannten Eingang der CPU zwei kaskadierte PICs (Programmable Interrupt Controller) -- Master PIC und Slave PIC -- angeschlossen. Der Ausgang des Slave PICs ist hierbei am IRQ-2-Eingang des Master PICs angeschlossen und der Ausgang des Master PICs am \verb|INT|-Eingang der CPU.
+
+An den verbleibenden Eing"angen der PICs wiederum sind die Hardwareinterrupt-Quellen angeschlossen.
+
+\paragraph{Bemerkung} Der Einfachheit halber behandeln wir im Folgenden nur die Interrupt-Verarbeitung im Real Mode.
+\\
+
+Wenn ein Peripherieger"at einen Interrupt erzeugt, so sorgen die PICs daf"ur, dass ein geeigneter Eintrag auf den Datenbus gelegt wird und die CPU ein \verb|IRQ|-Signal bekommt. 
+
+Falls das \verb|EI|-Flag der CPU aktiviert ist, beginnt die Interruptvearbeitung: der aktuelle Befehl wird noch fertig ausgef"uhrt. Anschlieﬂend wird der mit 4 multiplizierte (da jeder Interrupt-Vektor in diesem Modus aus 4 Bytes besteht) erhaltene Eintrag als Adresse aus der Interruptvektortabelle gelesen und der erhaltene Wert als Interruptvektor (Einsprungadresse in die Interrupt-Service-Routine (ISR)) interpretiert.
+
+Nun wird laut \cite[S.~107]{althaus}  der Wert des Program Counters \verb|PC| und des Flag-Registers auf dem Stack gesichert. Anschlieﬂend wird der Interruptvektor in den Program Counter geladen und Interrupts werden deaktiviert (also \verb|EI| ausgeschaltet). Wenn die ISR durch den \verb|IRET|-Befehl verlassen wird, werden Interrupts wieder aktiviert und der Wert des Flasg-Registers und Program Counter wieder hergestellt und somit der regul"are Programmablauf fortgesetzt.
 
 \section{Hardware- vs. Software-Interrupts}
 
@@ -154,7 +166,7 @@ Was unterscheidet Hardware- von Software-Interrupts, was haben sie gemeinsam?
 \subsection{Antwort}
 Hardware-Interrupts werden durch ein Peripherie-Ger"at ausgel"ost, w"ahrend Software-Interrupts durch einen \verb|INT|-Befehl ausgel"ost werden.
 
-In beiden F"allen wird laut \cite[S.~107]{althaus}  der Wert des Stack Pointers \verb|SP| und des Flag-Registers auf dem Stack gesichert und der dem Interrupt zugeh"orige Wert aus der Interrupt-Einsprungtabelle in den Program Counter \verb|PC| geladen.
+In beiden F"allen wird laut \cite[S.~107]{althaus}  der Wert des Program Counters \verb|PC| und des Flag-Registers auf dem Stack gesichert und der dem Interrupt zugeh"orige Wert aus der Interrupt-Einsprungtabelle in den Program Counter \verb|PC| geladen.
 
 Somit stellen Software-Interrupts eine Art Funktionsaufruf dar, bei dem zus"atzlich das Flag-Register gesichert und wiederhergestellt wird, w"ahrend Hardware-Interrupts eine asynchrone Unterbrechung des Programmablaufs darstellen.
 
