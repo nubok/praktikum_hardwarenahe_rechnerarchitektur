@@ -28,7 +28,60 @@ Geben Sie zusätzlich die oberen 4-Bit der ADU-Daten auf die LED-Balkenanzeige (a
 
 \subsection{L"osung}
 
+\begin{verbatim}
+	; Initialisierung
+	
+	; Laut Anlage 2 ist der ADU P35, P34 (fuer Controller
+	; Ausgabe) und P30 (fuer Z8 Eingabe) angeschlossen
+	
+	; P3M ist somit zu setzen
+	; Bit 0: 1 (da Push-Pull)
+	;     1: 0 Reserved
+	;     2: 0 P35=Output
+	;  3, 4: 00 (da P34 Output)
+	;     5: sollte egal sein (0)
+	;     6: 0 (P30 Input)
+	;     7: 0 (Parity Off)
+	; 00000001 = #%01
+	LD P3M, #%01
+	
+	; Laut Anlage 2 ist die Ausgabe des ADU-Moduls in P00-P07
+	; P01M ist somit zu setzen
+	; Bit 1, 0: 01 (P0_3-P0_0 Input)
+	;        2: egal (0)
+	;     4, 3: egal (00)
+	;        5: 0 (normales Timing)
+	;     7, 6: 01 (P0_7-P0_4 Input)
+	; 01000001 = #%41
+	LD P01M, #%41
+	
+	; Laut Anlage 2 ist das Balkenanzeige-Modul an P27-P24
+	; angeschlossen
+	; P2M ist somit zu setzen
+	; 00001111 (oberste 4 Bits Output) = #%0F
+	LD P2M, #%0F
+	
+loop:
+	; ADU starten
+	
+	; An P3:
+	; P34 (Channel Select) = 0 (Channel 1)
+	;                 oder = 1 (Channel 2)
+	; P35 (not CEN)        = 0
+	; restliche Bits 0
+	LD P3, #%00 ; oder #%10 (Channel 2)
+	
+	NOP         ; (siehe Anlage 3)
+	
+	; Laut Anlage 1 befindet sich das Ergebnis der
+	; A-D-Umwandlung in Port 0
+	; Wir koennen wir einfach direkt LD P2, 4 benutzen (da wir die unteren 4
+	; Bits von Port 2 als Input deklariert haben)
+	
+	LD P2, P0
 
+	jmp loop
+\end{verbatim}
 
 \section{Bin"ar/BCD-Konvertierung für 7-Segment-Anzeige}
 \subsection{Aufgabe}
