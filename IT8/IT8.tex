@@ -29,17 +29,19 @@ Geben Sie zus‰tzlich die oberen 4-Bit der ADU-Daten auf die LED-Balkenanzeige (a
 \subsection{L"osung}
 
 \begin{verbatim}
+	TITLE "Aufgabe 3.2"
+	ORG %0C
+	
 	; Initialisierung
 	
 	; Laut Anlage 2 ist der ADU P35, P34 (fuer Controller
 	; Ausgabe) und P30 (fuer Z8 Eingabe) angeschlossen
-	
-	; P3M ist somit zu setzen
+	; 3M ist somit zu setzen
 	; Bit 0: 1 (da Push-Pull)
 	;     1: 0 Reserved
 	;     2: 0 P35=Output
 	;  3, 4: 00 (da P34 Output)
-	;     5: sollte egal sein (0)
+	;     5: sollte egal; P sein (0)
 	;     6: 0 (P30 Input)
 	;     7: 0 (Parity Off)
 	; 00000001 = #%01
@@ -100,24 +102,60 @@ Geben Sie auch hierbei die oberen 4-Bit der ADU-Daten auf die LED-Balkenanzeige 
 Sei Register 4 das Register, welches das Ergebnis-Byte der AD-Umsetzung beinhaltet. Die Register 5 und das untere Nibble von Register 6 sollen den BSD-codierten Wert beinhalten. Als Register f"ur Zwischenwerte werden auﬂerdem die Register 10, 11, 12
 
 \begin{verbatim}
+	TITLE "Aufgabe 3.3"
+	ORG %0C
+	
 	; Initialisierung
 	
-	; externen Stack anlegen (vgl. Versuch IT2)
-	LD P01M, #%10
+	; Laut Anlage 2 ist der ADU P35, P34 (fuer Controller
+	; Ausgabe) und P30 (fuer Z8 Eingabe) angeschlossen
+	; 3M ist somit zu setzen
+	; Bit 0: 1 (da Push-Pull)
+	;     1: 0 Reserved
+	;     2: 0 P35=Output
+	;  3, 4: 00 (da P34 Output)
+	;     5: sollte egal; P sein (0)
+	;     6: 0 (P30 Input)
+	;     7: 0 (Parity Off)
+	; 00000001 = #%01
+	LD P3M, #%01
+	
+	; Laut Anlage 2 ist die Ausgabe des ADU-Moduls in P00-P07
+	; P01M ist somit zu setzen
+	; Bit 1, 0: 01 (P0_3-P0_0 Input)
+	;        2: 0 (externen Stack anlegen)
+	;     4, 3: 01 (P1_7-P1_0 Byte Output)
+	;        5: 0 (normales Timing)
+	;     7, 6: 01 (P0_7-P0_4 Input)
+	; 01001001 = #%49
+	LD P01M, #%49
+	
+	; Laut Anlage 2 ist die 7-Segment-Anzeige auﬂerdem an P23-P20
+	; angeschlossen
+	; P2M ist somit zu setzen
+	; 11110000 (unterste 4 Bits Output) = #%F0
+	LD P2M, #%F0
+	
+	; Stack Pointer initialisieren (vgl. Versuch IT2)
 	LD SPH,  #%11
 	LD SPL,  #%00
 	
-	; ...
+loop:
+	; ADU starten
 	
+	; An P3:
+	; P34 (Channel Select) = 0 (Channel 1)
+	;                 oder = 1 (Channel 2)
+	; P35 (not CEN)        = 0
+	; restliche Bits 0
+	LD P3, #%00 ; oder #%10 (Channel 2)
 	
+	NOP         ; (siehe Anlage 3)
 	
-main_loop:
-	; Eingabe auslesen
-	; ...
-
-
-
-	; Situation: in Register 4 soll der ausgelesene Wert liegen
+	; In Register 4 soll der ausgelesene Wert liegen
+	LD 4, P0
+	
+	; BCD-Konvertierung in Register 5 und 6
 	
 	LD 10, 4
 	CALL begin_routine
@@ -144,9 +182,12 @@ main_loop:
 	LD 6, 11
 	
 	; Ausgabe
-	; ...
+	LD P1, 5
+	LD P2, 6
 	
-	JMP main_loop
+	JMP loop
+	
+	
 	
 	; Routine, die Byte in Register 10 annimmt
 	; und in Register 11 den Modulus  bzgl. 10
@@ -162,7 +203,7 @@ begin_loop_routine:
 	JP MI, end_loop0
 	SUB 10, #10
 	INC 12             ; Wir ziehen #10 ab - also Register 12 inkrementieren
-	JP loop1
+	JP begin_loop_routine
 end_loop0: 
 	LD 11, 10
 	RET
@@ -175,5 +216,144 @@ Erweitern Sie die Software von Aufgabe \ref{sec:aufg_3_2} derart, dass Sie im Ze
 
 \subsection{L"osung}
 
+\begin{verbatim}
+	TITLE "Aufgabe 3.4"
+	ORG %0C
+	
+	; Initialisierung
+	
+	; Laut Anlage 2 ist der ADU P35, P34 (fuer Controller
+	; Ausgabe) und P30 (fuer Z8 Eingabe) angeschlossen
+	; 3M ist somit zu setzen
+	; Bit 0: 1 (da Push-Pull)
+	;     1: 0 Reserved
+	;     2: 0 P35=Output
+	;  3, 4: 00 (da P34 Output)
+	;     5: sollte egal; P sein (0)
+	;     6: 0 (P30 Input)
+	;     7: 0 (Parity Off)
+	; 00000001 = #%01
+	LD P3M, #%01
+	
+	; Laut Anlage 2 ist die Ausgabe des ADU-Moduls in P00-P07
+	; P01M ist somit zu setzen
+	; Bit 1, 0: 01 (P0_3-P0_0 Input)
+	;        2: 0 (externen Stack anlegen)
+	;     4, 3: 01 (P1_7-P1_0 Byte Output)
+	;        5: 0 (normales Timing)
+	;     7, 6: 01 (P0_7-P0_4 Input)
+	; 01001001 = #%49
+	LD P01M, #%49
+	
+	; Laut Anlage 2 ist die 7-Segment-Anzeige auﬂerdem an P23-P20
+	; angeschlossen
+	; P2M ist somit zu setzen
+	; 11110000 (unterste 4 Bits Output) = #%F0
+	LD P2M, #%F0
+	
+	; Stack Pointer initialisieren (vgl. Versuch IT2)
+	LD SPH,  #%11
+	LD SPL,  #%00
+
+	; Register Pointer aktivieren (fuer Schleifen)	
+	LD RP, #%10
+	
+loop:
+	LD 10, #%00
+	CALL channel_read_and_output_loop
+	
+	LD 10, #%10
+	CALL channel_read_and_output_loop
+	
+	JMP loop
+	
+	; Routine, die Byte in Register 10 annimmt
+	; und in Register 11 den Modulus  bzgl. 10
+	; und in Register 12 die Division bzgl. 10
+	; ablegt
+	;
+	; Keines der Register bleibt unveraendert
+moddiv10:
+	LD 11, 0
+	LD 12, 0
+begin_loop_routine:
+	CP 10, #9          ; Vergleiche Wert mit 9
+	JP MI, end_loop0
+	SUB 10, #10
+	INC 12             ; Wir ziehen #10 ab - also Register 12 inkrementieren
+	JP begin_loop_routine
+end_loop0: 
+	LD 11, 10
+	RET
+	
+	
+	
+	; Routine, die zu initialisierenden Wert fuer P3 in Register 10
+	; (#%00 fuer Channel 1 und #%10 fuer Channel 2) entgegennimmt und diesen
+	; auf der 7-Segment-Anzeige ausgibt.
+channel_read_and_output:
+	; ADU starten
+	LD P3, 10
+	
+	NOP         ; (siehe Anlage 3)
+	
+	; In Register 4 soll der ausgelesene Wert liegen
+	LD 4, P0
+	
+	; BCD-Konvertierung in Register 5 und 6
+	
+	LD 10, 4
+	CALL begin_routine
+	LD 5, 11           ; Register 5 enthaelt kleinstes Nibble des BCD-Wertes
+
+	LD 10, 12
+	CALL begin_routine
+	LD 6, 11
+	
+	; Register 6 um 4 Bits nach oben
+	; shiften = 4 * nach rechts rotieren
+	; + nun untere 4 Bits auf 0 setzen
+	RL 6
+	RL 6
+	RL 6
+	RL 6
+	AND 6, #F0
+	
+	; Nun diese 4 Bits nach Register 5 bringen
+	OR 5, 6
+	
+	LD 10, 12
+	CALL moddiv10
+	LD 6, 11
+
+	; Ausgabe	
+	LD P1, 5
+	LD P2, 6
+	
+	RET
+
+
+
+	; Routine, die in einer Schleife fuer ca. 4 Sekunden
+	; den Port abfragt. Parameter: in Register 10 zu initialisierender
+	; Wert fuer P3
+channel_read_and_output_loop:
+	; Schleifen
+	LD R0, #%FF
+loop0:
+	LD R1, #%FF
+loop1:
+	LD R2, #%FF
+loop2:
+	LD R3, #%FF
+loop3:
+	CALL channel_read_and_output
+	DJNZ R3, loop3
+	DJNZ R2, loop2
+	DJNZ R1, loop1
+	DJNZ R0, loop0	
+	
+	RET
+\end{verbatim}
 
 \end{document}
