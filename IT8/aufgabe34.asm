@@ -11,12 +11,12 @@
 	LD SPL,  #%80
 
 loop:
-	LD 10, #%20
-	LD 11, #%0
+	LD 10,   #%20
+	LD 11,   #%0
 	CALL read_loop
 
-	LD 10, #%30
-	LD 11, #%10
+	LD 10,   #%30
+	LD 11,   #%10
 	CALL read_loop
 
 	JP	loop
@@ -72,7 +72,8 @@ channel_read_and_output
 	RL 6
 	AND 6, #%F0
 
-	; Den geshifteten Wert als zweite Tetrade nach Register 5 bringen
+	; Den geshifteten Wert als zweite Tetrade 
+	; nach Register 5 bringen
 	OR 5, 6
 
 	LD 10, 12

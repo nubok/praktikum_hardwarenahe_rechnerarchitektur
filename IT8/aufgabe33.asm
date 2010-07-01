@@ -11,17 +11,17 @@
 	LD SPL,  #%80
 
 loop:
-	LD	p3, #%30
-	LD	p3, #%10
+	LD P3,   #%30
+	LD P3,   #%10
 
 	NOP
 
-	LD 	r0, p0
+	LD 	R0, P0
 
 	; r0 - ausgelesener Wert
 
 	; Ausgelesener Wert nach Register 4
-	LD 4, r0
+	LD 4, R0
 	LD 10, 4
 	CALL moddiv10
 	LD 5, 11
@@ -37,7 +37,8 @@ loop:
 	RL 6
 	AND 6, #%F0
 
-	; Den geshifteten Wert als zweite Tetrade nach Register 5 bringen
+	; Den geshifteten Wert als zweite Tetrade 
+	; nach Register 5 bringen
 	OR 5, 6
 
 	LD 10, 12
@@ -55,7 +56,7 @@ loop:
 	; oberste 4 Bits 0 sind)
 	AND r0, #%F0
 	OR	r0, 6
-	LD	p2, r0
+	LD	p2, R0
 
 	jp	loop
 

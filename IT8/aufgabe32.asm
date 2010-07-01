@@ -7,15 +7,15 @@
 	LD RP,   #%10
 
 loop:
-	LD	P3, #%30
-	LD	P3, #%10
+	LD P3,   #%30
+	LD P3,   #%10
 
 	NOP
 
-	LD 	R0, P0
-	OR	R0, #%0F
-	LD	P2, R0
-	LD 	P1, #%FF
-	JP	loop
+	LD  R0,  P0
+	OR  R0,  #%0F
+	LD  P2,  R0
+	LD  P1,  #%FF
+	JP  loop
 	
 	END
