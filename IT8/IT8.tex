@@ -11,10 +11,11 @@
 \usepackage{pstricks-add}
 \usepackage{listings} % for listings - of course ;-)
 \author{Denis Dietze\footnote{denis.dietze@st.ovgu.de} \and Wolfgang Keller\footnote{wolfgang.keller@student.uni-magdeburg.de} \and Nico Linke\footnote{nicolinke@googlemail.com} \and Thomas Schulte\footnote{thomas.schulte.md@googlemail.com}}
-\title{Protokoll Versuch IT2}
-\subtitle{Microcontroller Z8}
+\title{Protokoll Versuch IT8}
+\subtitle{Microcontroller Z8 mit ADU-Interface}
 \begin{document}
 \maketitle
+\tableofcontents
 
 \lstdefinelanguage{z8asm}
 {
@@ -31,8 +32,47 @@ frame=single,	                % adds a frame around the code
 tabsize=2	                % sets default tabsize to 2 spaces
 }
 
-\section{Zyklisches Auslösen der Analog-Digital-Umsetzung}
-\subsection{Aufgabe}
+\section{Vorliegende Situation des Experiments}
+
+\begin{figure}
+\begin{center}
+\begin{pspicture}(17,5)
+%\psgrid
+\begin{psmatrix}[rowsep=0.4,colsep=1.0]
+	~ & ~ & \psframebox{\parbox[c][0.7cm][c]{2.15cm}{\centering Bin"ar nach BCD}} & \psframebox{\parbox[c][0.7cm][c]{2.15cm}{\centering 7-Segment-Decoder}} & \psframebox{\parbox[c][0.7cm][c]{2.15cm}{\centering Anzeigen $10^1$, $10^0$, $10^{-1}$}} \\
+	~ & \psframebox{\parbox[c][0.7cm][c]{1.2cm}{\centering ADU}} & \parbox{0cm}{} & ~ & \psframebox{\parbox[c][0.7cm][c]{2.15cm}{\centering 8 LEDs}}  \\
+	~ & ~ & \psframebox{\parbox[c][0.7cm][c]{2.15cm}{\centering Oberes Nibble}} & \psframebox{\parbox[c][0.7cm][c]{2.15cm}{\centering Decoder}} & \psframebox{\parbox[c][0.7cm][c]{2.15cm}{\centering 15 LEDs}}
+\end{psmatrix}
+\ncline[offset=0.4cm]{->}{1,3}{1,4}\ncput*{4}
+\ncline{->}{1,3}{1,4}\ncput*{4}
+\ncline[offset=-0.4cm]{->}{1,3}{1,4}\ncput*{4}
+\ncline[offset=0.4cm]{->}{1,4}{1,5}\ncput*{7}
+\ncline{->}{1,4}{1,5}\ncput*{7}
+\ncline[offset=-0.4cm]{->}{1,4}{1,5}\ncput*{7}
+\ncline{->}{2,1}{2,2}\ncput*{1}\nbput{$U_E$}
+\ncline{-}{2,2}{2,3}\naput{Digits}\nbput{$\{0, 1\}$}
+\ncline{->}{2,3}{2,5}\ncput*{8}
+\ncline{->}{2,3}{1,3}\ncput*{8}
+\ncline{->}{2,3}{3,3}\ncput*{8}
+\ncline{->}{3,3}{3,4}\ncput*{4}
+\ncline{->}{3,4}{3,5}\ncput*{15}
+\end{pspicture}
+\end{center}
+\caption{Im Experiment vorliegende Situation}
+\label{abb:situation}
+\end{figure}
+
+Abbildung \ref{abb:situation} stellt die allgemeine Situation des Experiments dar: eine Eingangsspannung $U_E$ wird durch den ADU in 8 $\{0, 1\}$-wertige Digits umgesetzt. Diese werden als eine Verarbeitungsm"oglichkeit direkt auf den LEDs angezeigt (mittlere Zeile der Abbildung). 
+
+Eine weitere Option stellt das "Ubernehmen der oberen vier Bits (oberes Nibble) dar, um dieses an einen Decoder (welcher sich als Baustein auf der Platine befindet) zu senden, der die vier Bits auf 15 Bits decodiert. Diese sind an 15 LEDs angeschlossen, die als Balkenanzeige die Signalst"arke visualisieren. Das von uns zu entwickelnde Programm f"ur den mit "`Oberes Nibble"' bezeichneten Decoder wird in Abschnitt \ref{sec:3_2} beschrieben.
+
+Eine dritte M"oglichkeit, die im Rahmen des Experiments behandelt wird, ist die BCD-Codierung des Bytes, wof"ur in Abschnitt \ref{sec:3_3} ein Programm entwickelt wird. Das Ergebnis wird anschlie"send durch einen auf der Platine aufgel"oteteten Sieben-Segment-Decoder in drei mal sieben Bits (f"ur jedes Segment ein Bit) "uberf"uhrt, welche auf drei Sieben-Segment-Anzeigen dargestellt werden und somit f"ur eine numerische Darstellung der Eingangsspannung sorgen.
+
+
+\section{Aufgaben und L"osungen}
+\subsection{Zyklisches Auslösen der Analog-Digital-Umsetzung}
+\label{sec:3_2}
+\subsubsection{Aufgabe}
 \label{sec:aufg_3_2}
 Entwickeln Sie eine Software, die zyklisch den ADU des USER-Boards über das Signal $\overline{\textnormal{CEN}}$ (Conversion Enable) startet und zunächst die Spannung an Kanal 1 (CH1) in einen Digitalwert wandelt. Danach testen Sie die Software, modifiziert zur Erfassung der Spannung am Kanal 2 (siehe Anlage 2/3 der Versuchsanleitung).
 
@@ -42,18 +82,121 @@ Geben Sie zusätzlich die oberen 4-Bit der ADU-Daten auf die LED-Balkenanzeige (a
 
 \paragraph{Anmerkung 2} Port 2 als Ausgabe-Port muß mit aktiven 'pull ups' betrieben werden. Dazu muss Steuerregister P3M entsprechend konfiguriert werden!
 
-\subsection{L"osung}
+\subsubsection{L"osung}
 
-Asdf
+Um die Plausibilit"at der Ausgaben des Programms einfacher analysieren zu k"onnen, erstellten wir eine Tabelle mit Eingangsspannungen $U_E$ und erwarteten Ausgaben des ADUs. In Tabelle \ref{table:aufgabe32} sind diese Werte dokumentiert.
 
-\begin{figure}[htbp]
+Prinzipiell k"onnte man - sofern eine hinreichend stabile und genaue Spannungsquelle vorliegt - diese Referenzwerte auch zur Kalibrierung des ADUs benutzen, beispielsweise indem man mittels linearer Regression eine Ausgleichsgerade bestimmt. Aus offensichtlichen Gr"unden wurde jedoch im Rahmen dieses Experiments darauf nicht weiter eingegangen.
+
+\begin{table}
+\begin{tabular}[t]{|r|r|}
+\hline
+Eingangsspannung $U_E$ & Digitaler Wert \\
+\hline
+$0,0~V$ & \verb|00000000| \\
+$1,5~V$ & \verb|00001111| \\
+$1,6~V$ & \verb|00010000| \\
+$3,1~V$ & \verb|00011111| \\
+$3,2~V$ & \verb|00100000| \\
+$4,7~V$ & \verb|00101111| \\
+$4,8~V$ & \verb|00110000| \\
+$6,3~V$ & \verb|00111111| \\
+$6,4~V$ & \verb|01000000| \\
+$7,9~V$ & \verb|01001111| \\
+$8,0~V$ & \verb|01010000| \\
+$9,5~V$ & \verb|01011111| \\
+$9,6~V$ & \verb|01100000| \\
+$11,1~V$ & \verb|01101111| \\
+$11,2~V$ & \verb|01110000| \\
+$12,7~V$ & \verb|01111111| \\
+$12,8~V$ & \verb|10000000| \\
+$14,3~V$ & \verb|10001111| \\
+$14,4~V$ & \verb|10010000| \\
+$15,9~V$ & \verb|10011111| \\
+$16,0~V$ & \verb|10100000| \\
+$17,5~V$ & \verb|10101111| \\
+$17,6~V$ & \verb|10110000| \\
+$19,1~V$ & \verb|10111111| \\
+$19,2~V$ & \verb|11000000| \\
+$20,7~V$ & \verb|11001111| \\
+$20,8~V$ & \verb|11010000| \\
+$22,3~V$ & \verb|11011111| \\
+$22,4~V$ & \verb|11100000| \\
+$23,9~V$ & \verb|11101111| \\
+$24,0~V$ & \verb|11110000| \\
+$25,5~V$ & \verb|11111111| \\
+\hline
+\end{tabular}
+\caption{Erwartete Werte der AD-Umwandlung bei verschiedenen Eingangsspannungen $U_E$}
+\label{table:aufgabe32}
+\end{table}
+
+Nun zum eigentlichen Programm: in Abbildung \ref{abb:aufgabe32} ist befindet sich das Flussdiagramm des zu erstellenden Programms. Listing \label{lsg:aufgabe32} zeigt das daraus erstellte Assembler-Programm.
+
+\begin{figure}
+\begin{center}
+\begin{pspicture}(5,19)
+%\psgrid
+\begin{psmatrix}[rowsep=0.4,colsep=0.5]
+	\psovalbox{Begin} \\
+	~ & [name=Init1] & \makebox[5cm]{} & [name=Init1a]\\
+	\psframebox{\parbox{4cm}{45h in P01M schreiben}}  \\
+	~ & [name=Init2] \\
+	\psframebox{\parbox{4cm}{00h in P2M schreiben}} \\
+	~ & [name=Init3] \\
+	\psframebox{\parbox{4cm}{01h auf P3M schreiben}} \\
+	~ & [name=Init4] \\
+	\psframebox{\parbox{4cm}{RP mit 10h initialisieren}} \\
+	~ & [name=Init5] & \makebox[5cm]{} & [name=Init5a] \\
+	\psframebox{\parbox{4cm}{P3 auf 20h (Benutzung Port 1) bzw. 30h (Benutzung Port 2) setzen}} \\
+	\psframebox{\parbox{4cm}{P3 auf 00h (Benutzung Port 1) bzw. 10h (Benutzung Port 2) setzen}} \\
+	\psframebox{\parbox{4cm}{Einen Zyklus abwarten}} \\
+	~ & [name=Loop1] \\
+	\psframebox{\parbox{4cm}{Wert von P0 nach R0 laden}} \\
+	\psframebox{\parbox{4cm}{Untere 4 Bits von R0 auf 1 setzen}} \\
+	\psframebox{\parbox{4cm}{Wert von R0 in P2 ablegen}} \\
+	\psframebox{\parbox{4cm}{FFh in P1 speichern}} \\
+	~ & [name=Loop2] & \makebox[5cm]{} & [name=Loop2a]
+\end{psmatrix}
+\ncline{->}{1,1}{3,1}
+\ncline{->}{3,1}{5,1}
+\ncline{->}{5,1}{7,1}
+\ncline{->}{7,1}{9,1}
+\ncline{->}{9,1}{11,1}
+\ncline{->}{11,1}{12,1}
+\ncline{->}{12,1}{13,1}
+\ncline{->}{13,1}{15,1}
+\ncline{->}{15,1}{16,1}
+\ncline{->}{16,1}{17,1}
+\ncline{->}{17,1}{18,1}
+\ncangles[angleA=-90, armA=0.5cm, armB=2.5cm]{->}{18,1}{10,1}
+\psbrace[ref=lC](Init2)(Init1){\parbox{5cm}{Port 0 auf Input und Port 1 auf Output konfigurieren}}
+\psbrace[ref=lC](Init3)(Init2){\parbox{5cm}{Alle Bits von Port 2 als Output konfigurieren}}
+\psbrace[ref=lC](Init4)(Init3){\parbox{5cm}{In Port 2 'push-pull' aktivieren, Port 3 f"ur ADU konfigurieren}}
+\psbrace[ref=lC](Init5)(Init4){\parbox{5cm}{Initialisierung Register Pointer}}
+\psbrace[ref=lC](Init5a)(Init1a){\parbox{3cm}{Initialisierung}}
+\psbrace[ref=lC](Loop1)(Init5){\parbox{5cm}{A-D-Umwandlung ausl"osen}}
+\psbrace[ref=lC](Loop2)(Loop1){\parbox{5cm}{Digitalisiertes Datum auslesen, verarbeiten und ausgeben}}
+\psbrace[ref=lC](Loop2a)(Init5a){\parbox{3cm}{Hauptschleife}}
+\end{pspicture}
+\end{center}
+\caption{Zyklisches Auslösen der Analog-Digital-Umsetzung}
+\label{abb:aufgabe32}
+\end{figure}
+
+\begin{figure}
 \lstinputlisting[caption={Assembler-Programm f"ur zyklisches Auslösen der Analog-Digital-Umsetzung}, language=z8asm, label=lsg:aufgabe32]{aufgabe32.asm}
 \end{figure}
 
+Prinzipiell sollte der Ablauf des Programms relativ klar sein. Der einzige etwas kompliziertere Teil ist die Verarbeitung und Ausgabe des digitalisieren Werts. 
 
+Der Grund, warum wir die unteren vier Bits von P0 auf 1 setzen und nach P1 den Wert FFh senden, liegt darin begr"undet, dass gem"a"s Anlage 2 der Versuchsbeschreibung das Sieben-Segment-Anzeige-Modul an den unteren 4 Bits von Port 2 und dem gesamten Port 1 angeschlossen ist. Da es unerw"unscht ist, dass in diesem Programm die Sieben-Segment-Anzeige etwas anzeigt, schreiben wir in die vier Bits der Steuerbits jeder der vier Ziffern den Wert FFh (also einen Wert außerhalb des Intervalls von 0 bis 9), damit keines der Segmente aufleuchtet.
 
-\section{Bin"ar/BCD-Konvertierung für 7-Segment-Anzeige}
-\subsection{Aufgabe}
+\pagebreak
+
+\subsection{Bin"ar/BCD-Konvertierung für 7-Segment-Anzeige}
+\label{sec:3_3}
+\subsubsection{Aufgabe}
 
 Entwickeln Sie eine Software, die zyklisch den ADU startet und das Ergebnis-Byte der AD-Umsetzung (Daten D0 \ldots D7) in einen 3-stelligen BCD-Code wandelt und über das 7-Segment-Anzeigemodul ausgibt (siehe Anlage 2/3 der Versuchsanleitung).
 
@@ -64,28 +207,30 @@ Geben Sie auch hierbei die oberen 4-Bit der ADU-Daten auf die LED-Balkenanzeige 
 
 \paragraph{Anmerkung} Der ADU ist so kalibriert, dass er eine unipolare Eingangangsspannung von maximal 25,5 V verarbeiten kann. Da diese Spannung auf einen Digitalwert von 255 (FFh) abgebildet wird, ist somit \emph{keine} spezielle Skalierung vor der Binär/BCD-Konvertierung erforderlich.
 
-\subsection{L"osung}
+\subsubsection{L"osung}
 
 Sei Register 4 das Register, welches das Ergebnis-Byte der AD-Umsetzung beinhaltet. Die Register 5 und das untere Nibble von Register 6 sollen den BSD-codierten Wert beinhalten. Als Register f"ur Zwischenwerte werden außerdem die Register 10, 11, 12
 
-\begin{figure}[htbp]
+\begin{figure}
 \lstinputlisting[caption={Assembler-Programm f"ur Bin"ar/BCD-Konvertierung für 7-Segment-Anzeige -- Initialisierung}, language=z8asm, label=lsg:aufgabe33_1, lastline=12]{aufgabe33.asm}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}
 \lstinputlisting[caption={Assembler-Programm f"ur Bin"ar/BCD-Konvertierung für 7-Segment-Anzeige -- Hauptschleife}, language=z8asm, label=lsg:aufgabe33_2, firstline=13, firstnumber=13, lastline=61]{aufgabe33.asm}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}
 \lstinputlisting[caption={Assembler-Programm f"ur Bin"ar/BCD-Konvertierung für 7-Segment-Anzeige -- Funktion \texttt{moddiv10}}, language=z8asm, label=lsg:aufgabe33_3, firstline=64, firstnumber=64]{aufgabe33.asm}
 \end{figure}
 
-\section{Zeitmultiplexbetrieb der ADU-Kanäle}
-\subsection{Aufgabe}
+\pagebreak
+
+\subsection{Zeitmultiplexbetrieb der ADU-Kanäle}
+\subsubsection{Aufgabe}
 
 Erweitern Sie die Software von Aufgabe \ref{sec:aufg_3_2} derart, dass Sie im Zeitmultiplexverfahren beide Kanaleingangsspannungen des ADU digitalisieren. Jeder Kanal sollte dabei für ca. 4 s aktiviert werden (Software-Zeitschleife generieren).
 
-\subsection{L"osung}
+\subsubsection{L"osung}
 
 \begin{figure}[htbp]
 \lstinputlisting[caption={Assembler-Programm f"ur Zeitmultiplexbetrieb der ADU-Kanäle}, language=z8asm, label=lsg:aufgabe34_1, lastline=42]{aufgabe34.asm}

@@ -7,6 +7,8 @@
 	LD RP,   #%10
 
 loop:
+	; Werte: Port 1: #%20, #%0
+	;        Port 2: #%30, #%10
 	LD P3,   #%30
 	LD P3,   #%10
 
