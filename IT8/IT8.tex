@@ -19,7 +19,7 @@
 
 \lstdefinelanguage{z8asm}
 {
-morekeywords={ORG,AND,CALL,CP,DJNZ,INC,JP,LD,LDE,NOP,OR,RET,RLC,RRC,TITLE,END},
+morekeywords={ORG,AND,CALL,CP,DJNZ,INC,JP,LD,LDE,NOP,OR,RET,RLC,RRC,SUB,TITLE,END},
 morecomment=[l]{;}
 }
 
@@ -83,6 +83,7 @@ Geben Sie zusätzlich die oberen 4-Bit der ADU-Daten auf die LED-Balkenanzeige (a
 \paragraph{Anmerkung 2} Port 2 als Ausgabe-Port muß mit aktiven 'pull ups' betrieben werden. Dazu muss Steuerregister P3M entsprechend konfiguriert werden!
 
 \subsubsection{L"osung}
+\label{sec:lsg_3_2}
 
 Um die Plausibilit"at der Ausgaben des Programms einfacher analysieren zu k"onnen, erstellten wir eine Tabelle mit Eingangsspannungen $U_E$ und erwarteten Ausgaben des ADUs. In Tabelle \ref{table:aufgabe32} sind diese Werte dokumentiert.
 
@@ -148,8 +149,8 @@ Nun zum eigentlichen Programm: in Abbildung \ref{abb:aufgabe32} ist befindet sic
 	~ & [name=Init4] \\
 	\psframebox{\parbox{4cm}{RP mit 10h initialisieren}} \\
 	~ & [name=Init5] & \makebox[5cm]{} & [name=Init5a] \\
-	\psframebox{\parbox{4cm}{P3 auf 20h (Benutzung Port 1) bzw. 30h (Benutzung Port 2) setzen}} \\
-	\psframebox{\parbox{4cm}{P3 auf 00h (Benutzung Port 1) bzw. 10h (Benutzung Port 2) setzen}} \\
+	\psframebox{\parbox{4cm}{P3 auf 20h (Benutzung Channel 1) bzw. 30h (Benutzung Channel 2) setzen}} \\
+	\psframebox{\parbox{4cm}{P3 auf 00h (Benutzung Channel 1) bzw. 10h (Benutzung Channel 2) setzen}} \\
 	\psframebox{\parbox{4cm}{Einen Zyklus abwarten}} \\
 	~ & [name=Loop1] \\
 	\psframebox{\parbox{4cm}{Wert von P0 nach R0 laden}} \\
@@ -209,11 +210,94 @@ Geben Sie auch hierbei die oberen 4-Bit der ADU-Daten auf die LED-Balkenanzeige 
 
 \subsubsection{L"osung}
 
-Sei Register 4 das Register, welches das Ergebnis-Byte der AD-Umsetzung beinhaltet. Die Register 5 und das untere Nibble von Register 6 sollen den BSD-codierten Wert beinhalten. Als Register f"ur Zwischenwerte werden außerdem die Register 10, 11, 12
+Gem"a"s Anweisungen des Betreuers soll dieses Programm durch Erweiterung des Programms der vorhergehenden Aufgabe entwickelt werden.
+
+Zuerst betrachten wir die Initialisierung. Sie erfolgt wie bei dem Programm in Abschnitt \ref{sec:lsg_3_2}, nur dass zus"atzlich ein Stack initialisiert werden muss. Dies erfolgt dadurch, dass wir SPL auf 80h setzen. Somit liegt der Stack in einem Bereich in der Mitte der Register, wo es zu keiner Kollision mit von der CPU (vgl. dazu Anlage 6 der Versuchsanleitung) oder im Programm verwendeten Registern kommt.
+
+Abbildung \ref{abb:aufgabe33_1} bildet das Flussdiagramm des Programms unter Detailbetrachtung der Initialisierung und Listing \ref{lsg:aufgabe33_1} zeigt den Assembler-Code zur Initialisierung.
+
+\begin{figure}
+\begin{center}
+\begin{pspicture}(5,11)
+%\psgrid
+\begin{psmatrix}[rowsep=0.4,colsep=0.5]
+	\psovalbox{Begin} \\
+	~ & [name=Init1] & \makebox[5cm]{} & [name=Init1a]\\
+	\psframebox{\parbox{4cm}{45h in P01M schreiben}}  \\
+	~ & [name=Init2] \\
+	\psframebox{\parbox{4cm}{00h in P2M schreiben}} \\
+	~ & [name=Init3] \\
+	\psframebox{\parbox{4cm}{01h auf P3M schreiben}} \\
+	~ & [name=Init4] \\
+	\psframebox{\parbox{4cm}{RP mit 10h initialisieren}} \\
+	~ & [name=Init5] \\
+	\psframebox{\parbox{4cm}{SPL auf 80h setzen}} \\
+	~ & [name=Init6] & \makebox[5cm]{} & [name=Init6a] \\
+	\psframebox{\parbox{4cm}{Hauptschleife}}
+\end{psmatrix}
+\ncline{->}{1,1}{3,1}
+\ncline{->}{3,1}{5,1}
+\ncline{->}{5,1}{7,1}
+\ncline{->}{7,1}{9,1}
+\ncline{->}{9,1}{11,1}
+\ncline{->}{11,1}{13,1}
+\psbrace[ref=lC](Init2)(Init1){\parbox{5cm}{Port 0 auf Input und Port 1 auf Output konfigurieren}}
+\psbrace[ref=lC](Init3)(Init2){\parbox{5cm}{Alle Bits von Port 2 als Output konfigurieren}}
+\psbrace[ref=lC](Init4)(Init3){\parbox{5cm}{In Port 2 'push-pull' aktivieren, Port 3 f"ur ADU konfigurieren}}
+\psbrace[ref=lC](Init5)(Init4){\parbox{5cm}{Initialisierung Register Pointer}}
+\psbrace[ref=lC](Init6)(Init5){\parbox{5cm}{Initialisierung Stack Pointer}}
+\psbrace[ref=lC](Init6a)(Init1a){\parbox{3cm}{Initialisierung}}
+\end{pspicture}
+\end{center}
+\caption{Bin"ar/BCD-Konvertierung für 7-Segment-Anzeige -- Detailbetrachtung Initialisierung}
+\label{abb:aufgabe33_1}
+\end{figure}
 
 \begin{figure}
 \lstinputlisting[caption={Assembler-Programm f"ur Bin"ar/BCD-Konvertierung für 7-Segment-Anzeige -- Initialisierung}, language=z8asm, label=lsg:aufgabe33_1, lastline=12]{aufgabe33.asm}
 \end{figure}
+
+\begin{figure}
+\begin{center}
+\begin{pspicture}(5,19)
+%\psgrid
+\begin{psmatrix}[rowsep=0.4,colsep=0.5]
+	\psovalbox{Begin} \\
+	\psframebox{\parbox{4cm}{Initialisierung}}  \\
+	~ & [name=Init5] & \makebox[5cm]{} & [name=Init5a] \\
+	\psframebox{\parbox{4cm}{P3 auf 20h (Benutzung Channel 1) bzw. 30h (Benutzung Channel 2) setzen}} \\
+	\psframebox{\parbox{4cm}{P3 auf 00h (Benutzung Channel 1) bzw. 10h (Benutzung Channel 2) setzen}} \\
+	\psframebox{\parbox{4cm}{Einen Zyklus abwarten}} \\
+	~ & [name=Loop1] \\
+	\psframebox{\parbox{4cm}{Wert von P0 nach R0 laden}} \\
+	\psframebox{\parbox{4cm}{Rufe Funktion "`moddiv10"' mit Parameter R0 auf}} \\
+	\psframebox{\parbox{4cm}{Untere 4 Bits von R0 auf 1 setzen}} \\
+	\psframebox{\parbox{4cm}{Wert von R0 in P2 ablegen}} \\
+	\psframebox{\parbox{4cm}{FFh in P1 speichern}} \\
+	~ & [name=Loop2] & \makebox[5cm]{} & [name=Loop2a]
+\end{psmatrix}
+\ncline{->}{1,1}{2,1}
+\ncline{->}{2,1}{4,1}
+\ncline{->}{4,1}{5,1}
+\ncline{->}{5,1}{6,1}
+\ncline{->}{6,1}{8,1}
+%\ncline{->}{11,1}{12,1}
+%\ncline{->}{12,1}{13,1}
+%\ncline{->}{13,1}{15,1}
+%\ncline{->}{15,1}{16,1}
+%\ncline{->}{16,1}{17,1}
+%\ncline{->}{17,1}{18,1}
+\ncangles[angleA=-90, armA=0.5cm, armB=2.5cm]{->}{18,1}{10,1}
+\psbrace[ref=lC](Loop1)(Init5){\parbox{5cm}{A-D-Umwandlung ausl"osen}}
+\psbrace[ref=lC](Loop2)(Loop1){\parbox{5cm}{Digitalisiertes Datum auslesen, verarbeiten und ausgeben}}
+\psbrace[ref=lC](Loop2a)(Init5a){\parbox{3cm}{Hauptschleife}}
+\end{pspicture}
+\end{center}
+\caption{Bin"ar/BCD-Konvertierung für 7-Segment-Anzeige -- Detailbetrachtung Hauptschleife}
+\label{abb:aufgabe33_2}
+\end{figure}
+
+Als n"achtes gehen wir zur Hauptschleife. 
 
 \begin{figure}
 \lstinputlisting[caption={Assembler-Programm f"ur Bin"ar/BCD-Konvertierung für 7-Segment-Anzeige -- Hauptschleife}, language=z8asm, label=lsg:aufgabe33_2, firstline=13, firstnumber=13, lastline=61]{aufgabe33.asm}

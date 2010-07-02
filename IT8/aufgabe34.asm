@@ -19,7 +19,7 @@ loop:
 	LD 11,   #%10
 	CALL read_loop
 
-	JP	loop
+	JP  loop
 
 
 ; Routine, die fuer den Port 3 fuer 4 sekunden abfragt und ausgibt
@@ -53,10 +53,8 @@ channel_read_and_output
 
 	LD 	R0, P0
 
-	; r0 - ausgelesener Wert
-
-	; Ausgelesener Wert nach Register 4
-	LD 4, R0
+	; R0 - ausgelesener Wert
+	
 	LD 10, 4
 	CALL moddiv10
 	LD 5, 11
