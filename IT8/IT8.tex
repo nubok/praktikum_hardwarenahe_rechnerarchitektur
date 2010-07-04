@@ -373,7 +373,7 @@ Erweitern Sie die Software von Aufgabe \ref{sec:aufg_3_2} derart, dass Sie im Ze
 
 \subsubsection{L"osung}
 
-Die Hauptstruktur des Programms ist in Abbildung \ref{abb:aufgabe34_1} dargestellt. Der zugeh"orige Assembler-Code der Hauptschleife befindet sich in Listing \ref{aufgabe34_1}. Da die Initialisierung der Ports und des Stacks gegen"uber der vorherigen Aufgabe nicht ver"andert wurden, wird auf ein erneutes Abdrucken dieses Programmteile verzichtet.
+Die Hauptstruktur des Programms ist in Abbildung \ref{abb:aufgabe34_main} dargestellt. Der zugeh"orige Assembler-Code der Hauptschleife befindet sich in Listing \ref{aufgabe34_main}. Da die Initialisierung der Ports und des Stacks gegen"uber der vorherigen Aufgabe nicht ver"andert wurden, wird auf ein erneutes Abdrucken dieses Programmteile verzichtet.
 
 \begin{figure}
 \begin{center}
@@ -396,19 +396,19 @@ Die Hauptstruktur des Programms ist in Abbildung \ref{abb:aufgabe34_1} dargestel
 \psbrace[ref=lC](Loop1)(Loop0){\parbox{3cm}{Hauptschleife}}
 \end{pspicture}
 \end{center}
-\caption{Bin"ar/BCD-Konvertierung für 7-Segment-Anzeige -- Hauptstruktur Programm}
-\label{abb:aufgabe34_1}
+\caption{Zeitmultiplexbetrieb der ADU-Kanäle -- Hauptstruktur Programm}
+\label{abb:aufgabe34_main}
 \end{figure}
 
 \begin{figure}
-\lstinputlisting[caption={Assembler-Programm f"ur Zeitmultiplexbetrieb der ADU-Kanäle -- Hauptschleife}, language=z8asm, label=lsg:aufgabe34_1, firstline=13, lastline=22, firstnumber=13]{aufgabe34.asm}
+\lstinputlisting[caption={Assembler-Programm f"ur Zeitmultiplexbetrieb der ADU-Kanäle -- Hauptschleife}, language=z8asm, label=lsg:aufgabe34_main, firstline=13, lastline=22, firstnumber=13]{aufgabe34.asm}
 \end{figure}
 
 Wie man sieht, wurde das Auslesen des ADUs, die Verarbeitung und Ausgabe des Wertes in eine eigene Funktion \texttt{read\_loop} verlagert. Diese liest das Ergebnis des ADUs aus und macht geht anschließend in eine viersek"undige Warteschleife "uber.
 
 Diese Funktion nimmt zwei Parameter entgegen: in Register 10 und 11 nimmt sie die beiden Bytes entgegen, die nacheinander an Port 3 gesendet werden, um den gew"unschten Channel auszulesen.
 
-Das Flussdiagramm des Aufbaus der Funktion \texttt{read\_loop} befindet sich in Abbildung \label{abb:aufgabe34_2}.
+Das Flussdiagramm des Aufbaus der Funktion \texttt{read\_loop} befindet sich in Abbildung \label{abb:aufgabe34_read_loop} und in Listing \label{lst:aufgabe34_read_loop} die Assembler-Umsetzung.
 
 Um das Lesen des Codes zu erleichtern, befindet sich in Tabelle \ref{table:aufgabe34} eine Tabelle aller im Rahmen dieser L"osung im Programm benutzen Register.
 
@@ -423,8 +423,8 @@ R11 & Z"ahler mittlere Warteschleife in Funktion \texttt{read\_loop} \\
 R12 & Z"ahler innere Warteschleife in Funktion \texttt{read\_loop} \\
 5 & Ausgaberegister der unteren beiden BCD-Tetraden (nach Port 1) \\
 6 & Hilfsregister f"ur Bitoperationen, Ausgaberegister obere BCD-Tetrade und LED-Balkenleiste (nach Port 2) \\
-10 & "Ubergaberegister f"ur Parameter der Funktion  \texttt{moddiv10} \\
-11 & R"uckgabewert der Funktion \texttt{moddiv10}: Modulus bez"uglich 10 \\
+10 & "Ubergaberegister f"ur Parameter der Funktion \texttt{moddiv10}; "Ubergaberegister f"ur Parameter der Funktion \texttt{channel\_read\_and\_output} \\
+11 & R"uckgabewert der Funktion \texttt{moddiv10}: Modulus bez"uglich 10; "Ubergaberegister f"ur Parameter der Funktion \texttt{channel\_read\_and\_output} \\
 12 & R"uckgabewert der Funktion \texttt{moddiv10}: Ergebnis der ganzzahligen Division bez"uglich 10 \\
 \hline
 \end{tabularx}
@@ -472,21 +472,56 @@ R12 & Z"ahler innere Warteschleife in Funktion \texttt{read\_loop} \\
 \psbrace[ref=lC](Loop4a)(Loop0a){\parbox{3cm}{Ca. viersek"undige Warteschleife}}
 \end{pspicture}
 \end{center}
-\caption{Bin"ar/BCD-Konvertierung für 7-Segment-Anzeige -- Funktion \texttt{read\_loop}}
-\label{abb:aufgabe34_2}
-\end{figure}
-
-
-Vom Betreuer wurde als zus"atzliche kleine Herausforderung verlangt, dass bei der Ausgabe 
-
-
-
-\begin{figure}
-\lstinputlisting[caption={Assembler-Programm f"ur Zeitmultiplexbetrieb der ADU-Kanäle -- Routine \texttt{read\_loop}}, language=z8asm, label=lsg:aufgabe34_1, firstline=25, lastline=42, firstnumber=25]{aufgabe34.asm}
+\caption{Zeitmultiplexbetrieb der ADU-Kanäle -- Funktion \texttt{read\_loop}}
+\label{abb:aufgabe34_read_loop}
 \end{figure}
 
 \begin{figure}
-\lstinputlisting[caption={Assembler-Programm f"ur Zeitmultiplexbetrieb der ADU-Kanäle -- Routine \texttt{channel\_read\_and\_output}}, language=z8asm, label=lsg:aufgabe34_2, firstline=45, lastline=99, firstnumber=45]{aufgabe34.asm}
+\lstinputlisting[caption={Assembler-Programm f"ur Zeitmultiplexbetrieb der ADU-Kanäle -- Routine \texttt{read\_loop}}, language=z8asm, label=lsg:aufgabe34_read_loop, firstline=25, lastline=42, firstnumber=25]{aufgabe34.asm}
+\end{figure}
+
+Wie man sehen kann, delegiert diese Funktion das Auslesen, Verarbeiten und Ausgeben des Wertes des ADU' an eine Funktion namens \texttt{channel\_read\_and\_output}.
+
+Vom Betreuer wurde als zus"atzliche kleine Herausforderung verlangt, dass bei der Ausgabe, falls der oberste auszugebende BCD-Wert 0 ist, die Anzeige von diesem ausgeblendet werden soll, statt eine 0 auszugeben.
+
+Somit ergibt sich als Struktur der Funktion \texttt{channel\_read\_and\_output} ein in Abbildung \ref{abb:aufgabe34_channel_read_and_output} als Flussdiagramm dargestelltes Konstrukt. Der komplette Quellcode dieser befindet sich in Listing \ref{lsg:aufgabe34_channel_read_and_output}.
+
+\paragraph{Bemerkung} Die benutze Funktion \texttt{moddiv10} ist gegen"uber der L"osung der vorherigen Aufgabe unver"ander und wird daher aus Platzgr"unden hier nicht nochmal wiedergegeben, sondern stattdessen auf Abbildung \ref{abb:aufgabe33_3} und Listing \ref{lsg:aufgabe33_3} verwiesen.
+
+\begin{figure}
+\begin{center}
+\begin{pspicture}(5,15)
+%\psgrid
+\begin{psmatrix}[rowsep=0.4,colsep=0.5]
+	\psovalbox{Begin} \\
+	\psframebox{\parbox{4cm}{Schreibe den Wert von Register 10 nach P3}} \\
+	\psframebox{\parbox{4cm}{Schreibe den Wert von Register 10 nach P3}} \\
+	\psframebox{\parbox{4cm}{Lese den Wert von P0 nach R0 aus}} \\
+	\psframebox{\parbox{4cm}{Konvertiere den Wert von P0 nach BCD und speichere das Ergebnis in den Registern 5 und 6 ab}} \\
+	\psdiabox{\parbox{2.2cm}{Ist Register 6 = 0?}} \\
+	\psframebox{\parbox{4cm}{Setze Register 6 auf 0Ah}} \\
+	~ \\
+	\psframebox{\parbox{4cm}{Oberes Nibble von R0 als oberes Nibble in Port 6 ablegen}} \\
+	\psframebox{\parbox{4cm}{Register 6 auf Port 2 ausgeben}} \\
+	\psovalbox{Return}
+\end{psmatrix}
+\ncline{->}{1,1}{2,1}
+\ncline{->}{2,1}{3,1}
+\ncline{->}{3,1}{4,1}
+\ncline{->}{5,1}{6,1}
+\ncline{->}{6,1}{7,1}\naput{Ja}
+\ncangles[angleA=0, armA=0.5cm, armB=2.5cm]{->}{6,1}{8,1}\naput{Nein}
+\ncline{->}{7,1}{9,1}
+\ncline{->}{9,1}{10,1}
+\ncline{->}{10,1}{11,1}
+\end{pspicture}
+\end{center}
+\caption{Zeitmultiplexbetrieb der ADU-Kanäle -- Funktion \texttt{read\_loop}}
+\label{abb:aufgabe34_channel_read_and_output}
+\end{figure}
+
+\begin{figure}
+\lstinputlisting[caption={Assembler-Programm f"ur Zeitmultiplexbetrieb der ADU-Kanäle -- Routine \texttt{channel\_read\_and\_output}}, language=z8asm, label=lsg:aufgabe34_channel_read_and_output, firstline=45, lastline=99, firstnumber=45]{aufgabe34.asm}
 \end{figure}
 
 \end{document}

@@ -80,7 +80,6 @@ channel_read_and_output:
 	; Ergebnis:
 	; Register 5: zwei Tetraden
 	; Register 6: hoechste Tetrade
-
 	LD P1, 5
 
 	CP 6, #0
