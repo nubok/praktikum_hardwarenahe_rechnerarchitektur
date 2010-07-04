@@ -19,7 +19,6 @@ loop:
 	NOP
 
 	LD   R0, P0
-	
 	; R0 - ausgelesener Wert
 
 	LD   10, R0
@@ -48,10 +47,9 @@ loop:
 	; Ergebnis:
 	; Register 5: zwei Tetraden
 	; Register 6: hoechste Tetrade
-
 	LD   P1, 5
 
-	; Unterste Bits von r0 loeschen und
+	; Unterste Bits von R0 loeschen und
 	; durch diese von Register 6 ersetzen (dessen
 	; oberste 4 Bits 0 sind)
 	AND  R0, #%F0
@@ -65,7 +63,6 @@ moddiv10:
 	; Eingabe: Register 10
 	; Ausgabe: Register 11: Modulus bzgl. 10
 	;          Register 12: ganzz. Division bzgl. 10
-	LD  11,  #0
 	LD  12,  #0
 begin_loop_moddiv:
 	CP  10,  #9

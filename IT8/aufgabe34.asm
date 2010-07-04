@@ -46,29 +46,28 @@ loop2:
 ;            Register 11: zweiter Wert fuer p3 (#%10 oder #%10)
 channel_read_and_output
 
-	LD	P3, 10
-	LD	P3, 11
+	LD   P3, 10
+	LD   P3, 11
 
 	NOP
-
-	LD 	R0, P0
-
-	; R0 - ausgelesener Wert
 	
-	LD 10, 4
-	CALL moddiv10
-	LD 5, 11
+	LD   R0, P0
+	; R0 - ausgelesener Wert
 
-	LD 10, 12
+	LD   10, R0
+	CALL moddiv10
+	LD   5,  11
+
+	LD   10, 12
 	CALL moddiv10
 	; Register 6 dient als Hilfsregister
-	LD  6, 11
+	LD   6,  11
 	; Register 6 um 4 Bits nach links schieben
-	RL 6
-	RL 6
-	RL 6
-	RL 6
-	AND 6, #%F0
+	RL   6
+	RL   6
+	RL   6
+	RL   6
+	AND  6,  #%F0
 
 	; Den geshifteten Wert als zweite Tetrade 
 	; nach Register 5 bringen
@@ -104,17 +103,16 @@ moddiv10:
 	; Eingabe: Register 10
 	; Ausgabe: Register 11: Modulus bzgl. 10
 	;          Register 12: ganzz. Division bzgl. 10
-	LD 11, #0
-	LD 12, #0
+	LD  12,  #0
 begin_loop_moddiv:
-	CP 10, #9
-	JP ULE, end_loop_moddiv
-	SUB 10, #10
+	CP  10,  #9
+	JP  ULE, end_loop_moddiv
+	SUB 10,  #10
 	INC 12
 	JP begin_loop_moddiv
 
 end_loop_moddiv:
-	LD 11, 10
+	LD  11,  10
 	RET
 
 	END

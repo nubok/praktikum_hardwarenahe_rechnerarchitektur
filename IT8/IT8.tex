@@ -10,6 +10,7 @@
 \usepackage{pst-node}
 \usepackage{pstricks-add}
 \usepackage{listings} % for listings - of course ;-)
+\usepackage{float}
 \author{Denis Dietze\footnote{denis.dietze@st.ovgu.de} \and Wolfgang Keller\footnote{wolfgang.keller@student.uni-magdeburg.de} \and Nico Linke\footnote{nicolinke@googlemail.com} \and Thomas Schulte\footnote{thomas.schulte.md@googlemail.com}}
 \title{Protokoll Versuch IT8}
 \subtitle{Microcontroller Z8 mit ADU-Interface}
@@ -193,7 +194,7 @@ Prinzipiell sollte der Ablauf des Programms relativ klar sein. Der einzige etwas
 
 Der Grund, warum wir die unteren vier Bits von P0 auf 1 setzen und nach P1 den Wert FFh senden, liegt darin begr"undet, dass gem"a"s Anlage 2 der Versuchsbeschreibung das Sieben-Segment-Anzeige-Modul an den unteren 4 Bits von Port 2 und dem gesamten Port 1 angeschlossen ist. Da es unerw"unscht ist, dass in diesem Programm die Sieben-Segment-Anzeige etwas anzeigt, schreiben wir in die vier Bits der Steuerbits jeder der vier Ziffern den Wert FFh (also einen Wert außerhalb des Intervalls von 0 bis 9), damit keines der Segmente aufleuchtet.
 
-\pagebreak
+\clearpage
 
 \subsection{Bin"ar/BCD-Konvertierung für 7-Segment-Anzeige}
 \label{sec:3_3}
@@ -257,39 +258,46 @@ Abbildung \ref{abb:aufgabe33_1} bildet das Flussdiagramm des Programms unter Det
 \lstinputlisting[caption={Assembler-Programm f"ur Bin"ar/BCD-Konvertierung für 7-Segment-Anzeige -- Initialisierung}, language=z8asm, label=lsg:aufgabe33_1, lastline=12]{aufgabe33.asm}
 \end{figure}
 
+Als n"achtes betrachten wir zur Hauptschleife. Abbildung \ref{abb:aufgabe33_2} zeigt ein Flussdiagramm des Programms, welches die Hauptschleife im Detail betrachtet. Der Assembler-Code der Hauptschleife befindet sich in Listing \ref{lsg:aufgabe33_2}. Da das Programm etwas umfangreicher ist, befindet sich in Tabelle \ref{table:aufgabe33} eine Registerbelegungstabelle des gesamten Programms dieser Aufgabe.
+
+Die Grundidee hinter der L"osung ist es, drei mal nacheinander die Funktion "`moddiv10"' aufzurufen, welche den Modulus und das Ergebnis der ganzzahligen Division bez"uglich 10 bestimmt. Der Modulus wird als aktuelle BCD-Tetrade "ubernommen und das zwei mal mit dem Ergebnis der ganzzahligen Division durch 10 wiederholt.
+
 \begin{figure}
 \begin{center}
-\begin{pspicture}(5,19)
+\begin{pspicture}(5,21.5)
 %\psgrid
 \begin{psmatrix}[rowsep=0.4,colsep=0.5]
 	\psovalbox{Begin} \\
 	\psframebox{\parbox{4cm}{Initialisierung}}  \\
 	~ & [name=Init5] & \makebox[5cm]{} & [name=Init5a] \\
-	\psframebox{\parbox{4cm}{P3 auf 20h (Benutzung Channel 1) bzw. 30h (Benutzung Channel 2) setzen}} \\
-	\psframebox{\parbox{4cm}{P3 auf 00h (Benutzung Channel 1) bzw. 10h (Benutzung Channel 2) setzen}} \\
-	\psframebox{\parbox{4cm}{Einen Zyklus abwarten}} \\
-	~ & [name=Loop1] \\
-	\psframebox{\parbox{4cm}{Wert von P0 nach R0 laden}} \\
-	\psframebox{\parbox{4cm}{Rufe Funktion "`moddiv10"' mit Parameter R0 auf}} \\
-	\psframebox{\parbox{4cm}{Untere 4 Bits von R0 auf 1 setzen}} \\
-	\psframebox{\parbox{4cm}{Wert von R0 in P2 ablegen}} \\
-	\psframebox{\parbox{4cm}{FFh in P1 speichern}} \\
+	\psframebox{\parbox{4cm}{A-D-Umwandlung ausl"osen und Ergebnis nach R0 auslesen}} \\
+	~ & [name=Tetrade0] \\
+	\psframebox{\parbox{4cm}{Rufe Funktion "`moddiv10"' mit Parameter R0 auf und speichere Modulus in Register 5}} \\
+	~ & [name=Tetrade1] \\
+	\psframebox{\parbox{4cm}{Rufe Funktion "`moddiv10"' mit dem Ergebnis der vorhergehenden ganzzahligen Division auf}} \\
+	\psframebox{\parbox{4cm}{Modulus als oberes Nibble in Register 5 ablegen (dazu diesen um 4 Bits nach links shiften)}} \\
+	~ & [name=Tetrade2] \\
+	\psframebox{\parbox{4cm}{Rufe Funktion "`moddiv10"' mit dem Ergebnis der vorhergehenden ganzzahligen Division auf und speichere Modulus in Register 6}} \\
+	~ & [name=Tetrade3] \\
+	\psframebox{\parbox{4cm}{Register 5 auf Port 1 ausgeben}} \\
+	\psframebox{\parbox{4cm}{Oberes Nibble von R0 als oberes Nibble in Port 6 ablegen}} \\
+	\psframebox{\parbox{4cm}{Register 6 auf Port 2 ausgeben}} \\
 	~ & [name=Loop2] & \makebox[5cm]{} & [name=Loop2a]
 \end{psmatrix}
 \ncline{->}{1,1}{2,1}
 \ncline{->}{2,1}{4,1}
-\ncline{->}{4,1}{5,1}
-\ncline{->}{5,1}{6,1}
+\ncline{->}{4,1}{6,1}
 \ncline{->}{6,1}{8,1}
-%\ncline{->}{11,1}{12,1}
-%\ncline{->}{12,1}{13,1}
-%\ncline{->}{13,1}{15,1}
-%\ncline{->}{15,1}{16,1}
-%\ncline{->}{16,1}{17,1}
-%\ncline{->}{17,1}{18,1}
-\ncangles[angleA=-90, armA=0.5cm, armB=2.5cm]{->}{18,1}{10,1}
-\psbrace[ref=lC](Loop1)(Init5){\parbox{5cm}{A-D-Umwandlung ausl"osen}}
-\psbrace[ref=lC](Loop2)(Loop1){\parbox{5cm}{Digitalisiertes Datum auslesen, verarbeiten und ausgeben}}
+\ncline{->}{8,1}{9,1}
+\ncline{->}{9,1}{11,1}
+\ncline{->}{11,1}{13,1}
+\ncline{->}{13,1}{14,1}
+\ncline{->}{14,1}{15,1}
+\ncangles[angleA=-90, armA=0.5cm, armB=2.5cm]{->}{15,1}{3,1}
+\psbrace[ref=lC](Tetrade1)(Tetrade0){\parbox{3cm}{Berechung unterste BCD-Tetrade}}
+\psbrace[ref=lC](Tetrade2)(Tetrade1){\parbox{3cm}{Berechung mittlere BCD-Tetrade}}
+\psbrace[ref=lC](Tetrade3)(Tetrade2){\parbox{3cm}{Berechung obere BCD-Tetrade}}
+\psbrace[ref=lC](Loop2)(Tetrade3){\parbox{3cm}{Ausgabe}}
 \psbrace[ref=lC](Loop2a)(Init5a){\parbox{3cm}{Hauptschleife}}
 \end{pspicture}
 \end{center}
@@ -297,18 +305,65 @@ Abbildung \ref{abb:aufgabe33_1} bildet das Flussdiagramm des Programms unter Det
 \label{abb:aufgabe33_2}
 \end{figure}
 
-Als n"achtes gehen wir zur Hauptschleife. 
-
 \begin{figure}
 \lstinputlisting[caption={Assembler-Programm f"ur Bin"ar/BCD-Konvertierung für 7-Segment-Anzeige -- Hauptschleife}, language=z8asm, label=lsg:aufgabe33_2, firstline=13, firstnumber=13, lastline=61]{aufgabe33.asm}
 \end{figure}
 
+\begin{table}
+\begin{tabularx}{\textwidth}{|c|X|}
+\hline
+Register & Bedeutung \\
+\hline
+R0 & Von Port 0 (Ergebnis Analog-Digital-Umwandlung) ausgelesener Wert \\
+5 & Ausgaberegister der unteren beiden BCD-Tetraden (nach Port 1) \\
+6 & Hilfsregister f"ur Bitoperationen, Ausgaberegister obere BCD-Tetrade und LED-Balkenleiste (nach Port 2) \\
+10 & "Ubergaberegister f"ur Parameter der Funktion "`moddiv10"' \\
+11 & R"uckgabewert der Funktion "`moddiv10"': Modulus bez"uglich 10 \\
+12 & R"uckgabewert der Funktion "`moddiv10"': Ergebnis der ganzzahligen Division bez"uglich 10 \\
+\hline
+\end{tabularx}
+\caption{Registerbelegungstabelle f"ur die zweite Version (unter Ber"ucksichtigung von Schwingungen) des Programms zum Z"ahlen der Anzahl von Schalter"anderungen}
+\label{table:aufgabe33}
+\end{table}
+
+Nun zur Funktion "`moddiv10"'. Diese nimmt in Register 10 einen Wert (ein vorzeichenloses Byte) entgegen und gibt in Register 11 den Modulus dieses Wertes bez"uglich 10 und in Register 12 den Wert der ganzzahligen Division von Register 10 durch 10 zur"uck. Der Grund, warum diese Funktion von uns programmiert, da der Z8-Microcontroller laut Anlage 11 der Versuchsanleitung keine Befehle f"ur ganzzahlige Division und Modulus bereitstellt.
+
+Abbildung \label{abb:aufgabe33_3} beinhaltet das Flussdiagramm und Listing \label{lsg:aufgabe33_3} den zugeh"origen Quelltext.
+
 \begin{figure}
-\lstinputlisting[caption={Assembler-Programm f"ur Bin"ar/BCD-Konvertierung für 7-Segment-Anzeige -- Funktion \texttt{moddiv10}}, language=z8asm, label=lsg:aufgabe33_3, firstline=64, firstnumber=64]{aufgabe33.asm}
+\begin{center}
+\begin{pspicture}(5,11)
+%\psgrid
+\begin{psmatrix}[rowsep=0.4,colsep=0.5]
+	\psovalbox{Begin} \\
+	\psframebox{\parbox{4cm}{Initialisiere Register 12 mit 0}}  \\
+	~ & \\
+	\psdiabox{\parbox{2.2cm}{Ist Register 10 $\leq$ 9}} \\
+	\psframebox{\parbox{4cm}{Verringere den Wert in Register 10 um 10}} \\
+	\psframebox{\parbox{4cm}{Inkrementiere Register 12}} \\
+	~ & \\
+	~ & \\
+	\psframebox{\parbox{4cm}{Speichere Wert von Register 10 in Register 11}} \\
+	\psovalbox{Return}
+\end{psmatrix}
+\ncline{->}{1,1}{2,1}
+\ncline{->}{2,1}{4,1}
+\ncline{->}{4,1}{5,1}\nbput{Nein}
+\ncline{->}{5,1}{6,1}
+\ncangles[angleA=-90, armA=0.5cm, armB=2.5cm]{->}{6,1}{3,1}
+\ncangles[angleA=180, armA=0.5cm, armB=0.5cm, angleB=90]{->}{4,1}{9,1}\nbput{Ja}
+\ncline{->}{9,1}{10,1}
+\end{pspicture}
+\end{center}
+\caption{Funktion "`moddiv10"'}
+\label{abb:aufgabe33_3}
 \end{figure}
 
-\pagebreak
+\begin{figure}
+\lstinputlisting[caption={Assembler-Programm f"ur Bin"ar/BCD-Konvertierung für 7-Segment-Anzeige -- Funktion \texttt{moddiv10}}, language=z8asm, label=lsg:aufgabe33_3, firstline=64, firstnumber=64, lastline=78]{aufgabe33.asm}
+\end{figure}
 
+\clearpage
 \subsection{Zeitmultiplexbetrieb der ADU-Kanäle}
 \subsubsection{Aufgabe}
 
@@ -316,11 +371,15 @@ Erweitern Sie die Software von Aufgabe \ref{sec:aufg_3_2} derart, dass Sie im Ze
 
 \subsubsection{L"osung}
 
-\begin{figure}[htbp]
-\lstinputlisting[caption={Assembler-Programm f"ur Zeitmultiplexbetrieb der ADU-Kanäle}, language=z8asm, label=lsg:aufgabe34_1, lastline=42]{aufgabe34.asm}
+Da die Initialisierung der Ports und des Stacks, sowie die verwendete Funktion "`moddiv10"' gegen"uber der vorherigen Aufgabe nicht ver"andert wurden, wird auf ein erneutes Abdrucken dieser Programmteile verzichtet.
+
+Wie in den Programmen davor, wird anschlie"send in die Hauptschleife "ubergegangen.
+
+\begin{figure}
+\lstinputlisting[caption={Assembler-Programm f"ur Zeitmultiplexbetrieb der ADU-Kanäle -- Hauptschleife}, language=z8asm, label=lsg:aufgabe34_1, firstline=13, lastline=22, firstnumber=13]{aufgabe34.asm}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}
 \lstinputlisting[caption={Assembler-Programm f"ur Zeitmultiplexbetrieb der ADU-Kanäle -- Routine \texttt{channel\_read\_and\_output}}, language=z8asm, label=lsg:aufgabe34_2, firstline=44, lastline=102, firstnumber=44]{aufgabe34.asm}
 \end{figure}
 
