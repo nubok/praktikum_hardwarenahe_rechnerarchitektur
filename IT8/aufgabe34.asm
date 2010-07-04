@@ -22,9 +22,9 @@ loop:
 	JP  loop
 
 
-; Routine, die fuer den Port 3 fuer 4 sekunden abfragt und ausgibt
-; Parameter: Register 10: erster Wert fuer p3 (#%30 oder #%20)
-;            Register 11: zweiter Wert fuer p3 (#%10 oder #%10)
+; Fragt Port 3 ab und macht 4 Sekunden Pause
+; Parameter: Register 10: erster Wert fuer P3 (#%30 oder #%20)
+;            Register 11: zweiter Wert fuer P3 (#%10 oder #%10)
 read_loop:
 	
 	CALL channel_read_and_output
@@ -41,11 +41,11 @@ loop2:
 
 	RET
 
-; Routine, die fuer den Port 3 abfragt und ausgibt
-; Parameter: Register 10: erster Wert fuer p3 (#%30 oder #%20)
-;            Register 11: zweiter Wert fuer p3 (#%10 oder #%10)
-channel_read_and_output
 
+; Fragt Port 3 ab und gibt ihn aus
+; Parameter: Register 10: erster Wert fuer P3 (#%30 oder #%20)
+;            Register 11: zweiter Wert fuer P3 (#%10 oder #%10)
+channel_read_and_output:
 	LD   P3, 10
 	LD   P3, 11
 
